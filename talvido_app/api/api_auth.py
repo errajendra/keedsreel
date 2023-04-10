@@ -4,7 +4,8 @@ from rest_framework.views import APIView
 from .serializers import (
     TalvidoMobileLoginSerializer,
     TavlidoGoogleLoginSerializer,
-    TavlidoFacebokLoginSerializer
+    TavlidoFacebokLoginSerializer,
+    RegenerateAccessTokenSerializer
 )
 
 
@@ -85,5 +86,33 @@ class LoginFacebookAPIView(APIView):
             "status_code" : status.HTTP_400_BAD_REQUEST,
             "message" : "bad request",
             "data" : facebook_login_serializer.errors
+        }
+        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+
+
+"""This api generate the access token using refresh token"""
+
+class RegenerateAccessTokenAPIVIew(APIView):
+
+    def post(self,request):
+
+        """serialize the data"""
+        regenerate_access_token_serialzier = RegenerateAccessTokenSerializer(data=request.data)
+
+        """validate the data"""
+        if regenerate_access_token_serialzier.is_valid():
+
+            """generate the new token on the base of refresh token"""
+            token_data = regenerate_access_token_serialzier.get_access_token(
+                grant_type = regenerate_access_token_serialzier.validated_data.get("grant_type"),
+                refresh_token=regenerate_access_token_serialzier.validated_data.get("refresh_token")
+            )
+            return Response(token_data.json(),status=token_data.status_code)
+        
+        """return this response if validation failed"""
+        response = {
+            "status_code" : status.HTTP_400_BAD_REQUEST,
+            "message" : "bad request",
+            "data" : regenerate_access_token_serialzier.errors
         }
         return Response(response,status=status.HTTP_400_BAD_REQUEST)

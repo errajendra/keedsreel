@@ -119,3 +119,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #REGISTER CUSTOM USER
 AUTH_USER_MODEL = 'talvido_app.Talvidouser'
+
+#FIREBASE API KEY
+FIREBASE_API_KEY = os.environ.get("FIREBASE_API_KEY")
