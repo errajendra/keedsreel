@@ -11,7 +11,7 @@ git clone https://github.com/Aashish-wooshelf/talvido.git
 pip install -r requirements.txt
 ```
 
-3. create ```.env``` file, where manage.py file is located
+3. create ```.env``` file, where manage.py file is located and add this code.
 ```
 DATABASE_NAME=talvido
 DATABASE_USERNAME=aashish
