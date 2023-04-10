@@ -1,1 +1,1 @@
-from .api_auth import LoginMobileOTPAPIView
+from .api_auth import *
