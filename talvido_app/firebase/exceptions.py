@@ -18,3 +18,9 @@ class FirebaseError(APIException):
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
     default_detail = "The user provided with the auth token is not a valid Firebase user, it has no Firebase UID"
     default_code = "no_firebase_uid"
+
+
+class NoFirebaseuidAvaliable(APIException):
+    status_code = status.HTTP_401_UNAUTHORIZED
+    default_detail = "The token associate with firebase uid is not avaliable in database"
+    default_code = "no_firebase_uid_avaliable_in_database"
