@@ -8,8 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-sc@s_h6%*k(8(2cvdy+uta59b1ba2$#u+82$*aff&(rdko(roy'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
+DEBUG=True
 ALLOWED_HOSTS = []
 
 
@@ -115,3 +114,13 @@ AUTH_USER_MODEL = 'talvido_app.Talvidouser'
 # FIREBASE API KEY
 
 FIREBASE_API_KEY = os.environ.get("FIREBASE_API_KEY")
+
+# Firebase Authentication
+
+REST_FRAMEWORK = {
+     'DEFAULT_AUTHENTICATION_CLASSES': (
+    
+      'talvido_app.firebase.authentication.FirebaseAuthentication',
+    
+    )
+}
