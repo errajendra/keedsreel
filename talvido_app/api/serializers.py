@@ -3,7 +3,7 @@ from talvido_app.models import Talvidouser
 from rest_framework import status
 from django.conf import settings
 from talvido_app.firebase.helpers import verify_firebase_uid
-from talvido_app.firebase.exceptions import InvalidFirebaseUID
+from talvido_app.firebase.exceptions import InvalidFirebaseUID, FirebaseUIDExists
 import requests
 import re
 
@@ -48,13 +48,7 @@ class TalvidoMobileLoginSerializer(serializers.Serializer):
             )
             return user
         except:
-            raise serializers.ValidationError(
-                {
-                    "status_code": status.HTTP_400_BAD_REQUEST,
-                    "message": "bad request",
-                    "firebase_uid": "Firebase uid is already exist.",
-                }
-            )
+            raise FirebaseUIDExists()
 
 
 """Google login serializer"""
@@ -90,13 +84,7 @@ class TavlidoGoogleLoginSerializer(serializers.Serializer):
             )
             return user
         except:
-            raise serializers.ValidationError(
-                {
-                    "status_code": status.HTTP_400_BAD_REQUEST,
-                    "message": "bad request",
-                    "firebase_uid": "Firebase uid is already exist.",
-                }
-            )
+            raise FirebaseUIDExists()
 
 
 """Facebok login serializer"""
@@ -132,13 +120,7 @@ class TavlidoFacebokLoginSerializer(serializers.Serializer):
             )
             return user
         except:
-            raise serializers.ValidationError(
-                {
-                    "status_code": status.HTTP_400_BAD_REQUEST,
-                    "message": "bad request",
-                    "firebase_uid": "Firebase uid is already exist.",
-                }
-            )
+            raise FirebaseUIDExists()
 
 
 """Regenerate access token serializer"""

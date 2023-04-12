@@ -1,5 +1,5 @@
 from rest_framework.authentication import BaseAuthentication
-from firebase_admin import credentials, auth
+from firebase_admin import auth
 from .import (
     NoAuthToken,
     InvalidAuthToken,
@@ -37,7 +37,8 @@ class FirebaseAuthentication(BaseAuthentication):
             uid = decoded_token.get("uid")
         except Exception:
             raise FirebaseError()
-        
+
+        """checking firebase uid is avalible in database"""
         try:
             user = Talvidouser.objects.get(username=uid)
         except Talvidouser.DoesNotExist:
