@@ -2,6 +2,8 @@ from rest_framework import serializers
 from talvido_app.models import Talvidouser
 from rest_framework import status
 from django.conf import settings
+from talvido_app.firebase.helpers import verify_firebase_uid
+from talvido_app.firebase.exceptions import InvalidFirebaseUID
 import requests
 import re
 
@@ -28,9 +30,16 @@ class TalvidoMobileLoginSerializer(serializers.Serializer):
     """override the save method"""
 
     def save(self):
+
         mobile_number = self.validated_data.get("mobile_number")
         firebase_uid = self.validated_data.get("firebase_uid")
 
+        """verifying the firebase uid"""
+        try:
+            verify_firebase_uid(firebase_uid=firebase_uid)
+        except:
+            raise InvalidFirebaseUID()
+        
         try:
             user = Talvidouser.objects.get_or_create(
                 mobile_number=mobile_number,
@@ -65,6 +74,12 @@ class TavlidoGoogleLoginSerializer(serializers.Serializer):
         email = self.validated_data.get("email")
         firebase_uid = self.validated_data.get("firebase_uid")
         full_name = self.validated_data.get("full_name")
+
+        """verifying the firebase uid"""
+        try:
+            verify_firebase_uid(firebase_uid=firebase_uid)
+        except:
+            raise InvalidFirebaseUID()
 
         try:
             user = Talvidouser.objects.get_or_create(
@@ -102,6 +117,12 @@ class TavlidoFacebokLoginSerializer(serializers.Serializer):
         firebase_uid = self.validated_data.get("firebase_uid")
         full_name = self.validated_data.get("full_name")
 
+        """verifying the firebase uid"""
+        try:
+            verify_firebase_uid(firebase_uid=firebase_uid)
+        except:
+            raise InvalidFirebaseUID()
+        
         try:
             user = Talvidouser.objects.get_or_create(
                 username=firebase_uid,

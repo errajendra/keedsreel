@@ -24,3 +24,9 @@ class NoFirebaseuidAvaliable(APIException):
     status_code = status.HTTP_401_UNAUTHORIZED
     default_detail = "The token associate with firebase uid is not avaliable in database"
     default_code = "no_firebase_uid_avaliable_in_database"
+
+
+class InvalidFirebaseUID(APIException):
+    status_code = status.HTTP_401_UNAUTHORIZED
+    default_detail = "This firebase uid is invalid"
+    default_code = "invalid firebase uid"

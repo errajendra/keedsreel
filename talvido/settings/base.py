@@ -114,13 +114,3 @@ AUTH_USER_MODEL = 'talvido_app.Talvidouser'
 # FIREBASE API KEY
 
 FIREBASE_API_KEY = os.environ.get("FIREBASE_API_KEY")
-
-# Firebase Authentication
-
-REST_FRAMEWORK = {
-     'DEFAULT_AUTHENTICATION_CLASSES': (
-    
-      'talvido_app.firebase.authentication.FirebaseAuthentication',
-    
-    )
-}
