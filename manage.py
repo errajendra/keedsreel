@@ -3,16 +3,12 @@
 import os
 import sys
 import dotenv
-from talvido.settings.base import DEBUG
 
 
 def main():
     dotenv.read_dotenv()
     """Run administrative tasks."""
-    if DEBUG:
-        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'talvido.settings.development')
-    else:
-        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'talvido.settings.production')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'talvido.settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
