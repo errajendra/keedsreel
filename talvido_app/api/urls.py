@@ -1,5 +1,6 @@
 from django.urls import path
 from . import (
+    RegisterMobileOTPAPIView,
     LoginMobileOTPAPIView,
     LoginGoogleAPIView,
     LoginFacebookAPIView,
@@ -8,6 +9,9 @@ from . import (
 
 
 urlpatterns = [
+    path("auth/register/mobile-otp/",
+        RegisterMobileOTPAPIView.as_view(),
+        name="register-mobile-otp-api"),
     path(
         "auth/login/mobile-otp/",
         LoginMobileOTPAPIView.as_view(),

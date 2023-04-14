@@ -2,11 +2,40 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import (
+    TalvidoMobileRegisterSerializer,
     TalvidoMobileLoginSerializer,
     TavlidoGoogleLoginSerializer,
     TavlidoFacebokLoginSerializer,
     RegenerateAccessTokenSerializer,
 )
+
+
+"""This API handle registration with mobile otp"""
+
+class RegisterMobileOTPAPIView(APIView):
+    def post(self, request):
+        """Adding login_with field"""
+        request.data['login_with'] = 'Mobile Number'
+
+        """serialize the data"""
+        mobile_register_serializer = TalvidoMobileRegisterSerializer(data=request.data)
+
+        """validate the data"""
+        if mobile_register_serializer.is_valid():
+            mobile_register_serializer.save()
+            response = {
+                "status_code": status.HTTP_201_CREATED,
+                "message": "created",
+            }
+            return Response(response, status=status.HTTP_201_CREATED)
+
+        """return this response if validation failed"""
+        response = {
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": mobile_register_serializer.errors,
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
 """This API handle login with mobile otp"""

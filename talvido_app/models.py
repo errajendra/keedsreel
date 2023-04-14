@@ -19,16 +19,17 @@ class Talvidouser(AbstractUser):
     full_name = models.CharField(_("Full Name"), max_length=100, blank=True, null=True)
     firebase_uid = models.CharField(_("Firebase UID"), max_length=100, primary_key=True)
     referral_code = models.CharField(_("Referral Code"), max_length=200, blank=True, null=True)
-    username = models.CharField(_("Username"), max_length=100, unique=True)
+    username = models.CharField(_("Username"), max_length=100, unique=True, blank=True, null=True)
     mobile_number = models.CharField(
         _("Mobile Number"),
         max_length=100,
         validators=[phone_regex],
         blank=True,
         null=True,
+        unique=True
     )
     login_with = models.CharField(
-        verbose_name=_("Login with"), max_length=100, choices=LOGIN_WITH_CHOICES
+        verbose_name=_("Login with"), max_length=100, choices=LOGIN_WITH_CHOICES, default='', blank=True, null=True
     )
 
     USERNAME_FIELD = "firebase_uid"
@@ -37,4 +38,4 @@ class Talvidouser(AbstractUser):
     objects = TalvidouserManager()
 
     def __str__(self):
-        return self.username
+        return str(self.firebase_uid)

@@ -7,6 +7,34 @@ import requests
 import re
 
 
+"""Mobile registration serializer"""
+
+class TalvidoMobileRegisterSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Talvidouser
+        fields = ['mobile_number','firebase_uid','referral_code', 'login_with']
+
+    """validate the mobile number"""
+
+    def validate_mobile_number(self, value):
+        validate_phone_number_pattern = "^\\+?[1-9][0-9]{9,14}$"
+        if not re.match(validate_phone_number_pattern, value):
+            raise serializers.ValidationError(
+                """Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."""
+            )
+        return value
+
+    """override the create method and verfying the valid firebase uid"""
+    def create(self, validated_data):
+        try:
+            """verifying the firebase uid"""
+            verify_firebase_uid(firebase_uid=validated_data.get('firebase_uid'))
+        except:
+            raise InvalidFirebaseUID()
+        return super().create(validated_data)
+
+
 """mobile login serialzier"""
 
 class TalvidoMobileLoginSerializer(serializers.Serializer):
