@@ -5,3 +5,4 @@ from firebase_admin import auth
 def verify_firebase_uid(firebase_uid):
     user = auth.get_user(firebase_uid)
     return user.uid
+

@@ -12,7 +12,7 @@ class TalvidouserAdmin(UserAdmin):
     form = TalvidouserChangeForm
     model = Talvidouser
     list_display = (
-        "username",
+        "firebase_uid",
         "email",
         "is_staff",
         "is_active",
@@ -25,7 +25,7 @@ class TalvidouserAdmin(UserAdmin):
     fieldsets = (
         (
             "User Information",
-            {"fields": ("username", "email", "password", "full_name", "mobile_number")},
+            {"fields": ("username", "email", "password", "full_name", "mobile_number", "firebase_uid", "referral_code")},
         ),
         (
             "User Permissions",

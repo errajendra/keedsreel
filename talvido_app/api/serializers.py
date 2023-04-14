@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from talvido_app.models import Talvidouser
-from rest_framework import status
 from django.conf import settings
 from talvido_app.firebase.helpers import verify_firebase_uid
 from talvido_app.firebase.exceptions import InvalidFirebaseUID, FirebaseUIDExists
