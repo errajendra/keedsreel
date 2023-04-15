@@ -11,6 +11,8 @@ import re
 
 class TalvidoMobileRegisterSerializer(serializers.ModelSerializer):
 
+    mobile_number = serializers.CharField()
+
     class Meta:
         model = Talvidouser
         fields = ['mobile_number','firebase_uid','referral_code', 'login_with']
@@ -54,28 +56,21 @@ class TalvidoMobileLoginSerializer(serializers.Serializer):
             )
         return value
 
-    """override the save method"""
-
-    def save(self):
-
-        mobile_number = self.validated_data.get("mobile_number")
-        firebase_uid = self.validated_data.get("firebase_uid")
-
-        """verifying the firebase uid"""
+    """validate firebase uid"""
+    def validate_firebase_uid(self, value):
         try:
-            verify_firebase_uid(firebase_uid=firebase_uid)
+            """verifying the firebase uid"""
+            verify_firebase_uid(firebase_uid=value)
         except:
             raise InvalidFirebaseUID()
-        
-        try:
-            user = Talvidouser.objects.get_or_create(
-                mobile_number=mobile_number,
-                username=firebase_uid,
-                login_with="Mobile Number",
-            )
+        return value
+    
+    """checking credentails"""
+    def check_credentials(self, firebase_uid, mobile_number):
+        user = Talvidouser.objects.filter(firebase_uid=firebase_uid, mobile_number=mobile_number)
+        if user.exists():
             return user
-        except:
-            raise FirebaseUIDExists()
+        return None     
 
 
 """Google login serializer"""

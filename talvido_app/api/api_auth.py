@@ -14,7 +14,7 @@ from .serializers import (
 
 class RegisterMobileOTPAPIView(APIView):
     def post(self, request):
-        """Adding login_with field"""
+        """Adding login_with field data"""
         request.data['login_with'] = 'Mobile Number'
 
         """serialize the data"""
@@ -47,20 +47,37 @@ class LoginMobileOTPAPIView(APIView):
 
         """validate the data"""
         if mobile_login_serializer.is_valid():
-            mobile_login_serializer.save()
-            response = {
-                "status_code": status.HTTP_200_OK,
-                "message": "success",
+
+            """checking credentials"""
+            if mobile_login_serializer.check_credentials(
+                firebase_uid=mobile_login_serializer.validated_data.get('firebase_uid'),
+                mobile_number=mobile_login_serializer.validated_data.get("mobile_number")):
+                response = {
+                    "status_code": status.HTTP_200_OK,
+                    "message": "success",
+                }
+                return Response(response, status=status.HTTP_200_OK)
+            
+            else:
+                """return this if credentials failed"""
+                response = {
+                "status_code" : status.HTTP_401_UNAUTHORIZED,
+                "message" : "unauthorized",
+                "error" : {
+                    "mobile_number" : [
+                        "The mobile number you are trying with is not registered"
+                    ]
+                }
             }
-            return Response(response, status=status.HTTP_200_OK)
+                return Response(response, status=status.HTTP_401_UNAUTHORIZED)
 
         """return this response if validation failed"""
         response = {
-            "status_code": status.HTTP_400_BAD_REQUEST,
+            "status_code": status.HTTP_401_UNAUTHORIZED,
             "message": "bad request",
             "data": mobile_login_serializer.errors,
         }
-        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        return Response(response, status=status.HTTP_401_UNAUTHORIZED)
 
 
 """This API handle login with google"""
