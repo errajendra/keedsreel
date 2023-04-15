@@ -7,6 +7,7 @@ from .serializers import (
     TavlidoGoogleLoginSerializer,
     TavlidoFacebokLoginSerializer,
     RegenerateAccessTokenSerializer,
+    CheckMobileNumberExistSerializer,
 )
 
 
@@ -15,7 +16,7 @@ from .serializers import (
 class RegisterMobileOTPAPIView(APIView):
     def post(self, request):
         """Adding login_with field data"""
-        request.data['login_with'] = 'Mobile Number'
+        request.data["login_with"] = "Mobile Number"
 
         """serialize the data"""
         mobile_register_serializer = TalvidoMobileRegisterSerializer(data=request.data)
@@ -47,28 +48,30 @@ class LoginMobileOTPAPIView(APIView):
 
         """validate the data"""
         if mobile_login_serializer.is_valid():
-
             """checking credentials"""
             if mobile_login_serializer.check_credentials(
-                firebase_uid=mobile_login_serializer.validated_data.get('firebase_uid'),
-                mobile_number=mobile_login_serializer.validated_data.get("mobile_number")):
+                firebase_uid=mobile_login_serializer.validated_data.get("firebase_uid"),
+                mobile_number=mobile_login_serializer.validated_data.get(
+                    "mobile_number"
+                ),
+            ):
                 response = {
                     "status_code": status.HTTP_200_OK,
                     "message": "success",
                 }
                 return Response(response, status=status.HTTP_200_OK)
-            
+
             else:
                 """return this if credentials failed"""
                 response = {
-                "status_code" : status.HTTP_401_UNAUTHORIZED,
-                "message" : "unauthorized",
-                "error" : {
-                    "mobile_number" : [
-                        "The mobile number you are trying with is not registered"
-                    ]
+                    "status_code": status.HTTP_401_UNAUTHORIZED,
+                    "message": "unauthorized",
+                    "data": {
+                        "mobile_number": [
+                            "The mobile number you are trying with is not registered"
+                        ]
+                    },
                 }
-            }
                 return Response(response, status=status.HTTP_401_UNAUTHORIZED)
 
         """return this response if validation failed"""
@@ -78,6 +81,36 @@ class LoginMobileOTPAPIView(APIView):
             "data": mobile_login_serializer.errors,
         }
         return Response(response, status=status.HTTP_401_UNAUTHORIZED)
+
+
+"""This API check mobile number exist or not"""
+
+class CheckMobileNumberExistAPIView(APIView):
+    def post(self, request):
+        """serialize the data"""
+        check_mobile_serializer = CheckMobileNumberExistSerializer(data=request.data)
+
+        """validate the data"""
+        if check_mobile_serializer.is_valid():
+            response = {
+                "status_code": status.HTTP_200_OK,
+                "status": "1"
+                if check_mobile_serializer.check_mobile_number_exists(
+                    mobile_number=check_mobile_serializer.validated_data.get(
+                        "mobile_number"
+                    )
+                )
+                else "0",
+            }
+            return Response(response, status=status.HTTP_200_OK)
+
+        """return this response if validation failed"""
+        response = {
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": check_mobile_serializer.errors,
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
 """This API handle login with google"""

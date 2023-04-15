@@ -73,6 +73,28 @@ class TalvidoMobileLoginSerializer(serializers.Serializer):
         return None     
 
 
+"""check mobile number exist serializer"""
+
+class CheckMobileNumberExistSerializer(serializers.Serializer):
+
+    mobile_number = serializers.CharField()
+
+    """validate the mobile number"""
+    def validate_mobile_number(self, value):
+        validate_phone_number_pattern = "^\\+?[1-9][0-9]{9,14}$"
+        if not re.match(validate_phone_number_pattern, value):
+            raise serializers.ValidationError(
+                """Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."""
+            )
+        return value
+
+    def check_mobile_number_exists(self,mobile_number):
+
+        if Talvidouser.objects.filter(mobile_number=mobile_number).exists():
+            return True
+        return False
+    
+
 """Google login serializer"""
 
 class TavlidoGoogleLoginSerializer(serializers.Serializer):

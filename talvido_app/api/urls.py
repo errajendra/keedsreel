@@ -5,6 +5,7 @@ from . import (
     LoginGoogleAPIView,
     LoginFacebookAPIView,
     RegenerateAccessTokenAPIVIew,
+    CheckMobileNumberExistAPIView
 )
 
 
@@ -16,6 +17,11 @@ urlpatterns = [
         "auth/login/mobile-otp/",
         LoginMobileOTPAPIView.as_view(),
         name="login-mobile-otp-api",
+    ),
+    path(
+        "auth/check/mobile-number/",
+        CheckMobileNumberExistAPIView.as_view(),
+        name="check-mobile-number-exist-api"
     ),
     path("auth/login/google/", LoginGoogleAPIView.as_view(), name="login-google-api"),
     path(
