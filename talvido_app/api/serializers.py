@@ -10,12 +10,11 @@ import re
 """Mobile registration serializer"""
 
 class TalvidoMobileRegisterSerializer(serializers.ModelSerializer):
-
     mobile_number = serializers.CharField()
 
     class Meta:
         model = Talvidouser
-        fields = ['mobile_number','firebase_uid','referral_code', 'login_with']
+        fields = ["mobile_number", "firebase_uid", "referral_code", "login_with"]
 
     """validate the mobile number"""
 
@@ -28,10 +27,11 @@ class TalvidoMobileRegisterSerializer(serializers.ModelSerializer):
         return value
 
     """override the create method and verfying the valid firebase uid"""
+
     def create(self, validated_data):
         try:
             """verifying the firebase uid"""
-            verify_firebase_uid(firebase_uid=validated_data.get('firebase_uid'))
+            verify_firebase_uid(firebase_uid=validated_data.get("firebase_uid"))
         except:
             raise InvalidFirebaseUID()
         return super().create(validated_data)
@@ -57,6 +57,7 @@ class TalvidoMobileLoginSerializer(serializers.Serializer):
         return value
 
     """validate firebase uid"""
+
     def validate_firebase_uid(self, value):
         try:
             """verifying the firebase uid"""
@@ -64,22 +65,25 @@ class TalvidoMobileLoginSerializer(serializers.Serializer):
         except:
             raise InvalidFirebaseUID()
         return value
-    
+
     """checking credentails"""
+
     def check_credentials(self, firebase_uid, mobile_number):
-        user = Talvidouser.objects.filter(firebase_uid=firebase_uid, mobile_number=mobile_number)
+        user = Talvidouser.objects.filter(
+            firebase_uid=firebase_uid, mobile_number=mobile_number
+        )
         if user.exists():
             return user
-        return None     
+        return None
 
 
 """check mobile number exist serializer"""
 
 class CheckMobileNumberExistSerializer(serializers.Serializer):
-
     mobile_number = serializers.CharField()
 
     """validate the mobile number"""
+
     def validate_mobile_number(self, value):
         validate_phone_number_pattern = "^\\+?[1-9][0-9]{9,14}$"
         if not re.match(validate_phone_number_pattern, value):
@@ -88,12 +92,13 @@ class CheckMobileNumberExistSerializer(serializers.Serializer):
             )
         return value
 
-    def check_mobile_number_exists(self,mobile_number):
+    """checking mobile no. exists or not"""
 
+    def check_mobile_number_exists(self, mobile_number):
         if Talvidouser.objects.filter(mobile_number=mobile_number).exists():
             return True
         return False
-    
+
 
 """Google login serializer"""
 
@@ -154,7 +159,7 @@ class TavlidoFacebokLoginSerializer(serializers.Serializer):
             verify_firebase_uid(firebase_uid=firebase_uid)
         except:
             raise InvalidFirebaseUID()
-        
+
         try:
             user = Talvidouser.objects.get_or_create(
                 username=firebase_uid,
