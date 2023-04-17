@@ -1,6 +1,9 @@
 from django.contrib import admin
 from .forms import TalvidouserChangeForm, TalvidouserCreationForm
-from .models import Talvidouser
+from .models import (
+    Talvidouser,
+    Profile
+)
 from django.contrib.auth.admin import UserAdmin
 
 
@@ -44,3 +47,10 @@ class TalvidouserAdmin(UserAdmin):
     )
     search_fields = ("username",)
     ordering = ("full_name",)
+
+
+"""Register profile model in  django admin"""
+
+@admin.register(Profile)
+class ProfileModelAdmin(admin.ModelAdmin):
+    list_display = ["user","image","gender"]

@@ -5,6 +5,17 @@ from .utils import phone_regex
 from .manager import TalvidouserManager
 
 
+"""base model"""
+
+class BaseModel(models.Model):
+
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
+
+    class Meta:
+        abstract = True
+
+
 """Modify the regular user"""
 
 class Talvidouser(AbstractUser):
@@ -39,3 +50,21 @@ class Talvidouser(AbstractUser):
 
     def __str__(self):
         return str(self.firebase_uid)
+
+
+"""profile model that will store extra information of user"""
+
+class Profile(BaseModel):
+
+    GENDER_CHOICES = (
+        ("MALE","MALE"),
+        ("FEMALE","FEMALE"),
+        ("OTHER","OTHER")
+    )
+
+    user = models.OneToOneField(Talvidouser, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="profile", default="default.png", verbose_name="Profile Image")
+    gender = models.CharField(verbose_name="Gender", blank=False, choices=GENDER_CHOICES)
+
+    def __str__(self):
+        return str(self.user)
