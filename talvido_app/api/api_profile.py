@@ -74,9 +74,9 @@ class UpdateProfilePictureAPIView(APIView):
 
         return profile
 
-    def patch(self, request):
+    def put(self, request):
         upadate_profile_pic_serializer = UpdateuserProfilePictureModelSerializer(
-            instance=self.get_profile(request), data=request.data, partial=True
+            instance=self.get_profile(request), data=request.data
         )
 
         if upadate_profile_pic_serializer.is_valid():
@@ -98,3 +98,34 @@ class UpdateProfilePictureAPIView(APIView):
             "data": upadate_profile_pic_serializer.errors,
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+
+"""This API will remove the user profile picture"""
+
+class RemoveProfilePictureAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_profile(self, request):
+        """get the user from token"""
+        user = get_user_from_token(request)
+
+        """get the profile of user"""
+        profile = Profile.objects.get(user=user)
+
+        return profile
+    
+    def put(self,request):
+        profile_image = self.get_profile(request)
+        profile_image.image = "default.png"
+        profile_image.save()
+        response = {
+                "status_code": status.HTTP_200_OK,
+                "message": "profile picture updated",
+                "data": {
+                    "image": ProfileModelSerializer(
+                        profile_image, context={"request": request}
+                    ).data['image']
+                },
+            }
+        return Response(response, status=status.HTTP_200_OK)

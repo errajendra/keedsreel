@@ -7,7 +7,8 @@ from . import (
     RegenerateAccessTokenAPIVIew,
     CheckMobileNumberExistAPIView,
     ProfileAPIView,
-    UpdateProfilePictureAPIView
+    UpdateProfilePictureAPIView,
+    RemoveProfilePictureAPIView
 )
 
 
@@ -43,4 +44,5 @@ urlpatterns = [
 
     path("user/profile/", ProfileAPIView.as_view(), name="get-user-profile-api"),
     path("user/update/profile-picture/", UpdateProfilePictureAPIView.as_view(), name="update-user-profile-picture-api"),
+    path("user/remove/profile-picture/", RemoveProfilePictureAPIView.as_view(), name="remove-user-profile-picture-api"),
 ]

@@ -6,7 +6,6 @@ from talvido_app.models import Talvidouser, Profile
 
 class UserModelSerializer(serializers.ModelSerializer):
 
-    
     class Meta:
         model = Talvidouser
         fields = '__all__'

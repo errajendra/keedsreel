@@ -18,7 +18,7 @@ class FirebaseAuthentication(BaseAuthentication):
         auth_header = request.META.get("HTTP_AUTHORIZATION")
 
         if not auth_header:
-            raise NoAuthToken("No auth token provided")
+            raise NoAuthToken()
         
         """Decoding the Token It rasie exception when decode failed."""
         id_token = auth_header.split(" ").pop()
@@ -26,7 +26,7 @@ class FirebaseAuthentication(BaseAuthentication):
         try:
             decoded_token = auth.verify_id_token(id_token)
         except Exception:
-            raise InvalidAuthToken("Invalid auth token")
+            raise InvalidAuthToken()
         
         """Return Nothing"""
         if not id_token or not decoded_token:
@@ -42,6 +42,6 @@ class FirebaseAuthentication(BaseAuthentication):
         try:
             user = Talvidouser.objects.get(firebase_uid=uid)
         except Talvidouser.DoesNotExist:
-            raise NoFirebaseuidAvaliable("token associate with firebase uid is not avaliable in database")
+            raise NoFirebaseuidAvaliable()
 
         return (user,None)
