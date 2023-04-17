@@ -114,3 +114,8 @@ AUTH_USER_MODEL = 'talvido_app.Talvidouser'
 # FIREBASE API KEY
 
 FIREBASE_API_KEY = os.environ.get("FIREBASE_API_KEY")
+
+# MEDIA SETTINGS
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR/'media'

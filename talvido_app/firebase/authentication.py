@@ -40,7 +40,7 @@ class FirebaseAuthentication(BaseAuthentication):
 
         """checking firebase uid is avalible in database"""
         try:
-            user = Talvidouser.objects.get(username=uid)
+            user = Talvidouser.objects.get(firebase_uid=uid)
         except Talvidouser.DoesNotExist:
             raise NoFirebaseuidAvaliable("token associate with firebase uid is not avaliable in database")
 
