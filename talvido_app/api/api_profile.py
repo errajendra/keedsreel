@@ -2,7 +2,6 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from talvido_app.models import Profile
-from talvido_app.firebase.helpers import get_user_from_token
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
 from . import (
@@ -20,12 +19,9 @@ class ProfileAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_profile(self, request):
-        """get the user from token"""
-        user = get_user_from_token(request)
 
         """get the profile of user"""
-        profile = Profile.objects.get(user=user)
-
+        profile = Profile.objects.get(user=request.user)
         return profile
 
     def get(self, request):
@@ -66,12 +62,9 @@ class UpdateProfilePictureAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_profile(self, request):
-        """get the user from token"""
-        user = get_user_from_token(request)
 
         """get the profile of user"""
-        profile = Profile.objects.get(user=user)
-
+        profile = Profile.objects.get(user=request.user)
         return profile
 
     def put(self, request):
@@ -107,12 +100,9 @@ class RemoveProfilePictureAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_profile(self, request):
-        """get the user from token"""
-        user = get_user_from_token(request)
 
         """get the profile of user"""
-        profile = Profile.objects.get(user=user)
-
+        profile = Profile.objects.get(user=request.user)
         return profile
     
     def put(self,request):

@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from .utils import phone_regex
 from .manager import TalvidouserManager
+from datetime import datetime, timedelta
 
 
 """base model"""
@@ -68,3 +69,19 @@ class Profile(BaseModel):
 
     def __str__(self):
         return str(self.user)
+
+
+"""story model that will store the story content of users"""
+
+class Story(BaseModel):
+    user = models.ForeignKey(Talvidouser, verbose_name="User", on_delete=models.CASCADE)
+    story = models.FileField(upload_to="story/users/", null=True, blank=True, verbose_name="User Story")
+    post_at = models.DateTimeField(auto_now=True,editable=False,verbose_name="Story Post At")
+    ends_at = models.DateTimeField(blank=True,null=True,verbose_name="Post Ends At", editable=False)
+
+    def __str__(self):
+        return str(self.user)
+
+    def save(self, *args, **kwargs):
+        self.ends_at = datetime.now() + timedelta(hours=24)
+        super().save(*args, **kwargs)

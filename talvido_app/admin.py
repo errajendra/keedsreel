@@ -2,7 +2,8 @@ from django.contrib import admin
 from .forms import TalvidouserChangeForm, TalvidouserCreationForm
 from .models import (
     Talvidouser,
-    Profile
+    Profile,
+    Story
 )
 from django.contrib.auth.admin import UserAdmin
 
@@ -54,3 +55,10 @@ class TalvidouserAdmin(UserAdmin):
 @admin.register(Profile)
 class ProfileModelAdmin(admin.ModelAdmin):
     list_display = ["user","image","gender"]
+
+
+"""Register story model in  django admin"""
+
+@admin.register(Story)
+class StoryModelAdmin(admin.ModelAdmin):
+    list_display = ["user","story","post_at","ends_at"]
