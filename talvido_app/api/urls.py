@@ -9,7 +9,9 @@ from . import (
     ProfileAPIView,
     UpdateProfilePictureAPIView,
     RemoveProfilePictureAPIView,
-    ActiveStoryAPIView
+    ActiveStoryAPIView,
+    ArchiveStoryAPIView,
+    CreateStoryAPIView
 )
 
 
@@ -49,4 +51,6 @@ urlpatterns = [
 
     # post API's enpoints
     path("stories/active/",ActiveStoryAPIView.as_view(),name="active-stories-api"),
+    path("stories/archive/",ArchiveStoryAPIView.as_view(),name="archive-stories-api"),
+    path("stories/create/",CreateStoryAPIView.as_view(),name="create-stories-api"),
 ]
