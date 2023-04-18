@@ -9,7 +9,6 @@ from datetime import datetime, timedelta
 """base model"""
 
 class BaseModel(models.Model):
-
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
 
@@ -30,18 +29,27 @@ class Talvidouser(AbstractUser):
     last_name = None
     full_name = models.CharField(_("Full Name"), max_length=100, blank=True, null=True)
     firebase_uid = models.CharField(_("Firebase UID"), max_length=100, primary_key=True)
-    referral_code = models.CharField(_("Referral Code"), max_length=200, blank=True, null=True)
-    username = models.CharField(_("Username"), max_length=100, unique=True, blank=True, null=True)
+    referral_code = models.CharField(
+        _("Referral Code"), max_length=200, blank=True, null=True
+    )
+    username = models.CharField(
+        _("Username"), max_length=100, unique=True, blank=True, null=True
+    )
     mobile_number = models.CharField(
         _("Mobile Number"),
         max_length=100,
         validators=[phone_regex],
         blank=True,
         null=True,
-        unique=True
+        unique=True,
     )
     login_with = models.CharField(
-        verbose_name=_("Login with"), max_length=100, choices=LOGIN_WITH_CHOICES, default='', blank=True, null=True
+        verbose_name=_("Login with"),
+        max_length=100,
+        choices=LOGIN_WITH_CHOICES,
+        default="",
+        blank=True,
+        null=True,
     )
 
     USERNAME_FIELD = "firebase_uid"
@@ -56,16 +64,15 @@ class Talvidouser(AbstractUser):
 """profile model that will store extra information of user"""
 
 class Profile(BaseModel):
-
-    GENDER_CHOICES = (
-        ("MALE","MALE"),
-        ("FEMALE","FEMALE"),
-        ("OTHER","OTHER")
-    )
+    GENDER_CHOICES = (("MALE", "MALE"), ("FEMALE", "FEMALE"), ("OTHER", "OTHER"))
 
     user = models.OneToOneField(Talvidouser, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to="profile", default="default.png", verbose_name="Profile Image")
-    gender = models.CharField(verbose_name="Gender", blank=False, choices=GENDER_CHOICES)
+    image = models.ImageField(
+        upload_to="profile", default="default.png", verbose_name="Profile Image"
+    )
+    gender = models.CharField(
+        verbose_name="Gender", blank=False, choices=GENDER_CHOICES
+    )
 
     def __str__(self):
         return str(self.user)
@@ -75,9 +82,15 @@ class Profile(BaseModel):
 
 class Story(BaseModel):
     user = models.ForeignKey(Talvidouser, verbose_name="User", on_delete=models.CASCADE)
-    story = models.FileField(upload_to="story/users/", null=True, blank=True, verbose_name="User Story")
-    post_at = models.DateTimeField(auto_now=True,editable=False,verbose_name="Story Post At")
-    ends_at = models.DateTimeField(blank=True,null=True,verbose_name="Post Ends At", editable=False)
+    story = models.FileField(
+        upload_to="story/users/", null=True, blank=True, verbose_name="User Story"
+    )
+    post_at = models.DateTimeField(
+        auto_now=True, editable=False, verbose_name="Story Post At"
+    )
+    ends_at = models.DateTimeField(
+        blank=True, null=True, verbose_name="Post Ends At", editable=False
+    )
 
     def __str__(self):
         return str(self.user)

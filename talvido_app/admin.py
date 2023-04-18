@@ -61,4 +61,4 @@ class ProfileModelAdmin(admin.ModelAdmin):
 
 @admin.register(Story)
 class StoryModelAdmin(admin.ModelAdmin):
-    list_display = ["user","story","post_at","ends_at"]
+    list_display = ["id","user","story","post_at","ends_at"]
