@@ -132,7 +132,7 @@ class FollowersAPIView(APIView):
 
     def get(self,request):
         followers = Follow.objects.select_related().filter(user_to=request.user)
-        followers_serializer = FollowersModelSerializer(followers,many=True)
+        followers_serializer = FollowersModelSerializer(followers,many=True,context={"request":request})
         response = {
             "status_code" : status.HTTP_200_OK,
             "message" : "ok",
@@ -152,7 +152,7 @@ class FollowingsAPIView(APIView):
 
     def get(self,request):
         following = Follow.objects.select_related().filter(user_from=request.user)
-        followings_serializer = FollowingModelSerializer(following,many=True)
+        followings_serializer = FollowingModelSerializer(following,many=True,context={"request":request})
         response = {
             "status_code" : status.HTTP_200_OK,
             "message" : "ok",

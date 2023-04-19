@@ -65,19 +65,25 @@ class UpdateuserProfilePictureModelSerializer(serializers.ModelSerializer):
 
 class FollowersModelSerializer(serializers.ModelSerializer):
 
-    user_from = UserModelSerializer()
+    user = serializers.SerializerMethodField("get_profile")
 
     class Meta:
         model = Follow
-        fields = ['user_from','created_at']
+        fields = ['user','created_at']
+    
+    def get_profile(self,data):
+        return ProfileModelSerializer(Profile.objects.get(user=data.user_to),context=self.context).data
 
 
 """Following model serializer"""
 
 class FollowingModelSerializer(serializers.ModelSerializer):
 
-    user_to = UserModelSerializer()
+    user = serializers.SerializerMethodField("get_profile")
 
     class Meta:
         model = Follow
-        fields = ['user_to','created_at']
+        fields = ['user','created_at']
+
+    def get_profile(self,data):
+        return ProfileModelSerializer(Profile.objects.get(user=data.user_from),context=self.context).data
