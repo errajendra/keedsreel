@@ -4,7 +4,12 @@ from rest_framework.views import APIView
 from talvido_app.models import Story, StoryViews
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
-from . import StoryModelSerializer, DeleteStorySerializer, StoryViewModelSerializer
+from . import (
+    StoryModelSerializer,
+    DeleteStorySerializer,
+    StoryViewModelSerializer,
+    AddStoryViewSerializer,
+)
 from datetime import datetime
 
 
@@ -148,3 +153,21 @@ class StoryViewAPIView(APIView):
                 }
             }
             return Response(response,status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self,request):
+        add_storyview_serializer = AddStoryViewSerializer(data=request.data,context={"request":request})
+        if add_storyview_serializer.is_valid():
+            add_storyview_serializer.save()
+            response = {
+                "status" : status.HTTP_200_OK,
+                "message" : "ok"
+            }
+            return Response(response,status=status.HTTP_200_OK)
+        
+        """return this response if validation fails"""
+        response = {
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "message": "badd request",
+            "data": add_storyview_serializer.errors,
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)

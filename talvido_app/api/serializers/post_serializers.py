@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework import serializers, status
 from talvido_app.models import Story, StoryViews, Profile
 from talvido_app.api.serializers.profile_serializers import UserModelSerializer, ProfileModelSerializer
 
@@ -43,3 +43,34 @@ class StoryViewModelSerializer(serializers.ModelSerializer):
 
     def get_profile(self,data):
         return ProfileModelSerializer(Profile.objects.get(user=data.user),context=self.context).data
+
+
+"""add story views serializer"""
+
+class AddStoryViewSerializer(serializers.Serializer):
+    story_id = serializers.CharField()
+
+    """override save method"""
+    def save(self, **kwargs):
+        story_id = self.validated_data.get('story_id')
+        request = self.context['request']
+        try:
+            story = Story.objects.get(id=story_id)
+        except Story.DoesNotExist:
+            raise serializers.ValidationError(
+                {
+                    "status" : status.HTTP_400_BAD_REQUEST,
+                    "message" : "bad request",
+                    "data" : {
+                        "story_id" : [
+                            "The story_id is invalid"
+                        ]
+                    }
+                }
+            )
+        
+        """if user has own story then it will add the story views"""
+        if request.user.firebase_uid == story.user.firebase_uid:
+            return None
+        story_view = StoryViews.objects.get_or_create(user=request.user,story=story)
+        return story_view
