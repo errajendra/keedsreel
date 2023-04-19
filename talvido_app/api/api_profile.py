@@ -1,13 +1,15 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from talvido_app.models import Profile
+from talvido_app.models import Profile, Follow
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
 from . import (
     ProfileModelSerializer,
     UpdateProfileModelSerializer,
     UpdateuserProfilePictureModelSerializer,
+    FollowersModelSerializer,
+    FollowingModelSerializer
 )
 
 
@@ -119,3 +121,44 @@ class RemoveProfilePictureAPIView(APIView):
                 },
             }
         return Response(response, status=status.HTTP_200_OK)
+
+
+
+"""This API's will get all the followers of a current user"""
+
+class FollowersAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self,request):
+        followers = Follow.objects.filter(user_to=request.user)
+        followers_serializer = FollowersModelSerializer(followers,many=True)
+        response = {
+            "status_code" : status.HTTP_200_OK,
+            "message" : "ok",
+            "data" : {
+                "users" : followers_serializer.data,
+                'followers': followers.count()   
+            }
+        }
+        return Response(response,status=status.HTTP_200_OK)
+
+
+"""This API's will get all the following of a current user"""
+
+class FollowingsAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self,request):
+        following = Follow.objects.filter(user_from=request.user)
+        followings_serializer = FollowingModelSerializer(following,many=True)
+        response = {
+            "status_code" : status.HTTP_200_OK,
+            "message" : "ok",
+            "data" : {
+                "users" : followings_serializer.data,
+                'followings': following.count()   
+            }
+        }
+        return Response(response,status=status.HTTP_200_OK)

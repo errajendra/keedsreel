@@ -1,5 +1,9 @@
 from rest_framework import serializers
-from talvido_app.models import Talvidouser, Profile
+from talvido_app.models import (
+    Talvidouser,
+    Profile,
+    Follow
+)
 
 
 """user model serializer"""
@@ -55,3 +59,25 @@ class UpdateuserProfilePictureModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['image']
+
+
+"""Followers model serializer"""
+
+class FollowersModelSerializer(serializers.ModelSerializer):
+
+    user_from = UserModelSerializer()
+
+    class Meta:
+        model = Follow
+        fields = ['user_from','created_at']
+
+
+"""Following model serializer"""
+
+class FollowingModelSerializer(serializers.ModelSerializer):
+
+    user_to = UserModelSerializer()
+
+    class Meta:
+        model = Follow
+        fields = ['user_to','created_at']

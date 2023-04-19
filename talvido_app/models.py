@@ -98,3 +98,13 @@ class Story(BaseModel):
     def save(self, *args, **kwargs):
         self.ends_at = datetime.now() + timedelta(hours=24)
         super().save(*args, **kwargs)
+
+
+"""This model will store the followers and following users"""
+
+class Follow(BaseModel):
+    user_to = models.ForeignKey(Talvidouser,on_delete=models.CASCADE,related_name="user_to",verbose_name="User To")
+    user_from = models.ForeignKey(Talvidouser,on_delete=models.CASCADE,related_name="user_from",verbose_name="User From")
+
+    def __str__(self):
+        return str(self.user_to)

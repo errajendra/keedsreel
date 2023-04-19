@@ -3,7 +3,8 @@ from .forms import TalvidouserChangeForm, TalvidouserCreationForm
 from .models import (
     Talvidouser,
     Profile,
-    Story
+    Story,
+    Follow
 )
 from django.contrib.auth.admin import UserAdmin
 
@@ -62,3 +63,10 @@ class ProfileModelAdmin(admin.ModelAdmin):
 @admin.register(Story)
 class StoryModelAdmin(admin.ModelAdmin):
     list_display = ["id","user","story","post_at","ends_at"]
+
+
+"""Register story model in  django admin"""
+
+@admin.register(Follow)
+class FollowModelAdmin(admin.ModelAdmin):
+    list_display = ["id","user_to","user_from","created_at","updated_at"]
