@@ -131,7 +131,7 @@ class FollowersAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self,request):
-        followers = Follow.objects.filter(user_to=request.user)
+        followers = Follow.objects.select_related().filter(user_to=request.user)
         followers_serializer = FollowersModelSerializer(followers,many=True)
         response = {
             "status_code" : status.HTTP_200_OK,
@@ -151,7 +151,7 @@ class FollowingsAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self,request):
-        following = Follow.objects.filter(user_from=request.user)
+        following = Follow.objects.select_related().filter(user_from=request.user)
         followings_serializer = FollowingModelSerializer(following,many=True)
         response = {
             "status_code" : status.HTTP_200_OK,

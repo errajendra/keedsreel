@@ -1,10 +1,10 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from talvido_app.models import Story
+from talvido_app.models import Story, StoryViews
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
-from . import StoryModelSerializer, DeleteStorySerializer
+from . import StoryModelSerializer, DeleteStorySerializer, StoryViewModelSerializer
 from datetime import datetime
 
 
@@ -115,3 +115,36 @@ class DeleteStoryAPIView(APIView):
             "data": delete_story_serializer.errors,
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+
+"""This API will get the views and add the views to the story"""
+
+class StoryViewAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self,request):
+        try:
+            story_id = request.query_params.get("story_id")
+            story_view = StoryViews.objects.select_related().filter(story=story_id)
+            story_view_serializer = StoryViewModelSerializer(story_view,many=True,context={"request":request})
+            response = {
+                "status_code" : status.HTTP_200_OK,
+                "message" : "ok",
+                "data" : {
+                    "users" : story_view_serializer.data,
+                    "story_views" : story_view.count()
+                }
+            }
+            return Response(response,status=status.HTTP_200_OK)
+        except:
+            response = {
+                "status_code" : status.HTTP_400_BAD_REQUEST,
+                "message" : "bad request",
+                "data" : {  
+                    "story_id" : [
+                        "The story_id query params is invalid, make sure it should be integer like (1, 2, 3)"
+                    ]
+                }
+            }
+            return Response(response,status=status.HTTP_400_BAD_REQUEST)

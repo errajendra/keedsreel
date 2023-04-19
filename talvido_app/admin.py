@@ -4,7 +4,8 @@ from .models import (
     Talvidouser,
     Profile,
     Story,
-    Follow
+    Follow,
+    StoryViews
 )
 from django.contrib.auth.admin import UserAdmin
 
@@ -65,7 +66,14 @@ class StoryModelAdmin(admin.ModelAdmin):
     list_display = ["id","user","story","post_at","ends_at"]
 
 
-"""Register story model in  django admin"""
+"""Register storyviews model in  django admin"""
+
+@admin.register(StoryViews)
+class StoryViewsModelAdmin(admin.ModelAdmin):
+    list_display = ["id","user","story","created_at"]
+
+
+"""Register follow model in  django admin"""
 
 @admin.register(Follow)
 class FollowModelAdmin(admin.ModelAdmin):

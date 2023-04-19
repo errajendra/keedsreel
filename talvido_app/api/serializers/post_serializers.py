@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from talvido_app.models import Story
+from talvido_app.models import Story, StoryViews, Profile
+from talvido_app.api.serializers.profile_serializers import UserModelSerializer, ProfileModelSerializer
 
 
 """ story model serializer"""
@@ -28,3 +29,17 @@ class DeleteStorySerializer(serializers.Serializer):
     def delete(self, id):
         Story.objects.get(id=id).delete()
         return None
+
+
+"""story view model serializer"""
+
+class StoryViewModelSerializer(serializers.ModelSerializer):
+
+    user = serializers.SerializerMethodField("get_profile")
+
+    class Meta:
+        model = StoryViews
+        fields = ['user','created_at']
+
+    def get_profile(self,data):
+        return ProfileModelSerializer(Profile.objects.get(user=data.user),context=self.context).data

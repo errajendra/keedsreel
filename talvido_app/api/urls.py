@@ -15,6 +15,7 @@ from . import (
     ArchiveStoryAPIView,
     CreateStoryAPIView,
     DeleteStoryAPIView,
+    StoryViewAPIView,
 )
 
 
@@ -65,4 +66,5 @@ urlpatterns = [
     path("stories/archive/", ArchiveStoryAPIView.as_view(), name="archive-stories-api"),
     path("stories/create/", CreateStoryAPIView.as_view(), name="create-stories-api"),
     path("stories/delete/", DeleteStoryAPIView.as_view(), name="delete-stories-api"),
+    path("stories/view/", StoryViewAPIView.as_view(), name="view-stories-api"),
 ]

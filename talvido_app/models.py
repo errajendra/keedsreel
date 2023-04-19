@@ -93,7 +93,7 @@ class Story(BaseModel):
     )
 
     def __str__(self):
-        return str(self.user)
+        return str(self.id)
 
     def save(self, *args, **kwargs):
         self.ends_at = datetime.now() + timedelta(hours=24)
@@ -108,3 +108,11 @@ class Follow(BaseModel):
 
     def __str__(self):
         return str(self.user_to)
+
+
+class StoryViews(BaseModel):
+    user = models.ForeignKey(Talvidouser,verbose_name="User",on_delete=models.CASCADE,related_name="user")
+    story = models.ForeignKey(Story,verbose_name="Story",related_name="story_content",on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.user)
