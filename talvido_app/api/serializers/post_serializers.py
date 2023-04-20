@@ -68,7 +68,7 @@ class AddStoryViewSerializer(serializers.Serializer):
                 }
             )
 
-        """if user has own story then it will add the story views"""
+        """if user has own story then it will not add the story views"""
         if request.user.firebase_uid == story.user.firebase_uid:
             return None
         story_view = StoryViews.objects.get_or_create(user=request.user, story=story)

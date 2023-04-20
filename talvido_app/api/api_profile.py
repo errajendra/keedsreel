@@ -9,7 +9,7 @@ from . import (
     UpdateProfileModelSerializer,
     UpdateuserProfilePictureModelSerializer,
     FollowersModelSerializer,
-    FollowingModelSerializer
+    FollowingModelSerializer,
 )
 
 
@@ -21,7 +21,6 @@ class ProfileAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_profile(self, request):
-
         """get the profile of user"""
         profile = Profile.objects.get(user=request.user)
         return profile
@@ -64,7 +63,6 @@ class UpdateProfilePictureAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_profile(self, request):
-
         """get the profile of user"""
         profile = Profile.objects.get(user=request.user)
         return profile
@@ -102,26 +100,24 @@ class RemoveProfilePictureAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_profile(self, request):
-
         """get the profile of user"""
         profile = Profile.objects.get(user=request.user)
         return profile
-    
-    def put(self,request):
+
+    def put(self, request):
         profile_image = self.get_profile(request)
         profile_image.image = "default.png"
         profile_image.save()
         response = {
-                "status_code": status.HTTP_200_OK,
-                "message": "profile picture updated",
-                "data": {
-                    "image": ProfileModelSerializer(
-                        profile_image, context={"request": request}
-                    ).data['image']
-                },
-            }
+            "status_code": status.HTTP_200_OK,
+            "message": "profile picture updated",
+            "data": {
+                "image": ProfileModelSerializer(
+                    profile_image, context={"request": request}
+                ).data["image"]
+            },
+        }
         return Response(response, status=status.HTTP_200_OK)
-
 
 
 """This API's will get all the followers of a current user"""
@@ -130,18 +126,20 @@ class FollowersAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self,request):
+    def get(self, request):
         followers = Follow.objects.select_related().filter(user_to=request.user)
-        followers_serializer = FollowersModelSerializer(followers,many=True,context={"request":request})
+        followers_serializer = FollowersModelSerializer(
+            followers, many=True, context={"request": request}
+        )
         response = {
-            "status_code" : status.HTTP_200_OK,
-            "message" : "ok",
-            "data" : {
-                "users" : followers_serializer.data,
-                'followers': followers.count()   
-            }
+            "status_code": status.HTTP_200_OK,
+            "message": "ok",
+            "data": {
+                "users": followers_serializer.data,
+                "followers": followers.count(),
+            },
         }
-        return Response(response,status=status.HTTP_200_OK)
+        return Response(response, status=status.HTTP_200_OK)
 
 
 """This API's will get all the following of a current user"""
@@ -150,15 +148,17 @@ class FollowingsAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self,request):
+    def get(self, request):
         following = Follow.objects.select_related().filter(user_from=request.user)
-        followings_serializer = FollowingModelSerializer(following,many=True,context={"request":request})
+        followings_serializer = FollowingModelSerializer(
+            following, many=True, context={"request": request}
+        )
         response = {
-            "status_code" : status.HTTP_200_OK,
-            "message" : "ok",
-            "data" : {
-                "users" : followings_serializer.data,
-                'followings': following.count()   
-            }
+            "status_code": status.HTTP_200_OK,
+            "message": "ok",
+            "data": {
+                "users": followings_serializer.data,
+                "followings": following.count(),
+            },
         }
-        return Response(response,status=status.HTTP_200_OK)
+        return Response(response, status=status.HTTP_200_OK)

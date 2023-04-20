@@ -1,43 +1,37 @@
 from rest_framework import serializers
-from talvido_app.models import (
-    Talvidouser,
-    Profile,
-    Follow
-)
+from talvido_app.models import Talvidouser, Profile, Follow
 
 
 """user model serializer"""
 
 class UserModelSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Talvidouser
-        fields = '__all__'
+        fields = "__all__"
 
 
 """profile model serializer"""
 
 class ProfileModelSerializer(serializers.ModelSerializer):
-
     user = UserModelSerializer()
 
     class Meta:
         model = Profile
-        fields = ['user','image','gender']
+        fields = ["user", "image", "gender"]
 
 
 """update profile model serializer"""
 
 class UpdateProfileModelSerializer(serializers.ModelSerializer):
-
     full_name = serializers.CharField(required=False, allow_blank=True)
     username = serializers.CharField(required=False, allow_blank=True)
 
     class Meta:
         model = Profile
-        fields = ['full_name','username','gender']
-    
+        fields = ["full_name", "username", "gender"]
+
     """override update method and update the talvido user information"""
+
     def update(self, instance, validated_data):
         username = validated_data.get("username")
         full_name = validated_data.get("full_name")
@@ -55,35 +49,36 @@ class UpdateProfileModelSerializer(serializers.ModelSerializer):
 """upadate user profile picture model serializer"""
 
 class UpdateuserProfilePictureModelSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Profile
-        fields = ['image']
+        fields = ["image"]
 
 
 """Followers model serializer"""
 
 class FollowersModelSerializer(serializers.ModelSerializer):
-
     user = serializers.SerializerMethodField("get_profile")
 
     class Meta:
         model = Follow
-        fields = ['user','created_at']
-    
-    def get_profile(self,data):
-        return ProfileModelSerializer(Profile.objects.get(user=data.user_to),context=self.context).data
+        fields = ["user", "created_at"]
+
+    def get_profile(self, data):
+        return ProfileModelSerializer(
+            Profile.objects.get(user=data.user_from), context=self.context
+        ).data
 
 
 """Following model serializer"""
 
 class FollowingModelSerializer(serializers.ModelSerializer):
-
     user = serializers.SerializerMethodField("get_profile")
 
     class Meta:
         model = Follow
-        fields = ['user','created_at']
+        fields = ["user", "created_at"]
 
-    def get_profile(self,data):
-        return ProfileModelSerializer(Profile.objects.get(user=data.user_to),context=self.context).data
+    def get_profile(self, data):
+        return ProfileModelSerializer(
+            Profile.objects.get(user=data.user_to), context=self.context
+        ).data
