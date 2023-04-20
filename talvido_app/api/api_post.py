@@ -22,7 +22,7 @@ class ActiveStoryAPIView(APIView):
 
     def get(self, request):
         """filter the active stories of current user"""
-        story = Story.objects.filter(user=request.user, ends_at__gt=datetime.today())
+        story = Story.objects.select_related().filter(user=request.user, ends_at__gt=datetime.today())
         """serialize the data"""
         story_serializer = StoryModelSerializer(
             story, many=True, context={"request": request}

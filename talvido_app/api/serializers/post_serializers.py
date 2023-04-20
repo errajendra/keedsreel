@@ -2,22 +2,25 @@ from rest_framework import serializers, status
 from talvido_app.models import Story, StoryViews, Profile, Follow
 from talvido_app.api.serializers.profile_serializers import ProfileModelSerializer
 from datetime import datetime
+import math
 
 
 """ story model serializer"""
 
 class StoryModelSerializer(serializers.ModelSerializer):
-    hours = serializers.SerializerMethodField("get_hours")
+    duration = serializers.SerializerMethodField("get_hours")
     user = serializers.CharField(read_only=True)
     story = serializers.FileField()
 
     def get_hours(self, data):
-        hours = data.ends_at - data.post_at
-        return hours.days
+        difference = data.ends_at.replace(tzinfo=None) - datetime.now()
+        m, s = divmod(difference.total_seconds(), 60)
+        hours  = int(24 - m//60)
+        return f"{hours}h ago" if hours > 1 else f"{int(60 - m%60)}m ago"
 
     class Meta:
         model = Story
-        fields = ["id", "user", "story", "post_at", "ends_at", "hours"]
+        fields = ["id", "user", "story", "post_at", "ends_at", "duration"]
 
 
 """delete story serializer"""
@@ -92,7 +95,7 @@ class GetUserFollowingsStoriesModelSerializer(serializers.ModelSerializer):
 
     def get_stories(self, data):
         return StoryModelSerializer(
-            Story.objects.filter(user=data.user_to, ends_at__gt=datetime.today()),
+            Story.objects.select_related().filter(user=data.user_to, ends_at__gt=datetime.today()),
             many=True,
             context=self.context,
         ).data
