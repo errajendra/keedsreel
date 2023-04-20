@@ -11,6 +11,7 @@ from . import (
     RemoveProfilePictureAPIView,
     FollowersAPIView,
     FollowingsAPIView,
+    GetAnyUserProfileAPIView,
     ActiveStoryAPIView,
     ArchiveStoryAPIView,
     CreateStoryAPIView,
@@ -49,7 +50,7 @@ urlpatterns = [
         name="regenerate-access-token-api",
     ),
     # profile api's endpoints
-    path("user/profile/", ProfileAPIView.as_view(), name="get-user-profile-api"),
+    path("user/profile/", ProfileAPIView.as_view(), name="get-current-user-profile-api"),
     path(
         "user/update/profile-picture/",
         UpdateProfilePictureAPIView.as_view(),
@@ -62,6 +63,7 @@ urlpatterns = [
     ),
     path("user/profile/followers/",FollowersAPIView.as_view(),name="user-followers-api"),
     path("user/profile/followings/",FollowingsAPIView.as_view(),name="user-followings-api"),
+    path("user/profile/<str:firebase_uid>/",GetAnyUserProfileAPIView.as_view(),name="get-any-user-profile-api"),
     # post API's enpoints
     path("stories/active/", ActiveStoryAPIView.as_view(), name="active-stories-api"),
     path("stories/archive/", ArchiveStoryAPIView.as_view(), name="archive-stories-api"),

@@ -2,7 +2,6 @@ from rest_framework import serializers, status
 from talvido_app.models import Story, StoryViews, Profile, Follow
 from talvido_app.api.serializers.profile_serializers import ProfileModelSerializer
 from datetime import datetime
-import math
 
 
 """ story model serializer"""
