@@ -1,6 +1,7 @@
 from rest_framework import serializers, status
-from talvido_app.models import Story, StoryViews, Profile
-from talvido_app.api.serializers.profile_serializers import UserModelSerializer, ProfileModelSerializer
+from talvido_app.models import Story, StoryViews, Profile, Follow
+from talvido_app.api.serializers.profile_serializers import ProfileModelSerializer
+from datetime import datetime
 
 
 """ story model serializer"""
@@ -34,15 +35,16 @@ class DeleteStorySerializer(serializers.Serializer):
 """story view model serializer"""
 
 class StoryViewModelSerializer(serializers.ModelSerializer):
-
     user = serializers.SerializerMethodField("get_profile")
 
     class Meta:
         model = StoryViews
-        fields = ['user','created_at']
+        fields = ["user", "created_at"]
 
-    def get_profile(self,data):
-        return ProfileModelSerializer(Profile.objects.get(user=data.user),context=self.context).data
+    def get_profile(self, data):
+        return ProfileModelSerializer(
+            Profile.objects.get(user=data.user), context=self.context
+        ).data
 
 
 """add story views serializer"""
@@ -51,26 +53,46 @@ class AddStoryViewSerializer(serializers.Serializer):
     story_id = serializers.CharField()
 
     """override save method"""
+
     def save(self, **kwargs):
-        story_id = self.validated_data.get('story_id')
-        request = self.context['request']
+        story_id = self.validated_data.get("story_id")
+        request = self.context["request"]
         try:
             story = Story.objects.get(id=story_id)
         except Story.DoesNotExist:
             raise serializers.ValidationError(
                 {
-                    "status" : status.HTTP_400_BAD_REQUEST,
-                    "message" : "bad request",
-                    "data" : {
-                        "story_id" : [
-                            "The story_id is invalid"
-                        ]
-                    }
+                    "status": status.HTTP_400_BAD_REQUEST,
+                    "message": "bad request",
+                    "data": {"story_id": ["The story_id is invalid"]},
                 }
             )
-        
+
         """if user has own story then it will add the story views"""
         if request.user.firebase_uid == story.user.firebase_uid:
             return None
-        story_view = StoryViews.objects.get_or_create(user=request.user,story=story)
+        story_view = StoryViews.objects.get_or_create(user=request.user, story=story)
         return story_view
+
+
+"""Get user followings stories model serializer"""
+
+class GetUserFollowingsStoriesModelSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField("get_profile")
+    stories = serializers.SerializerMethodField("get_stories")
+
+    class Meta:
+        model = Follow
+        fields = ["user", "stories"]
+
+    def get_profile(self, data):
+        return ProfileModelSerializer(
+            Profile.objects.get(user=data.user_to), context=self.context
+        ).data
+
+    def get_stories(self, data):
+        return StoryModelSerializer(
+            Story.objects.filter(user=data.user_to, ends_at__gt=datetime.today()),
+            many=True,
+            context=self.context,
+        ).data

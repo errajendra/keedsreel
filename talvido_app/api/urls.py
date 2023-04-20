@@ -16,6 +16,7 @@ from . import (
     CreateStoryAPIView,
     DeleteStoryAPIView,
     StoryViewAPIView,
+    GetUserFollowingStories,
 )
 
 
@@ -67,4 +68,9 @@ urlpatterns = [
     path("stories/create/", CreateStoryAPIView.as_view(), name="create-stories-api"),
     path("stories/delete/", DeleteStoryAPIView.as_view(), name="delete-stories-api"),
     path("stories/view/", StoryViewAPIView.as_view(), name="view-stories-api"),
+    path(
+        "stories/active/followings/",
+        GetUserFollowingStories.as_view(),
+        name="get-user-followings-stories-api"
+    ),
 ]

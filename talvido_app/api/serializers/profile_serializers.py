@@ -86,4 +86,4 @@ class FollowingModelSerializer(serializers.ModelSerializer):
         fields = ['user','created_at']
 
     def get_profile(self,data):
-        return ProfileModelSerializer(Profile.objects.get(user=data.user_from),context=self.context).data
+        return ProfileModelSerializer(Profile.objects.get(user=data.user_to),context=self.context).data
