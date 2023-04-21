@@ -14,10 +14,23 @@ class UserModelSerializer(serializers.ModelSerializer):
 
 class ProfileModelSerializer(serializers.ModelSerializer):
     user = UserModelSerializer()
+    followers = serializers.SerializerMethodField("get_user_followers")
+    followings = serializers.SerializerMethodField("get_user_followings")
+    posts = serializers.SerializerMethodField("get_user_posts")
+
 
     class Meta:
         model = Profile
-        fields = ["user", "image", "gender"]
+        fields = ["user", "image", "gender","followers","followings","posts"]
+
+    def get_user_followers(self,data):
+        return Talvidouser.objects.get(firebase_uid=data.user).user_to.all().count()
+
+    def get_user_followings(self,data):
+        return Talvidouser.objects.get(firebase_uid=data.user).user_from.all().count()
+
+    def get_user_posts(self,data):
+        return Talvidouser.objects.get(firebase_uid=data.user).post_user.all().count()
 
 
 """update profile model serializer"""
