@@ -18,6 +18,7 @@ from . import (
     DeleteStoryAPIView,
     StoryViewAPIView,
     GetUserFollowingStories,
+    GetAuthUserActivePosts,
 )
 
 
@@ -74,5 +75,10 @@ urlpatterns = [
         "stories/active/followings/",
         GetUserFollowingStories.as_view(),
         name="get-user-followings-stories-api"
+    ),
+    path(
+        "user/posts/active/",
+        GetAuthUserActivePosts.as_view(),
+        name="get-auth-user-active-posts-api"
     ),
 ]

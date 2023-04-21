@@ -5,7 +5,8 @@ from .models import (
     Profile,
     Story,
     Follow,
-    StoryViews
+    StoryViews,
+    Post
 )
 from django.contrib.auth.admin import UserAdmin
 
@@ -78,3 +79,10 @@ class StoryViewsModelAdmin(admin.ModelAdmin):
 @admin.register(Follow)
 class FollowModelAdmin(admin.ModelAdmin):
     list_display = ["id","user_to","user_from","created_at","updated_at"]
+
+
+"""Register follow model in  django admin"""
+
+@admin.register(Post)
+class PostModelAdmin(admin.ModelAdmin):
+    list_display = ["id","user","description","post","created_at","updated_at"]

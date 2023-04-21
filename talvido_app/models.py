@@ -110,9 +110,22 @@ class Follow(BaseModel):
         return str(self.user_to)
 
 
+"""This model will store the stories views"""
+
 class StoryViews(BaseModel):
     user = models.ForeignKey(Talvidouser,verbose_name="User",on_delete=models.CASCADE,related_name="user")
     story = models.ForeignKey(Story,verbose_name="Story",related_name="story_content",on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.user)
+
+
+"""This model will store the post data"""
+
+class Post(BaseModel):
+    user = models.ForeignKey(Talvidouser,verbose_name="User",on_delete=models.CASCADE,related_name="post_user")
+    description = models.TextField(verbose_name="Post Description",max_length=1000,blank=True,null=True)
+    post = models.FileField(verbose_name="Post",upload_to="post/users/")
+
+    def __str__(self):
+        return str(self.id)

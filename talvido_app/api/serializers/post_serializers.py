@@ -1,5 +1,11 @@
 from rest_framework import serializers, status
-from talvido_app.models import Story, StoryViews, Profile, Follow
+from talvido_app.models import (
+    Story,
+    StoryViews,
+    Profile,
+    Follow,
+    Post
+)
 from talvido_app.api.serializers.profile_serializers import ProfileModelSerializer
 from datetime import datetime
 
@@ -7,11 +13,11 @@ from datetime import datetime
 """ story model serializer"""
 
 class StoryModelSerializer(serializers.ModelSerializer):
-    duration = serializers.SerializerMethodField("get_hours")
+    duration = serializers.SerializerMethodField("get_story_duration")
     user = serializers.CharField(read_only=True)
     story = serializers.FileField()
 
-    def get_hours(self, data):
+    def get_story_duration(self, data):
         difference = data.ends_at.replace(tzinfo=None) - datetime.now()
         m, s = divmod(difference.total_seconds(), 60)
         hours  = int(24 - m//60)
@@ -98,3 +104,29 @@ class GetUserFollowingsStoriesModelSerializer(serializers.ModelSerializer):
             many=True,
             context=self.context,
         ).data
+
+
+"""Post model serializer"""
+
+class PostModelSerializer(serializers.ModelSerializer):
+
+    user = serializers.SerializerMethodField("get_profile")
+    duration = serializers.SerializerMethodField("get_post_duration")
+
+    class Meta:
+        model = Post
+        fields = ["id","user","description","post","duration","created_at","updated_at"]
+
+    def get_profile(self, data):
+        return ProfileModelSerializer(
+            Profile.objects.get(user=data.user), context=self.context
+        ).data
+
+    def get_post_duration(self,data):
+        difference = datetime.now() - data.created_at.replace(tzinfo=None)
+        m, s = divmod(difference.total_seconds(), 60)
+        hours  = int(m//60)
+        if hours >= 1:
+            return f"{hours} hours ago"
+        else:
+            return f"{int(60 - m%60)} minutes ago"

@@ -1,5 +1,4 @@
 from firebase_admin import auth
-from talvido_app.models import Talvidouser
 
 
 """this method verify firebase uid"""

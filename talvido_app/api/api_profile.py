@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from talvido_app.models import Profile, Follow, Talvidouser
+from talvido_app.models import Profile, Follow
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
 from . import (
