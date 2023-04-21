@@ -5,7 +5,8 @@ from talvido_app.models import (
     Story,
     StoryViews,
     Follow,
-    Talvidouser
+    Talvidouser,
+    Post
 )
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
@@ -17,6 +18,7 @@ from . import (
     GetUserFollowingsStoriesModelSerializer,
     GetPostModelSerializer,
     UploadPostModelSerializer,
+    DeletePostSerializer,
 )
 from datetime import datetime
 
@@ -102,7 +104,7 @@ class DeleteStoryAPIView(APIView):
             story_id = delete_story_serializer.validated_data.get("story_id")
             """checking the story is belong to the current user or not"""
             if Story.objects.filter(user=request.user, id=story_id).exists():
-                delete_story_serializer.delete(id=story_id)
+                delete_story_serializer.delete()
                 response = {
                     "status_code": status.HTTP_204_NO_CONTENT,
                     "message": "story deleted",
@@ -224,7 +226,7 @@ class GetAuthUserActivePosts(APIView):
 class UploadPostAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
-    
+
     def post(self,request):
         upload_post_serializer = UploadPostModelSerializer(data=request.data)
         if upload_post_serializer.is_valid():
@@ -241,3 +243,46 @@ class UploadPostAPIView(APIView):
             "data" : upload_post_serializer.errors
         }
         return Response(response,status=status.HTTP_400_BAD_REQUEST)
+
+
+"""This api will delete the post"""
+
+class DeletePostAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        """deserialize the data"""
+        delete_post_serializer = DeletePostSerializer(data=request.data)
+        """checking the validation on data"""
+        if delete_post_serializer.is_valid():
+            """get the post id"""
+            post_id = delete_post_serializer.validated_data.get("post_id")
+            """checking the post is belong to the current user or not"""
+            if Post.objects.filter(user=request.user, id=post_id).exists():
+                delete_post_serializer.delete()
+                response = {
+                    "status_code": status.HTTP_204_NO_CONTENT,
+                    "message": "post deleted",
+                }
+                return Response(response, status=status.HTTP_204_NO_CONTENT)
+            else:
+                """response this if post is not belong to the current user or post id is invalid"""
+                response = {
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "bad request",
+                    "data": {
+                        "post_id": [
+                            "The post id is either invalid nor associate with current user"
+                        ]
+                    },
+                }
+                return Response(response, status=status.HTTP_204_NO_CONTENT)
+
+        """return this response if validation fails"""
+        response = {
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": delete_post_serializer.errors,
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)

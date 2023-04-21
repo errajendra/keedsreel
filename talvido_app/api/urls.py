@@ -20,6 +20,7 @@ from . import (
     GetUserFollowingStories,
     GetAuthUserActivePosts,
     UploadPostAPIView,
+    DeletePostAPIView,
 )
 
 
@@ -86,5 +87,10 @@ urlpatterns = [
         "user/posts/upload/",
         UploadPostAPIView.as_view(),
         name="upload-auth-user-posts-api"
+    ),
+    path(
+        "user/posts/delete/",
+        DeletePostAPIView.as_view(),
+        name="delete-user-posts-api"
     ),
 ]

@@ -35,8 +35,8 @@ class DeleteStorySerializer(serializers.Serializer):
 
     """this method will delete the story"""
 
-    def delete(self, id):
-        Story.objects.get(id=id).delete()
+    def delete(self):
+        Story.objects.get(id=self.validated_data.get("story_id")).delete()
         return None
 
 
@@ -139,3 +139,13 @@ class UploadPostModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ["post","description"]
+
+
+"""delete post serializer"""
+
+class DeletePostSerializer(serializers.Serializer):
+    post_id = serializers.CharField()
+
+    def delete(self):
+        Post.objects.get(id=self.validated_data.get("post_id")).delete()
+        return None
