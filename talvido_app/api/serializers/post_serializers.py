@@ -106,9 +106,9 @@ class GetUserFollowingsStoriesModelSerializer(serializers.ModelSerializer):
         ).data
 
 
-"""Post model serializer"""
+"""Get Post model serializer"""
 
-class PostModelSerializer(serializers.ModelSerializer):
+class GetPostModelSerializer(serializers.ModelSerializer):
 
     user = serializers.SerializerMethodField("get_profile")
     duration = serializers.SerializerMethodField("get_post_duration")
@@ -126,7 +126,16 @@ class PostModelSerializer(serializers.ModelSerializer):
         difference = datetime.now() - data.created_at.replace(tzinfo=None)
         m, s = divmod(difference.total_seconds(), 60)
         hours  = int(m//60)
-        if hours >= 1:
+        if hours > 1:
             return f"{hours} hours ago"
         else:
-            return f"{int(60 - m%60)} minutes ago"
+            return f"{int(m%60)} minutes ago"
+
+
+"""upload post model serializer"""
+
+class UploadPostModelSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Post
+        fields = ["post","description"]

@@ -15,7 +15,8 @@ from . import (
     StoryViewModelSerializer,
     AddStoryViewSerializer,
     GetUserFollowingsStoriesModelSerializer,
-    PostModelSerializer,
+    GetPostModelSerializer,
+    UploadPostModelSerializer,
 )
 from datetime import datetime
 
@@ -209,10 +210,34 @@ class GetAuthUserActivePosts(APIView):
     def get(self,request):
         user = Talvidouser.objects.get(firebase_uid=request.user)
         posts = user.post_user.all()
-        post_serializer = PostModelSerializer(posts,many=True,context={"request":request})
+        post_serializer = GetPostModelSerializer(posts,many=True,context={"request":request})
         response = {
             "status_code" : status.HTTP_200_OK,
             "message" : "ok",
             "data" : post_serializer.data 
         }
         return Response(response,status=status.HTTP_200_OK)
+
+
+"""This API will upload post for authenticated user"""
+
+class UploadPostAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+    def post(self,request):
+        upload_post_serializer = UploadPostModelSerializer(data=request.data)
+        if upload_post_serializer.is_valid():
+            upload_post_serializer.save(user=request.user)
+            response = {
+                "status_code" : status.HTTP_200_OK,
+                "message" : "ok",
+            }
+            return Response(response,status=status.HTTP_200_OK)
+
+        response = {
+            "status_code" : status.HTTP_400_BAD_REQUEST,
+            "message" : "bad request",
+            "data" : upload_post_serializer.errors
+        }
+        return Response(response,status=status.HTTP_400_BAD_REQUEST)

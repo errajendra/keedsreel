@@ -19,6 +19,7 @@ from . import (
     StoryViewAPIView,
     GetUserFollowingStories,
     GetAuthUserActivePosts,
+    UploadPostAPIView,
 )
 
 
@@ -80,5 +81,10 @@ urlpatterns = [
         "user/posts/active/",
         GetAuthUserActivePosts.as_view(),
         name="get-auth-user-active-posts-api"
+    ),
+    path(
+        "user/posts/upload/",
+        UploadPostAPIView.as_view(),
+        name="upload-auth-user-posts-api"
     ),
 ]
