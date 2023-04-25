@@ -209,10 +209,26 @@ class GetAuthUserActivePosts(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self,request):
+    def get(self,request,id=None):
         user = Talvidouser.objects.get(firebase_uid=request.user)
-        posts = user.post_user.all()
-        post_serializer = GetPostModelSerializer(posts,many=True,context={"request":request})
+        if id is not None:
+            try:
+                post = user.post_user.get(id=id)
+            except Post.DoesNotExist:
+                response = {
+                    "status_code" : status.HTTP_400_BAD_REQUEST,
+                    "message" : "bad request",
+                    "data" : {
+                        "post_id" : [
+                            "The post id is either invalid nor associate with current user"
+                        ]
+                    }
+                }
+                return Response(response,status=status.HTTP_400_BAD_REQUEST)
+            post_serializer = GetPostModelSerializer(post,context={"request":request})
+        else:
+            posts = user.post_user.all()
+            post_serializer = GetPostModelSerializer(posts,many=True,context={"request":request})
         response = {
             "status_code" : status.HTTP_200_OK,
             "message" : "ok",

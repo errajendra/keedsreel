@@ -84,6 +84,11 @@ urlpatterns = [
         name="get-auth-user-active-posts-api"
     ),
     path(
+        "user/posts/active/<int:id>/",
+        GetAuthUserActivePosts.as_view(),
+        name="get-auth-user-particular-active-posts-api"
+    ),
+    path(
         "user/posts/upload/",
         UploadPostAPIView.as_view(),
         name="upload-auth-user-posts-api"
