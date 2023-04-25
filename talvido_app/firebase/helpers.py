@@ -17,4 +17,4 @@ def generate_firebase_token(email,password):
         "returnSecureToken": True
     }
     response = requests.post(data=data, url=url)
-    return response.json()
+    return response

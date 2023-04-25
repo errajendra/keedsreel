@@ -5,6 +5,7 @@ from . import (
     LoginGoogleAPIView,
     LoginFacebookAPIView,
     RegsiterEmailAPIView,
+    LoginEmailAPIView,
     RegenerateAccessTokenAPIVIew,
     CheckMobileNumberExistAPIView,
     ProfileAPIView,
@@ -47,6 +48,11 @@ urlpatterns = [
         "auth/register/email/",
         RegsiterEmailAPIView.as_view(),
         name="register-email-api",
+    ),
+     path(
+        "auth/login/email/",
+        LoginEmailAPIView.as_view(),
+        name="login-email-api",
     ),
     path(
         "auth/login/facebook/",

@@ -7,6 +7,8 @@ from django.contrib.auth.hashers import make_password
 import requests
 import re
 from firebase_admin import auth
+from django.contrib.auth import authenticate
+from rest_framework import status
 
 
 """Mobile registration serializer"""
@@ -218,7 +220,7 @@ class TalvidoEmailRegisterSerializer(serializers.Serializer):
             email = email,
             password = password
         )
-        user = generate_firebase_token(email=email, password=password)
+        user = generate_firebase_token(email=email, password=password).json()
         Talvidouser.objects.create(
             first_name = validated_data.get("first_name"),
             last_name = validated_data.get("last_name"),
@@ -228,3 +230,30 @@ class TalvidoEmailRegisterSerializer(serializers.Serializer):
             firebase_uid = user["localId"]
         )
         return user
+
+
+"""Email login serializer"""
+
+class TalvidoEmailLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
+
+    def validate_password(self, value):
+        if len(value) <= 6:
+            raise serializers.ValidationError("Password should atleast contain more than 6 characters")
+        return value
+
+    def check_credentials(self):
+        email = self.validated_data.get("email")
+        password = self.validated_data.get("password")
+
+        user = generate_firebase_token(email=email, password=password)
+        if user.status_code == 400:
+            raise serializers.ValidationError(
+                {
+                    "status_code" : status.HTTP_401_UNAUTHORIZED,
+                    "message" : "unauthorized",
+                    "data" : user.json()['error']['message']
+                }
+            )
+        return user.json()

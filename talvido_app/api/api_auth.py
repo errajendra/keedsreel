@@ -9,6 +9,7 @@ from .import (
     RegenerateAccessTokenSerializer,
     CheckMobileNumberExistSerializer,
     TalvidoEmailRegisterSerializer,
+    TalvidoEmailLoginSerializer,
 )
 
 
@@ -213,5 +214,27 @@ class RegsiterEmailAPIView(APIView):
             "status_code" : status.HTTP_400_BAD_REQUEST,
             "message" : "bad request",
             "data" : email_regsiter_serializer.errors
+        }
+        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+
+
+"""This API handle login with email"""
+
+class LoginEmailAPIView(APIView):
+    def post(self,request):
+        email_login_serializer = TalvidoEmailLoginSerializer(data=request.data)
+        if email_login_serializer.is_valid():
+            user = email_login_serializer.check_credentials()
+            response = {
+                "status_code" : status.HTTP_200_OK,
+                "message" : "ok",
+                "data" : user
+            }
+            return Response(response,status=status.HTTP_200_OK)
+        
+        response = {
+            "status_code" : status.HTTP_400_BAD_REQUEST,
+            "message" : "bad request",
+            "data" : email_login_serializer.errors
         }
         return Response(response,status=status.HTTP_400_BAD_REQUEST)
