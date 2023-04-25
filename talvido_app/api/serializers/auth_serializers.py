@@ -1,10 +1,12 @@
 from rest_framework import serializers
 from talvido_app.models import Talvidouser
 from django.conf import settings
-from talvido_app.firebase.helpers import verify_firebase_uid
+from talvido_app.firebase.helpers import verify_firebase_uid, generate_firebase_token
 from talvido_app.firebase.exceptions import InvalidFirebaseUID, FirebaseUIDExists
+from django.contrib.auth.hashers import make_password
 import requests
 import re
+from firebase_admin import auth
 
 
 """Mobile registration serializer"""
@@ -188,3 +190,41 @@ class RegenerateAccessTokenSerializer(serializers.Serializer):
         data = {"grant_type": grant_type, "refresh_token": refresh_token}
         response = requests.post(url=url, data=data)
         return response
+
+
+"""Email register model serializer"""
+
+class TalvidoEmailRegisterSerializer(serializers.Serializer):
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    email = serializers.EmailField()
+    password = serializers.CharField()
+    referral_code = serializers.CharField(required=False)
+
+    def validate_email(self, value):
+        if Talvidouser.objects.filter(email=value).exists():
+            raise serializers.ValidationError("This email is already exists")
+        return value
+    
+    def validate_password(self, value):
+        if len(value) <= 6:
+            raise serializers.ValidationError("Password should atleast contain more than 6 characters")
+        return value
+
+    def create(self, validated_data):
+        email = validated_data.get("email")
+        password = validated_data.get("password")
+        auth.create_user(
+            email = email,
+            password = password
+        )
+        user = generate_firebase_token(email=email, password=password)
+        Talvidouser.objects.create(
+            first_name = validated_data.get("first_name"),
+            last_name = validated_data.get("last_name"),
+            email = email,
+            password = make_password(password),
+            referral_code = validated_data.get("referral_code",""),
+            firebase_uid = user["localId"]
+        )
+        return user

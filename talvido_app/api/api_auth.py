@@ -8,6 +8,7 @@ from .import (
     TavlidoFacebokLoginSerializer,
     RegenerateAccessTokenSerializer,
     CheckMobileNumberExistSerializer,
+    TalvidoEmailRegisterSerializer,
 )
 
 
@@ -192,3 +193,25 @@ class RegenerateAccessTokenAPIVIew(APIView):
             "data": regenerate_access_token_serialzier.errors,
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+
+"""This API handle registeration with email"""
+
+class RegsiterEmailAPIView(APIView):
+    def post(self,request):
+        email_regsiter_serializer = TalvidoEmailRegisterSerializer(data=request.data)
+        if email_regsiter_serializer.is_valid():
+            user = email_regsiter_serializer.save()
+            response = {
+                "status_code" : status.HTTP_201_CREATED,
+                "message" : "created",
+                "data" : user
+            }
+            return Response(response,status=status.HTTP_201_CREATED)
+        
+        response = {
+            "status_code" : status.HTTP_400_BAD_REQUEST,
+            "message" : "bad request",
+            "data" : email_regsiter_serializer.errors
+        }
+        return Response(response,status=status.HTTP_400_BAD_REQUEST)
