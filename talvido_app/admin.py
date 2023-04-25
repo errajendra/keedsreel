@@ -33,7 +33,7 @@ class TalvidouserAdmin(UserAdmin):
     fieldsets = (
         (
             "User Information",
-            {"fields": ("username", "email", "password", "full_name", "mobile_number", "firebase_uid", "referral_code")},
+            {"fields": ("username", "email", "password", "first_name", "last_name", "mobile_number", "firebase_uid", "referral_code")},
         ),
         (
             "User Permissions",
@@ -51,7 +51,7 @@ class TalvidouserAdmin(UserAdmin):
         ),
     )
     search_fields = ("username",)
-    ordering = ("full_name",)
+    ordering = ("first_name", "last_name",)
 
 
 """Register profile model in  django admin"""

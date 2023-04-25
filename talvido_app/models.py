@@ -24,10 +24,6 @@ class Talvidouser(AbstractUser):
         ("Google", "Google"),
         ("Facebook", "Facebook"),
     )
-
-    first_name = None
-    last_name = None
-    full_name = models.CharField(_("Full Name"), max_length=100, blank=True, null=True)
     firebase_uid = models.CharField(_("Firebase UID"), max_length=100, primary_key=True)
     referral_code = models.CharField(
         _("Referral Code"), max_length=200, blank=True, null=True
