@@ -129,3 +129,14 @@ class Post(BaseModel):
 
     def __str__(self):
         return str(self.id)
+
+
+"""This model will store the comments under posts"""
+
+class PostComment(BaseModel):
+    user = models.ForeignKey(Talvidouser,verbose_name="User",on_delete=models.CASCADE,related_name="post_comment_user")
+    post = models.ForeignKey(Post,verbose_name="Post",on_delete=models.CASCADE,related_name="post_comment")
+    comment = models.TextField(verbose_name="Comment")
+
+    def __str__(self):
+        return str(self.id)
