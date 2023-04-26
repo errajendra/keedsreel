@@ -20,6 +20,7 @@ from . import (
     UploadPostModelSerializer,
     DeletePostSerializer,
     PostCommentModelSerializer,
+    DeletePostCommentSerializer,
 )
 from datetime import datetime
 
@@ -325,5 +326,29 @@ class PostCommentAPIView(APIView):
             "status_code" : status.HTTP_400_BAD_REQUEST,
             "message" : "bad request",
             "data" : post_comment_serializer.errors
+        }
+        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+
+
+"""This API will delete the comment from post"""
+
+class DeletePostCommentAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+    def delete(self,request):
+        delete_post_comment_serializer = DeletePostCommentSerializer(data=request.data, context={"request":request})
+        if delete_post_comment_serializer.is_valid():
+            delete_post_comment_serializer.delete()
+            response = {
+                "status_code" : status.HTTP_204_NO_CONTENT,
+                "message" : "comment deleted"
+            }
+            return Response(response,status=status.HTTP_204_NO_CONTENT)
+
+        response = {
+            "status_code" : status.HTTP_400_BAD_REQUEST,
+            "message" : "bad request",
+            "data" : delete_post_comment_serializer.errors
         }
         return Response(response,status=status.HTTP_400_BAD_REQUEST)

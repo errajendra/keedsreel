@@ -24,6 +24,7 @@ from . import (
     UploadPostAPIView,
     DeletePostAPIView,
     PostCommentAPIView,
+    DeletePostCommentAPIView,
 )
 
 
@@ -116,5 +117,10 @@ urlpatterns = [
         "post/comment/add/",
         PostCommentAPIView.as_view(),
         name="add-post-comment-api"
+    ),
+    path(
+        "post/comment/delete/",
+        DeletePostCommentAPIView.as_view(),
+        name="delete-post-comment-api"
     ),
 ]

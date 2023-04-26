@@ -184,3 +184,27 @@ class PostCommentModelSerializer(serializers.ModelSerializer):
             comment = self.validated_data.get("comment")
         )
         return post_comment
+
+
+"""delete post comment serializer"""
+
+class DeletePostCommentSerializer(serializers.Serializer):
+    comment_id = serializers.CharField()
+
+    def delete(self):
+        request = self.context["request"]
+        post_comment = PostComment.objects.filter(user=request.user,id=self.validated_data.get("comment_id"))
+        if post_comment.exists():
+            post_comment.first().delete()
+            return None
+        raise serializers.ValidationError(
+            {
+                "status_code" : status.HTTP_400_BAD_REQUEST,
+                "message" : "bad request",
+                "data" : {
+                    "comment_id" : [
+                        "comment_id is either invalid nor associate with current user"
+                    ]
+                }
+            }
+        )
