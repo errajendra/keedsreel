@@ -4,7 +4,8 @@ from talvido_app.models import (
     StoryViews,
     Profile,
     Follow,
-    Post
+    Post,
+    PostComment,
 )
 from talvido_app.api.serializers.profile_serializers import ProfileModelSerializer
 from datetime import datetime
@@ -149,3 +150,37 @@ class DeletePostSerializer(serializers.Serializer):
     def delete(self):
         Post.objects.get(id=self.validated_data.get("post_id")).delete()
         return None
+
+
+"""post comment model serializer"""
+
+class PostCommentModelSerializer(serializers.ModelSerializer):
+
+    post_id = serializers.CharField()
+
+    class Meta:
+        model = PostComment
+        fields = ["post_id", "comment"]
+
+    def create(self, validated_data):
+        request = self.context["request"]
+        try:
+            post = Post.objects.get(id=self.validated_data.get("post_id"))
+        except Post.DoesNotExist:
+            raise serializers.ValidationError(
+                {
+                    "status_code" : status.HTTP_400_BAD_REQUEST,
+                    "message" : "bad request",
+                    "data" : {
+                        "post_id" : [
+                            "This post_id is invalid" 
+                        ]
+                    }
+                }
+            )
+        post_comment = PostComment.objects.create(
+            user = request.user,
+            post = post,
+            comment = self.validated_data.get("comment")
+        )
+        return post_comment

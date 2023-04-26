@@ -19,6 +19,7 @@ from . import (
     GetPostModelSerializer,
     UploadPostModelSerializer,
     DeletePostSerializer,
+    PostCommentModelSerializer,
 )
 from datetime import datetime
 
@@ -302,3 +303,27 @@ class DeletePostAPIView(APIView):
             "data": delete_post_serializer.errors,
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+
+"""This API will add the comment to post"""
+
+class PostCommentAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self,request):
+        post_comment_serializer = PostCommentModelSerializer(data=request.data,context={"request":request})
+        if post_comment_serializer.is_valid():
+            post_comment_serializer.save()
+            response = {
+                "status_code" : status.HTTP_201_CREATED,
+                "message" : "comment created"
+            }
+            return Response(response, status=status.HTTP_201_CREATED)
+        
+        response = {
+            "status_code" : status.HTTP_400_BAD_REQUEST,
+            "message" : "bad request",
+            "data" : post_comment_serializer.errors
+        }
+        return Response(response,status=status.HTTP_400_BAD_REQUEST)

@@ -23,6 +23,7 @@ from . import (
     GetAuthUserActivePosts,
     UploadPostAPIView,
     DeletePostAPIView,
+    PostCommentAPIView,
 )
 
 
@@ -109,5 +110,11 @@ urlpatterns = [
         "user/posts/delete/",
         DeletePostAPIView.as_view(),
         name="delete-user-posts-api"
+    ),
+    # comment API'S endpoints
+    path(
+        "post/comment/add/",
+        PostCommentAPIView.as_view(),
+        name="add-post-comment-api"
     ),
 ]
