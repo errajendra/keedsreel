@@ -67,7 +67,7 @@ class Profile(BaseModel):
         upload_to="profile", default="default.png", verbose_name="Profile Image"
     )
     gender = models.CharField(
-        verbose_name="Gender", blank=False, choices=GENDER_CHOICES
+        verbose_name="Gender", blank=False, choices=GENDER_CHOICES, max_length=100
     )
 
     def __str__(self):

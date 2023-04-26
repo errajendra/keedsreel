@@ -7,7 +7,6 @@ from django.contrib.auth.hashers import make_password
 import requests
 import re
 from firebase_admin import auth
-from django.contrib.auth import authenticate
 from rest_framework import status
 
 
