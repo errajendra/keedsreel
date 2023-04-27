@@ -21,6 +21,7 @@ from . import (
     DeletePostSerializer,
     PostCommentModelSerializer,
     DeletePostCommentSerializer,
+    AddPostLikeSerializer,
 )
 from datetime import datetime
 
@@ -350,5 +351,53 @@ class DeletePostCommentAPIView(APIView):
             "status_code" : status.HTTP_400_BAD_REQUEST,
             "message" : "bad request",
             "data" : delete_post_comment_serializer.errors
+        }
+        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+
+
+"""This API will add like to post"""
+
+class AddPostLikeAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self,request):
+        add_post_like_serializer = AddPostLikeSerializer(data=request.data,context={"request":request})
+        if add_post_like_serializer.is_valid():
+            add_post_like_serializer.save()
+            response = {
+                "status_code" : status.HTTP_201_CREATED,
+                "messages" : "liked post"
+            }
+            return Response(response,status=status.HTTP_201_CREATED)
+
+        response = {
+            "status_code" : status.HTTP_400_BAD_REQUEST,
+            "message" : "bad request",
+            "data" : add_post_like_serializer.errors
+        }
+        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+
+
+"""This API will remove like from post"""
+
+class RemovePostLikeAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+    def delete(self,request):
+        add_post_like_serializer = AddPostLikeSerializer(data=request.data,context={"request":request})
+        if add_post_like_serializer.is_valid():
+            add_post_like_serializer.delete()
+            response = {
+                "status_code" : status.HTTP_204_NO_CONTENT,
+                "messages" : "liked removed"
+            }
+            return Response(response,status=status.HTTP_204_NO_CONTENT)
+
+        response = {
+            "status_code" : status.HTTP_400_BAD_REQUEST,
+            "message" : "bad request",
+            "data" : add_post_like_serializer.errors
         }
         return Response(response,status=status.HTTP_400_BAD_REQUEST)

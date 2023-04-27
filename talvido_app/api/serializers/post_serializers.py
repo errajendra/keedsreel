@@ -6,7 +6,8 @@ from talvido_app.models import (
     Follow,
     Post,
     PostComment,
-    Talvidouser
+    Talvidouser,
+    PostLike,
 )
 from talvido_app.api.serializers.profile_serializers import ProfileModelSerializer, UserModelSerializer
 from datetime import datetime
@@ -235,6 +236,8 @@ class DeletePostCommentSerializer(serializers.Serializer):
         )
 
 
+"""get post comments model serializer"""
+
 class GetPostCommentModelSerializer(serializers.ModelSerializer):
 
     duration = serializers.SerializerMethodField("get_comment_duration")
@@ -258,3 +261,46 @@ class GetPostCommentModelSerializer(serializers.ModelSerializer):
         user_serializer = UserModelSerializer(user,context={"request":self.context['request']}).data
         user_serializer['image'] = "http://"+self.context['request'].META['HTTP_HOST'] + user.profile.image.url
         return user_serializer
+
+
+"""add post like serializer"""
+
+class AddPostLikeSerializer(serializers.Serializer):
+    post_id = serializers.CharField()
+
+    def create(self, validated_data):
+        request = self.context['request']
+        try:
+            post = Post.objects.get(id=self.validated_data.get("post_id"))
+        except Post.DoesNotExist:
+            raise serializers.ValidationError(
+                {
+                    "status_code" : status.HTTP_400_BAD_REQUEST,
+                    "message" : "bad request",
+                    "data" : {
+                        "post_id" : [
+                            "post_id is invalid"
+                        ]
+                    }
+                }
+            )
+        post_like = PostLike.objects.get_or_create(user=request.user,post=post)
+        return post_like
+
+    def delete(self):
+        request = self.context['request']
+        post_like = PostLike.objects.filter(user=request.user,post=self.validated_data.get("post_id"))
+        if post_like.exists():
+            post_like.delete()
+            return None
+        raise serializers.ValidationError(
+            {
+                "status_code" : status.HTTP_400_BAD_REQUEST,
+                "message" : "bad request",
+                "data" : {
+                    "comment_id" : [
+                        "post_id is either invalid nor like associate with current user"
+                    ]
+                }
+            }
+        )

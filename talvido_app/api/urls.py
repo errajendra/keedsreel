@@ -25,6 +25,8 @@ from . import (
     DeletePostAPIView,
     PostCommentAPIView,
     DeletePostCommentAPIView,
+    AddPostLikeAPIView,
+    RemovePostLikeAPIView,
 )
 
 
@@ -122,5 +124,15 @@ urlpatterns = [
         "post/comment/delete/",
         DeletePostCommentAPIView.as_view(),
         name="delete-post-comment-api"
+    ),
+    path(
+        "post/like/add/",
+        AddPostLikeAPIView.as_view(),
+        name="add-post-like-api"
+    ),
+    path(
+        "post/like/remove/",
+        RemovePostLikeAPIView.as_view(),
+        name="remove-post-like-api"
     ),
 ]
