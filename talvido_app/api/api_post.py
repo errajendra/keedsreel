@@ -229,7 +229,7 @@ class GetAuthUserActivePosts(APIView):
                 return Response(response,status=status.HTTP_400_BAD_REQUEST)
             post_serializer = GetPostModelSerializer(post,context={"request":request})
         else:
-            posts = user.post_user.all()
+            posts = user.post_user.all().order_by("-created_at")
             post_serializer = GetPostModelSerializer(posts,many=True,context={"request":request})
         response = {
             "status_code" : status.HTTP_200_OK,
