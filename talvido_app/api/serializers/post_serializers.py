@@ -230,6 +230,17 @@ class DeletePostCommentSerializer(serializers.Serializer):
 
 class GetPostCommentModelSerializer(serializers.ModelSerializer):
 
+    duration = serializers.SerializerMethodField("get_comment_duration")
+
     class Meta:
         model = PostComment
-        fields = ["id","user","post","comment"]
+        fields = ["id","user","post","comment","created_at","duration"]
+
+    def get_comment_duration(self,data):
+        difference = datetime.now() - data.created_at.replace(tzinfo=None)
+        m, s = divmod(difference.total_seconds(), 60)
+        hours  = int(m//60)
+        if hours > 1:
+            return f"{hours} hours ago"
+        else:
+            return f"{int(m%60)} minutes ago"
