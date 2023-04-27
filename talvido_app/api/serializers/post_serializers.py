@@ -19,6 +19,7 @@ class StoryModelSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField("get_user_profile",read_only=True)
     story = serializers.FileField()
     story_views = serializers.SerializerMethodField("get_story_views",read_only=True)
+    finish = serializers.CharField(default="0",read_only=True)
 
     def get_story_duration(self, data):
         difference = data.ends_at.replace(tzinfo=None) - datetime.now()
@@ -29,7 +30,7 @@ class StoryModelSerializer(serializers.ModelSerializer):
     def get_user_profile(self,data):
         user = Talvidouser.objects.get(firebase_uid=data.user)
         user_serializer = UserModelSerializer(user,context={"request":self.context['request']}).data
-        user_serializer['image'] = user.profile.image.url
+        user_serializer['image'] = "https://"+self.context['request'].META['HTTP_HOST'] + user.profile.image.url
         return user_serializer
 
     def get_story_views(self,data):
@@ -39,7 +40,7 @@ class StoryModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Story
-        fields = ["id", "user", "story", "post_at", "ends_at", "duration","story_views"]
+        fields = ["id", "user", "story", "post_at", "ends_at", "duration","story_views","finish"]
 
 
 """delete story serializer"""
