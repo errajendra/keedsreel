@@ -19,7 +19,7 @@ class StoryModelSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField("get_user_profile",read_only=True)
     story = serializers.FileField()
     story_views = serializers.SerializerMethodField("get_story_views",read_only=True)
-    finish = serializers.CharField(default="0",read_only=True)
+    finish = serializers.CharField(default=0,read_only=True)
 
     def get_story_duration(self, data):
         difference = data.ends_at.replace(tzinfo=None) - datetime.now()
