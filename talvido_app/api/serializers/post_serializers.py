@@ -30,7 +30,7 @@ class StoryModelSerializer(serializers.ModelSerializer):
     def get_user_profile(self,data):
         user = Talvidouser.objects.get(firebase_uid=data.user)
         user_serializer = UserModelSerializer(user,context={"request":self.context['request']}).data
-        user_serializer['image'] = "https://"+self.context['request'].META['HTTP_HOST'] + user.profile.image.url
+        user_serializer['image'] = "http://"+self.context['request'].META['HTTP_HOST'] + user.profile.image.url
         return user_serializer
 
     def get_story_views(self,data):
