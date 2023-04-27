@@ -18,6 +18,7 @@ class StoryModelSerializer(serializers.ModelSerializer):
     duration = serializers.SerializerMethodField("get_story_duration")
     user = serializers.SerializerMethodField("get_user_profile",read_only=True)
     story = serializers.FileField()
+    story_views = serializers.SerializerMethodField("get_story_views",read_only=True)
 
     def get_story_duration(self, data):
         difference = data.ends_at.replace(tzinfo=None) - datetime.now()
@@ -31,9 +32,14 @@ class StoryModelSerializer(serializers.ModelSerializer):
         user_serializer['image'] = user.profile.image.url
         return user_serializer
 
+    def get_story_views(self,data):
+        story = Story.objects.get(id=data.id)
+        story_views = story.story_content.all().count()
+        return story_views
+
     class Meta:
         model = Story
-        fields = ["id", "user", "story", "post_at", "ends_at", "duration"]
+        fields = ["id", "user", "story", "post_at", "ends_at", "duration","story_views"]
 
 
 """delete story serializer"""
