@@ -113,10 +113,12 @@ class GetPostModelSerializer(serializers.ModelSerializer):
 
     user = serializers.SerializerMethodField("get_profile")
     duration = serializers.SerializerMethodField("get_post_duration")
+    comments = serializers.SerializerMethodField("get_post_comments")
+    total_comments = serializers.SerializerMethodField("count_comments")
 
     class Meta:
         model = Post
-        fields = ["id","user","description","post","duration","created_at","updated_at"]
+        fields = ["id","user","description","post","duration","created_at","updated_at","comments","total_comments"]
 
     def get_profile(self, data):
         return ProfileModelSerializer(
@@ -131,6 +133,15 @@ class GetPostModelSerializer(serializers.ModelSerializer):
             return f"{hours} hours ago"
         else:
             return f"{int(m%60)} minutes ago"
+
+    def get_post_comments(self,data):
+        post = Post.objects.get(id=data.id)
+        post_comments = post.post_comment.all()
+        self.comments_count = post_comments.count()
+        return GetPostCommentModelSerializer(post_comments,many=True).data
+
+    def count_comments(self,data):
+        return self.comments_count
 
 
 """upload post model serializer"""
@@ -208,3 +219,10 @@ class DeletePostCommentSerializer(serializers.Serializer):
                 }
             }
         )
+
+
+class GetPostCommentModelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PostComment
+        fields = ["id","user","post","comment"]

@@ -220,7 +220,7 @@ class TalvidoEmailRegisterSerializer(serializers.Serializer):
             password = password
         )
         user = generate_firebase_token(email=email, password=password).json()
-        Talvidouser.objects.create(
+        talvido_user = Talvidouser.objects.create(
             first_name = validated_data.get("first_name"),
             last_name = validated_data.get("last_name"),
             email = email,
@@ -228,6 +228,8 @@ class TalvidoEmailRegisterSerializer(serializers.Serializer):
             referral_code = validated_data.get("referral_code",""),
             firebase_uid = user["localId"]
         )
+        user['first_name'] = talvido_user.first_name
+        user['last_name'] = talvido_user.last_name
         return user
 
 
