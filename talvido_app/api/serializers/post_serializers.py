@@ -6,8 +6,9 @@ from talvido_app.models import (
     Follow,
     Post,
     PostComment,
+    Talvidouser
 )
-from talvido_app.api.serializers.profile_serializers import ProfileModelSerializer
+from talvido_app.api.serializers.profile_serializers import ProfileModelSerializer, UserModelSerializer
 from datetime import datetime
 
 
@@ -15,7 +16,7 @@ from datetime import datetime
 
 class StoryModelSerializer(serializers.ModelSerializer):
     duration = serializers.SerializerMethodField("get_story_duration")
-    user = serializers.CharField(read_only=True)
+    user = serializers.SerializerMethodField("get_user_profile",read_only=True)
     story = serializers.FileField()
 
     def get_story_duration(self, data):
@@ -23,6 +24,12 @@ class StoryModelSerializer(serializers.ModelSerializer):
         m, s = divmod(difference.total_seconds(), 60)
         hours  = int(24 - m//60)
         return f"{hours}h ago" if hours > 1 else f"{int(60 - m%60)}m ago"
+
+    def get_user_profile(self,data):
+        user = Talvidouser.objects.get(firebase_uid=data.user)
+        user_serializer = UserModelSerializer(user,context={"request":self.context['request']}).data
+        user_serializer['image'] = user.profile.image.url
+        return user_serializer
 
     class Meta:
         model = Story
