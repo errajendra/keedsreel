@@ -238,6 +238,7 @@ class DeletePostCommentSerializer(serializers.Serializer):
 class GetPostCommentModelSerializer(serializers.ModelSerializer):
 
     duration = serializers.SerializerMethodField("get_comment_duration")
+    user = UserModelSerializer()
 
     class Meta:
         model = PostComment

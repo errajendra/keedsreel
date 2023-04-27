@@ -21,7 +21,7 @@ class ProfileModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ["user", "image", "gender","followers","followings","posts"]
+        fields = ["user", "image", "gender","location", "description", "followers","followings","posts"]
 
     def get_user_followers(self,data):
         return Talvidouser.objects.get(firebase_uid=data.user).user_to.all().count()

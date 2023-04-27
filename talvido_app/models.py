@@ -69,6 +69,8 @@ class Profile(BaseModel):
     gender = models.CharField(
         verbose_name="Gender", blank=False, choices=GENDER_CHOICES, max_length=100
     )
+    location = models.CharField(verbose_name="Location", blank=True, null=True, max_length=100)
+    description = models.TextField(verbose_name="Description", blank=True, null=True)
 
     def __str__(self):
         return str(self.user)
