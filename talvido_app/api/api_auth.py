@@ -233,8 +233,8 @@ class LoginEmailAPIView(APIView):
             return Response(response,status=status.HTTP_200_OK)
         
         response = {
-            "status_code" : status.HTTP_400_BAD_REQUEST,
+            "status_code" : status.HTTP_401_UNAUTHORIZED,
             "message" : "bad request",
             "data" : email_login_serializer.errors
         }
-        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+        return Response(response,status=status.HTTP_401_UNAUTHORIZED)

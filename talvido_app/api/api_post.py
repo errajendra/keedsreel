@@ -174,8 +174,8 @@ class StoryViewAPIView(APIView):
         )
         if add_storyview_serializer.is_valid():
             add_storyview_serializer.save()
-            response = {"status": status.HTTP_200_OK, "message": "ok"}
-            return Response(response, status=status.HTTP_200_OK)
+            response = {"status": status.HTTP_201_CREATED, "message": "ok"}
+            return Response(response, status=status.HTTP_201_CREATED)
 
         """return this response if validation fails"""
         response = {
@@ -250,10 +250,10 @@ class UploadPostAPIView(APIView):
         if upload_post_serializer.is_valid():
             upload_post_serializer.save(user=request.user)
             response = {
-                "status_code" : status.HTTP_200_OK,
+                "status_code" : status.HTTP_201_CREATED,
                 "message" : "ok",
             }
-            return Response(response,status=status.HTTP_200_OK)
+            return Response(response,status=status.HTTP_201_CREATED)
 
         response = {
             "status_code" : status.HTTP_400_BAD_REQUEST,
@@ -335,7 +335,7 @@ class PostCommentAPIView(APIView):
 class DeletePostCommentAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
-    
+
     def delete(self,request):
         delete_post_comment_serializer = DeletePostCommentSerializer(data=request.data, context={"request":request})
         if delete_post_comment_serializer.is_valid():
