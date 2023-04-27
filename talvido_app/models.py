@@ -170,3 +170,20 @@ class PostComment(BaseModel):
 
     def __str__(self):
         return str(self.id)
+
+
+"""This model will store post like data"""
+
+class PostLike(BaseModel):
+    user = models.ForeignKey(
+        Talvidouser,
+        verbose_name="User",
+        on_delete=models.CASCADE,
+        related_name="post_like_user",
+    )
+    post = models.ForeignKey(
+        Post, verbose_name="Post", on_delete=models.CASCADE, related_name="post_like"
+    )
+
+    def __str__(self):
+        return str(self.id)

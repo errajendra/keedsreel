@@ -7,7 +7,8 @@ from .models import (
     Follow,
     StoryViews,
     Post,
-    PostComment
+    PostComment,
+    PostLike,
 )
 from django.contrib.auth.admin import UserAdmin
 
@@ -33,7 +34,18 @@ class TalvidouserAdmin(UserAdmin):
     fieldsets = (
         (
             "User Information",
-            {"fields": ("username", "email", "password", "first_name", "last_name", "mobile_number", "firebase_uid", "referral_code")},
+            {
+                "fields": (
+                    "username",
+                    "email",
+                    "password",
+                    "first_name",
+                    "last_name",
+                    "mobile_number",
+                    "firebase_uid",
+                    "referral_code",
+                )
+            },
         ),
         (
             "User Permissions",
@@ -51,46 +63,56 @@ class TalvidouserAdmin(UserAdmin):
         ),
     )
     search_fields = ("username",)
-    ordering = ("first_name", "last_name",)
+    ordering = (
+        "first_name",
+        "last_name",
+    )
 
 
 """Register profile model in  django admin"""
 
 @admin.register(Profile)
 class ProfileModelAdmin(admin.ModelAdmin):
-    list_display = ["user","image","gender"]
+    list_display = ["user", "image", "gender"]
 
 
 """Register story model in  django admin"""
 
 @admin.register(Story)
 class StoryModelAdmin(admin.ModelAdmin):
-    list_display = ["id","user","story","post_at","ends_at"]
+    list_display = ["id", "user", "story", "post_at", "ends_at"]
 
 
 """Register storyviews model in  django admin"""
 
 @admin.register(StoryViews)
 class StoryViewsModelAdmin(admin.ModelAdmin):
-    list_display = ["id","user","story","created_at"]
+    list_display = ["id", "user", "story", "created_at"]
 
 
 """Register follow model in  django admin"""
 
 @admin.register(Follow)
 class FollowModelAdmin(admin.ModelAdmin):
-    list_display = ["id","user_to","user_from","created_at","updated_at"]
+    list_display = ["id", "user_to", "user_from", "created_at", "updated_at"]
 
 
 """Register post model in  django admin"""
 
 @admin.register(Post)
 class PostModelAdmin(admin.ModelAdmin):
-    list_display = ["id","user","description","post","created_at","updated_at"]
+    list_display = ["id", "user", "description", "post", "created_at", "updated_at"]
 
 
 """Register post comment model in  django admin"""
 
 @admin.register(PostComment)
 class PostCommentModelAdmin(admin.ModelAdmin):
-    list_display = ["id","user","post","comment","created_at","updated_at"]
+    list_display = ["id", "user", "post", "comment", "created_at", "updated_at"]
+
+
+"""Register post like model in django admin"""
+
+@admin.register(PostLike)
+class PostLikeModelAdmin(admin.ModelAdmin):
+    list_display = ["id", "user", "post", "created_at", "updated_at"]
