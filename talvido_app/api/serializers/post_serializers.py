@@ -152,7 +152,7 @@ class GetPostModelSerializer(serializers.ModelSerializer):
         post = Post.objects.get(id=data.id)
         post_comments = post.post_comment.all()
         self.comments_count = post_comments.count()
-        return GetPostCommentModelSerializer(post_comments,many=True).data
+        return GetPostCommentModelSerializer(post_comments,many=True,context=self.context).data
 
     def count_comments(self,data):
         return self.comments_count
@@ -238,7 +238,7 @@ class DeletePostCommentSerializer(serializers.Serializer):
 class GetPostCommentModelSerializer(serializers.ModelSerializer):
 
     duration = serializers.SerializerMethodField("get_comment_duration")
-    user = UserModelSerializer()
+    user = serializers.SerializerMethodField("get_user_profile")
 
     class Meta:
         model = PostComment
@@ -252,3 +252,9 @@ class GetPostCommentModelSerializer(serializers.ModelSerializer):
             return f"{hours} hours ago"
         else:
             return f"{int(m%60)} minutes ago"
+
+    def get_user_profile(self,data):
+        user = Talvidouser.objects.get(firebase_uid=data.user)
+        user_serializer = UserModelSerializer(user,context={"request":self.context['request']}).data
+        user_serializer['image'] = "http://"+self.context['request'].META['HTTP_HOST'] + user.profile.image.url
+        return user_serializer
