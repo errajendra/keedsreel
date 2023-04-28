@@ -11,7 +11,7 @@ from talvido_app.models import (
     PostCommentLike,
 )
 from talvido_app.api.serializers.profile_serializers import (
-    ProfileModelSerializer,
+    # ProfileModelSerializer,
     UserModelSerializer,
 )
 from datetime import datetime
@@ -168,7 +168,7 @@ class GetUserFollowingsStoriesModelSerializer(serializers.ModelSerializer):
 """Get Post model serializer"""
 
 class GetPostModelSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField("get_profile")
+    user = UserModelSerializer()
     duration = serializers.SerializerMethodField("get_post_duration")
     comments = serializers.SerializerMethodField("get_post_comments")
     total_comments = serializers.SerializerMethodField("count_comments")
@@ -192,9 +192,10 @@ class GetPostModelSerializer(serializers.ModelSerializer):
         ]
 
     def get_profile(self, data):
-        return ProfileModelSerializer(
-            Profile.objects.get(user=data.user), context=self.context
-        ).data
+        return []
+    # ProfileModelSerializer(
+    #         Profile.objects.get(user=data.user), context=self.context
+    #     ).data
 
     def get_post_duration(self, data):
         difference = datetime.now() - data.created_at.replace(tzinfo=None)

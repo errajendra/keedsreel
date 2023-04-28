@@ -17,11 +17,12 @@ class ProfileModelSerializer(serializers.ModelSerializer):
     followers = serializers.SerializerMethodField("get_user_followers")
     followings = serializers.SerializerMethodField("get_user_followings")
     total_post = serializers.SerializerMethodField("get_user_total_posts")
+    posts = serializers.SerializerMethodField("get_user_posts")
 
 
     class Meta:
         model = Profile
-        fields = ["user", "image", "gender","location", "description", "followers","followings","total_post"]
+        fields = ["user", "image", "gender","location", "description", "posts", "followers","followings","total_post"]
 
     def get_user_followers(self,data):
         return Talvidouser.objects.get(firebase_uid=data.user).user_to.all().count()
@@ -31,6 +32,13 @@ class ProfileModelSerializer(serializers.ModelSerializer):
 
     def get_user_total_posts(self,data):
         return Talvidouser.objects.get(firebase_uid=data.user).post_user.all().count()
+    
+    def get_user_posts(self, data):
+        from talvido_app.api.serializers.post_serializers import GetPostModelSerializer
+        user = Talvidouser.objects.get(firebase_uid=data.user.firebase_uid)
+        user_posts = user.post_user.all()
+        # return []
+        return GetPostModelSerializer(user_posts, many=True, context=self.context).data
 
 
 """update profile model serializer"""
