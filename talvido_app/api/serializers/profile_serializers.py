@@ -36,8 +36,10 @@ class ProfileModelSerializer(serializers.ModelSerializer):
 """update profile model serializer"""
 
 class UpdateProfileModelSerializer(serializers.ModelSerializer):
-    full_name = serializers.CharField(required=False, allow_blank=True)
+    first_name = serializers.CharField(required=False, allow_blank=True)
+    last_name = serializers.CharField(required=False, allow_blank=True)
     username = serializers.CharField(required=False, allow_blank=True)
+    mobile_number = serializers.CharField(required=False, allow_blank=True)
 
     class Meta:
         model = Profile
@@ -47,14 +49,20 @@ class UpdateProfileModelSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         username = validated_data.get("username")
-        full_name = validated_data.get("full_name")
+        first_name = validated_data.get("first_name")
+        last_name = validated_data.get("last_name")
+        mobile_number = validated_data.get("mobile_number")
 
         user = Talvidouser.objects.get(firebase_uid=instance)
 
         if username is not None and username:
             user.username = username
-        if full_name is not None and full_name:
-            user.full_name = full_name
+        if first_name is not None and first_name:
+            user.first_name = first_name
+        if last_name is not None and last_name:
+            user.last_name = last_name
+        if mobile_number is not None and mobile_number:
+            user.mobile_number = mobile_number
         user.save()
         return super().update(instance, validated_data)
 

@@ -142,10 +142,11 @@ class GetPostModelSerializer(serializers.ModelSerializer):
     duration = serializers.SerializerMethodField("get_post_duration")
     comments = serializers.SerializerMethodField("get_post_comments")
     total_comments = serializers.SerializerMethodField("count_comments")
+    liked_by = serializers.SerializerMethodField("get_post_liked_by_user")
 
     class Meta:
         model = Post
-        fields = ["id","user","description","post","duration","created_at","updated_at","comments","total_comments"]
+        fields = ["id","user","description","post","duration","created_at","updated_at","comments","total_comments","liked_by"]
 
     def get_profile(self, data):
         return ProfileModelSerializer(
@@ -169,6 +170,11 @@ class GetPostModelSerializer(serializers.ModelSerializer):
 
     def count_comments(self,data):
         return self.comments_count
+
+    def get_post_liked_by_user(self,data):
+        post = Post.objects.get(id=data.id)
+        post_liked_user = post.post_like.values()
+        return [users['user_id'] for users in post_liked_user ]
 
 
 """upload post model serializer"""
