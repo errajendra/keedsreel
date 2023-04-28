@@ -302,10 +302,12 @@ class DeletePostCommentSerializer(serializers.Serializer):
 class GetPostCommentModelSerializer(serializers.ModelSerializer):
     duration = serializers.SerializerMethodField("get_comment_duration")
     user = serializers.SerializerMethodField("get_user_profile")
+    comment_likes = serializers.SerializerMethodField("get_comment_likes")
+    total_comment_likes = serializers.SerializerMethodField("get_total_comment_likes")
 
     class Meta:
         model = PostComment
-        fields = ["id", "user", "post", "comment", "created_at", "duration"]
+        fields = ["id", "user", "post", "comment", "created_at", "duration", "comment_likes", "total_comment_likes"]
 
     def get_comment_duration(self, data):
         difference = datetime.now() - data.created_at.replace(tzinfo=None)
@@ -327,6 +329,15 @@ class GetPostCommentModelSerializer(serializers.ModelSerializer):
             + user.profile.image.url
         )
         return user_serializer
+
+    def get_comment_likes(self, data):
+        comment  = PostComment.objects.get(id=data.id)
+        comment_like = comment.post_comment.all()
+        self.total_comment_likes = comment_like.count()
+        return GetPostCommentLikeModelSerializer(comment_like, many=True).data
+
+    def get_total_comment_likes(self, data):
+        return self.total_comment_likes
 
 
 """add post like serializer"""
@@ -409,3 +420,12 @@ class AddPostCommentLikeSerializer(serializers.Serializer):
                 "data": {"comment_id": ["comment_id is invalid"]},
             }
         )
+
+
+"""get post comment like model serializer"""
+
+class GetPostCommentLikeModelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PostCommentLike
+        fields = ["id", "user"]
