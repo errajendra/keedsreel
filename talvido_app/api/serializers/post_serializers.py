@@ -8,6 +8,7 @@ from talvido_app.models import (
     PostComment,
     Talvidouser,
     PostLike,
+    PostCommentLike,
 )
 from talvido_app.api.serializers.profile_serializers import ProfileModelSerializer, UserModelSerializer
 from datetime import datetime
@@ -282,7 +283,7 @@ class GetPostCommentModelSerializer(serializers.ModelSerializer):
     def get_user_profile(self,data):
         user = Talvidouser.objects.get(firebase_uid=data.user)
         user_serializer = UserModelSerializer(user,context={"request":self.context['request']}).data
-        user_serializer['image'] = "http://"+self.context['request'].META['HTTP_HOST'] + user.profile.image.url
+        user_serializer['image'] = "https://"+self.context['request'].META['HTTP_HOST'] + user.profile.image.url
         return user_serializer
 
 
@@ -323,6 +324,49 @@ class AddPostLikeSerializer(serializers.Serializer):
                 "data" : {
                     "comment_id" : [
                         "post_id is either invalid nor like associate with current user"
+                    ]
+                }
+            }
+        )
+
+
+"""post comment like serializer"""
+
+class AddPostCommentLikeSerializer(serializers.Serializer):
+    comment_id = serializers.CharField()
+
+    def create(self, validated_data):
+        request = self.context["request"]
+        try:
+            post_comment = PostComment.objects.get(id=self.validated_data.get("comment_id"))
+        except PostComment.DoesNotExist:
+            raise serializers.ValidationError(
+                {
+                    "status_code" : status.HTTP_400_BAD_REQUEST,
+                    "message" : "bad request",
+                    "data" : {
+                        "post_id" : [
+                            "comment_id is invalid"
+                        ]
+                    }
+                }
+            )
+        post_comment_like = PostCommentLike.objects.get_or_create(user=request.user,comment=post_comment)
+        return post_comment_like
+
+    def delete(self):
+        request = self.context['request']
+        post_comment_like = PostCommentLike.objects.filter(user=request.user,comment=self.validated_data.get("comment_id"))
+        if post_comment_like.exists():
+            post_comment_like.delete()
+            return None
+        raise serializers.ValidationError(
+            {
+                "status_code" : status.HTTP_400_BAD_REQUEST,
+                "message" : "bad request",
+                "data" : {
+                    "comment_id" : [
+                        "comment_id is invalid"
                     ]
                 }
             }

@@ -9,6 +9,7 @@ from .models import (
     Post,
     PostComment,
     PostLike,
+    PostCommentLike,
 )
 from django.contrib.auth.admin import UserAdmin
 
@@ -116,3 +117,10 @@ class PostCommentModelAdmin(admin.ModelAdmin):
 @admin.register(PostLike)
 class PostLikeModelAdmin(admin.ModelAdmin):
     list_display = ["id", "user", "post", "created_at", "updated_at"]
+
+
+"""Register post like model in django admin"""
+
+@admin.register(PostCommentLike)
+class PostCommentLikeModelAdmin(admin.ModelAdmin):
+    list_display = ["id", "user", "comment", "created_at", "updated_at"]

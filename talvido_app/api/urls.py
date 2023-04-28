@@ -28,6 +28,8 @@ from . import (
     AddPostLikeAPIView,
     RemovePostLikeAPIView,
     GetUserFollowingsPost,
+    AddPostCommentLikeAPIView,
+    RemovePostCommentLikeAPIView,
 )
 
 
@@ -136,9 +138,19 @@ urlpatterns = [
         RemovePostLikeAPIView.as_view(),
         name="remove-post-like-api"
     ),
-     path(
+    path(
         "user/posts/followings/",
         GetUserFollowingsPost.as_view(),
         name="get-user-following-post-api"
+    ),
+    path(
+        "post/comment/add/like/",
+        AddPostCommentLikeAPIView.as_view(),
+        name="add-post-comment-like-api"
+    ),
+    path(
+        "post/comment/remove/like/",
+        RemovePostCommentLikeAPIView.as_view(),
+        name="remove-post-comment-like-api"
     ),
 ]
