@@ -10,7 +10,10 @@ from talvido_app.models import (
     PostLike,
     PostCommentLike,
 )
-from talvido_app.api.serializers.profile_serializers import ProfileModelSerializer, UserModelSerializer
+from talvido_app.api.serializers.profile_serializers import (
+    ProfileModelSerializer,
+    UserModelSerializer,
+)
 from datetime import datetime
 import os
 
@@ -19,32 +22,47 @@ import os
 
 class StoryModelSerializer(serializers.ModelSerializer):
     duration = serializers.SerializerMethodField("get_story_duration")
-    user = serializers.SerializerMethodField("get_user_profile",read_only=True)
+    user = serializers.SerializerMethodField("get_user_profile", read_only=True)
     story = serializers.FileField()
-    story_views = serializers.SerializerMethodField("get_story_views",read_only=True)
-    finish = serializers.CharField(default=0,read_only=True)
-    story_type = serializers.SerializerMethodField("get_story_type",read_only=True)
+    story_views = serializers.SerializerMethodField("get_story_views", read_only=True)
+    finish = serializers.CharField(default=0, read_only=True)
+    story_type = serializers.SerializerMethodField("get_story_type", read_only=True)
 
     def get_story_duration(self, data):
         difference = data.ends_at.replace(tzinfo=None) - datetime.now()
         m, s = divmod(difference.total_seconds(), 60)
-        hours  = int(24 - m//60)
+        hours = int(24 - m // 60)
         return f"{hours}h ago" if hours > 1 else f"{int(60 - m%60)}m ago"
 
-    def get_user_profile(self,data):
+    def get_user_profile(self, data):
         user = Talvidouser.objects.get(firebase_uid=data.user)
-        user_serializer = UserModelSerializer(user,context={"request":self.context['request']}).data
-        user_serializer['image'] = "http://"+self.context['request'].META['HTTP_HOST'] + user.profile.image.url
+        user_serializer = UserModelSerializer(
+            user, context={"request": self.context["request"]}
+        ).data
+        user_serializer["image"] = (
+            "http://"
+            + self.context["request"].META["HTTP_HOST"]
+            + user.profile.image.url
+        )
         return user_serializer
 
-    def get_story_views(self,data):
+    def get_story_views(self, data):
         story = Story.objects.get(id=data.id)
         story_views = story.story_content.all().count()
         return story_views
-    
-    def get_story_type(self,data):
-        image_formats = [".jpg",".jpeg",".png"]
-        video_formats = [".mp4",".mov",".wmv",".webm",".avi",".fli",".mkv",".mts"]
+
+    def get_story_type(self, data):
+        image_formats = [".jpg", ".jpeg", ".png"]
+        video_formats = [
+            ".mp4",
+            ".mov",
+            ".wmv",
+            ".webm",
+            ".avi",
+            ".fli",
+            ".mkv",
+            ".mts",
+        ]
         name, extension = os.path.splitext(data.story.name)
         if extension.lower() in image_formats:
             return "image"
@@ -54,7 +72,17 @@ class StoryModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Story
-        fields = ["id", "user", "story", "post_at", "ends_at", "duration","story_views","finish","story_type"]
+        fields = [
+            "id",
+            "user",
+            "story",
+            "post_at",
+            "ends_at",
+            "duration",
+            "story_views",
+            "finish",
+            "story_type",
+        ]
 
 
 """delete story serializer"""
@@ -129,7 +157,9 @@ class GetUserFollowingsStoriesModelSerializer(serializers.ModelSerializer):
 
     def get_stories(self, data):
         return StoryModelSerializer(
-            Story.objects.select_related().filter(user=data.user_to, ends_at__gt=datetime.today()),
+            Story.objects.select_related().filter(
+                user=data.user_to, ends_at__gt=datetime.today()
+            ),
             many=True,
             context=self.context,
         ).data
@@ -138,7 +168,6 @@ class GetUserFollowingsStoriesModelSerializer(serializers.ModelSerializer):
 """Get Post model serializer"""
 
 class GetPostModelSerializer(serializers.ModelSerializer):
-
     user = serializers.SerializerMethodField("get_profile")
     duration = serializers.SerializerMethodField("get_post_duration")
     comments = serializers.SerializerMethodField("get_post_comments")
@@ -148,48 +177,61 @@ class GetPostModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ["id","user","description","post","duration","created_at","updated_at","comments","liked_by","total_comments","total_likes"]
+        fields = [
+            "id",
+            "user",
+            "description",
+            "post",
+            "duration",
+            "created_at",
+            "updated_at",
+            "comments",
+            "liked_by",
+            "total_comments",
+            "total_likes",
+        ]
 
     def get_profile(self, data):
         return ProfileModelSerializer(
             Profile.objects.get(user=data.user), context=self.context
         ).data
 
-    def get_post_duration(self,data):
+    def get_post_duration(self, data):
         difference = datetime.now() - data.created_at.replace(tzinfo=None)
         m, s = divmod(difference.total_seconds(), 60)
-        hours  = int(m//60)
+        hours = int(m // 60)
         if hours > 1:
             return f"{hours} hours ago"
         else:
             return f"{int(m%60)} minutes ago"
 
-    def get_post_comments(self,data):
+    def get_post_comments(self, data):
         post = Post.objects.get(id=data.id)
         post_comments = post.post_comment.all()
         self.comments_count = post_comments.count()
-        return GetPostCommentModelSerializer(post_comments,many=True,context=self.context).data
+        return GetPostCommentModelSerializer(
+            post_comments, many=True, context=self.context
+        ).data
 
-    def count_comments(self,data):
+    def count_comments(self, data):
         return self.comments_count
 
-    def get_post_liked_by_user(self,data):
+    def get_post_liked_by_user(self, data):
         post = Post.objects.get(id=data.id)
         post_liked_user = post.post_like.values()
         self.total_likes = post_liked_user.count()
-        return [users['user_id'] for users in post_liked_user ]
+        return [users["user_id"] for users in post_liked_user]
 
-    def get_total_likes(self,data):
+    def get_total_likes(self, data):
         return self.total_likes
 
 
 """upload post model serializer"""
 
 class UploadPostModelSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = Post
-        fields = ["post","description"]
+        fields = ["post", "description"]
 
 
 """delete post serializer"""
@@ -205,7 +247,6 @@ class DeletePostSerializer(serializers.Serializer):
 """post comment model serializer"""
 
 class PostCommentModelSerializer(serializers.ModelSerializer):
-
     post_id = serializers.CharField()
 
     class Meta:
@@ -219,19 +260,13 @@ class PostCommentModelSerializer(serializers.ModelSerializer):
         except Post.DoesNotExist:
             raise serializers.ValidationError(
                 {
-                    "status_code" : status.HTTP_400_BAD_REQUEST,
-                    "message" : "bad request",
-                    "data" : {
-                        "post_id" : [
-                            "This post_id is invalid" 
-                        ]
-                    }
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "bad request",
+                    "data": {"post_id": ["This post_id is invalid"]},
                 }
             )
         post_comment = PostComment.objects.create(
-            user = request.user,
-            post = post,
-            comment = self.validated_data.get("comment")
+            user=request.user, post=post, comment=self.validated_data.get("comment")
         )
         return post_comment
 
@@ -243,19 +278,21 @@ class DeletePostCommentSerializer(serializers.Serializer):
 
     def delete(self):
         request = self.context["request"]
-        post_comment = PostComment.objects.filter(user=request.user,id=self.validated_data.get("comment_id"))
+        post_comment = PostComment.objects.filter(
+            user=request.user, id=self.validated_data.get("comment_id")
+        )
         if post_comment.exists():
             post_comment.first().delete()
             return None
         raise serializers.ValidationError(
             {
-                "status_code" : status.HTTP_400_BAD_REQUEST,
-                "message" : "bad request",
-                "data" : {
-                    "comment_id" : [
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": "bad request",
+                "data": {
+                    "comment_id": [
                         "comment_id is either invalid nor associate with current user"
                     ]
-                }
+                },
             }
         )
 
@@ -263,27 +300,32 @@ class DeletePostCommentSerializer(serializers.Serializer):
 """get post comments model serializer"""
 
 class GetPostCommentModelSerializer(serializers.ModelSerializer):
-
     duration = serializers.SerializerMethodField("get_comment_duration")
     user = serializers.SerializerMethodField("get_user_profile")
 
     class Meta:
         model = PostComment
-        fields = ["id","user","post","comment","created_at","duration"]
+        fields = ["id", "user", "post", "comment", "created_at", "duration"]
 
-    def get_comment_duration(self,data):
+    def get_comment_duration(self, data):
         difference = datetime.now() - data.created_at.replace(tzinfo=None)
         m, s = divmod(difference.total_seconds(), 60)
-        hours  = int(m//60)
+        hours = int(m // 60)
         if hours > 1:
             return f"{hours} hours ago"
         else:
             return f"{int(m%60)} minutes ago"
 
-    def get_user_profile(self,data):
+    def get_user_profile(self, data):
         user = Talvidouser.objects.get(firebase_uid=data.user)
-        user_serializer = UserModelSerializer(user,context={"request":self.context['request']}).data
-        user_serializer['image'] = "https://"+self.context['request'].META['HTTP_HOST'] + user.profile.image.url
+        user_serializer = UserModelSerializer(
+            user, context={"request": self.context["request"]}
+        ).data
+        user_serializer["image"] = (
+            "https://"
+            + self.context["request"].META["HTTP_HOST"]
+            + user.profile.image.url
+        )
         return user_serializer
 
 
@@ -293,39 +335,37 @@ class AddPostLikeSerializer(serializers.Serializer):
     post_id = serializers.CharField()
 
     def create(self, validated_data):
-        request = self.context['request']
+        request = self.context["request"]
         try:
             post = Post.objects.get(id=self.validated_data.get("post_id"))
         except Post.DoesNotExist:
             raise serializers.ValidationError(
                 {
-                    "status_code" : status.HTTP_400_BAD_REQUEST,
-                    "message" : "bad request",
-                    "data" : {
-                        "post_id" : [
-                            "post_id is invalid"
-                        ]
-                    }
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "bad request",
+                    "data": {"post_id": ["post_id is invalid"]},
                 }
             )
-        post_like = PostLike.objects.get_or_create(user=request.user,post=post)
+        post_like = PostLike.objects.get_or_create(user=request.user, post=post)
         return post_like
 
     def delete(self):
-        request = self.context['request']
-        post_like = PostLike.objects.filter(user=request.user,post=self.validated_data.get("post_id"))
+        request = self.context["request"]
+        post_like = PostLike.objects.filter(
+            user=request.user, post=self.validated_data.get("post_id")
+        )
         if post_like.exists():
             post_like.delete()
             return None
         raise serializers.ValidationError(
             {
-                "status_code" : status.HTTP_400_BAD_REQUEST,
-                "message" : "bad request",
-                "data" : {
-                    "comment_id" : [
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": "bad request",
+                "data": {
+                    "comment_id": [
                         "post_id is either invalid nor like associate with current user"
                     ]
-                }
+                },
             }
         )
 
@@ -338,36 +378,34 @@ class AddPostCommentLikeSerializer(serializers.Serializer):
     def create(self, validated_data):
         request = self.context["request"]
         try:
-            post_comment = PostComment.objects.get(id=self.validated_data.get("comment_id"))
+            post_comment = PostComment.objects.get(
+                id=self.validated_data.get("comment_id")
+            )
         except PostComment.DoesNotExist:
             raise serializers.ValidationError(
                 {
-                    "status_code" : status.HTTP_400_BAD_REQUEST,
-                    "message" : "bad request",
-                    "data" : {
-                        "post_id" : [
-                            "comment_id is invalid"
-                        ]
-                    }
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "bad request",
+                    "data": {"post_id": ["comment_id is invalid"]},
                 }
             )
-        post_comment_like = PostCommentLike.objects.get_or_create(user=request.user,comment=post_comment)
+        post_comment_like = PostCommentLike.objects.get_or_create(
+            user=request.user, comment=post_comment
+        )
         return post_comment_like
 
     def delete(self):
-        request = self.context['request']
-        post_comment_like = PostCommentLike.objects.filter(user=request.user,comment=self.validated_data.get("comment_id"))
+        request = self.context["request"]
+        post_comment_like = PostCommentLike.objects.filter(
+            user=request.user, comment=self.validated_data.get("comment_id")
+        )
         if post_comment_like.exists():
             post_comment_like.delete()
             return None
         raise serializers.ValidationError(
             {
-                "status_code" : status.HTTP_400_BAD_REQUEST,
-                "message" : "bad request",
-                "data" : {
-                    "comment_id" : [
-                        "comment_id is invalid"
-                    ]
-                }
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": "bad request",
+                "data": {"comment_id": ["comment_id is invalid"]},
             }
         )

@@ -1,13 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from talvido_app.models import (
-    Story,
-    StoryViews,
-    Follow,
-    Talvidouser,
-    Post
-)
+from talvido_app.models import Story, StoryViews, Follow, Talvidouser, Post
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
 from . import (
@@ -36,7 +30,9 @@ class ActiveStoryAPIView(APIView):
 
     def get(self, request):
         """filter the active stories of current user"""
-        story = Story.objects.select_related().filter(user=request.user, ends_at__gt=datetime.today())
+        story = Story.objects.select_related().filter(
+            user=request.user, ends_at__gt=datetime.today()
+        )
         """serialize the data"""
         story_serializer = StoryModelSerializer(
             story, many=True, context={"request": request}
@@ -214,32 +210,34 @@ class GetAuthUserActivePosts(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self,request,id=None):
+    def get(self, request, id=None):
         user = Talvidouser.objects.get(firebase_uid=request.user)
         if id is not None:
             try:
                 post = user.post_user.get(id=id)
             except Post.DoesNotExist:
                 response = {
-                    "status_code" : status.HTTP_400_BAD_REQUEST,
-                    "message" : "bad request",
-                    "data" : {
-                        "post_id" : [
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "bad request",
+                    "data": {
+                        "post_id": [
                             "The post id is either invalid nor associate with current user"
                         ]
-                    }
+                    },
                 }
-                return Response(response,status=status.HTTP_400_BAD_REQUEST)
-            post_serializer = GetPostModelSerializer(post,context={"request":request})
+                return Response(response, status=status.HTTP_400_BAD_REQUEST)
+            post_serializer = GetPostModelSerializer(post, context={"request": request})
         else:
             posts = user.post_user.all().order_by("-created_at")
-            post_serializer = GetPostModelSerializer(posts,many=True,context={"request":request})
+            post_serializer = GetPostModelSerializer(
+                posts, many=True, context={"request": request}
+            )
         response = {
-            "status_code" : status.HTTP_200_OK,
-            "message" : "ok",
-            "data" : post_serializer.data 
+            "status_code": status.HTTP_200_OK,
+            "message": "ok",
+            "data": post_serializer.data,
         }
-        return Response(response,status=status.HTTP_200_OK)
+        return Response(response, status=status.HTTP_200_OK)
 
 
 """This API will upload post for authenticated user"""
@@ -248,22 +246,22 @@ class UploadPostAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def post(self,request):
+    def post(self, request):
         upload_post_serializer = UploadPostModelSerializer(data=request.data)
         if upload_post_serializer.is_valid():
             upload_post_serializer.save(user=request.user)
             response = {
-                "status_code" : status.HTTP_201_CREATED,
-                "message" : "ok",
+                "status_code": status.HTTP_201_CREATED,
+                "message": "ok",
             }
-            return Response(response,status=status.HTTP_201_CREATED)
+            return Response(response, status=status.HTTP_201_CREATED)
 
         response = {
-            "status_code" : status.HTTP_400_BAD_REQUEST,
-            "message" : "bad request",
-            "data" : upload_post_serializer.errors
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": upload_post_serializer.errors,
         }
-        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
 """This api will delete the post"""
@@ -315,22 +313,24 @@ class PostCommentAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def post(self,request):
-        post_comment_serializer = PostCommentModelSerializer(data=request.data,context={"request":request})
+    def post(self, request):
+        post_comment_serializer = PostCommentModelSerializer(
+            data=request.data, context={"request": request}
+        )
         if post_comment_serializer.is_valid():
             post_comment_serializer.save()
             response = {
-                "status_code" : status.HTTP_201_CREATED,
-                "message" : "comment created"
+                "status_code": status.HTTP_201_CREATED,
+                "message": "comment created",
             }
             return Response(response, status=status.HTTP_201_CREATED)
-        
+
         response = {
-            "status_code" : status.HTTP_400_BAD_REQUEST,
-            "message" : "bad request",
-            "data" : post_comment_serializer.errors
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": post_comment_serializer.errors,
         }
-        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
 """This API will delete the comment from post"""
@@ -339,22 +339,24 @@ class DeletePostCommentAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def delete(self,request):
-        delete_post_comment_serializer = DeletePostCommentSerializer(data=request.data, context={"request":request})
+    def delete(self, request):
+        delete_post_comment_serializer = DeletePostCommentSerializer(
+            data=request.data, context={"request": request}
+        )
         if delete_post_comment_serializer.is_valid():
             delete_post_comment_serializer.delete()
             response = {
-                "status_code" : status.HTTP_204_NO_CONTENT,
-                "message" : "comment deleted"
+                "status_code": status.HTTP_204_NO_CONTENT,
+                "message": "comment deleted",
             }
-            return Response(response,status=status.HTTP_204_NO_CONTENT)
+            return Response(response, status=status.HTTP_204_NO_CONTENT)
 
         response = {
-            "status_code" : status.HTTP_400_BAD_REQUEST,
-            "message" : "bad request",
-            "data" : delete_post_comment_serializer.errors
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": delete_post_comment_serializer.errors,
         }
-        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
 """This API will add like to post"""
@@ -363,22 +365,24 @@ class AddPostLikeAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def post(self,request):
-        add_post_like_serializer = AddPostLikeSerializer(data=request.data,context={"request":request})
+    def post(self, request):
+        add_post_like_serializer = AddPostLikeSerializer(
+            data=request.data, context={"request": request}
+        )
         if add_post_like_serializer.is_valid():
             add_post_like_serializer.save()
             response = {
-                "status_code" : status.HTTP_201_CREATED,
-                "messages" : "liked post"
+                "status_code": status.HTTP_201_CREATED,
+                "messages": "liked post",
             }
-            return Response(response,status=status.HTTP_201_CREATED)
+            return Response(response, status=status.HTTP_201_CREATED)
 
         response = {
-            "status_code" : status.HTTP_400_BAD_REQUEST,
-            "message" : "bad request",
-            "data" : add_post_like_serializer.errors
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": add_post_like_serializer.errors,
         }
-        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
 """This API will remove like from post"""
@@ -386,23 +390,25 @@ class AddPostLikeAPIView(APIView):
 class RemovePostLikeAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
-    
-    def delete(self,request):
-        add_post_like_serializer = AddPostLikeSerializer(data=request.data,context={"request":request})
+
+    def delete(self, request):
+        add_post_like_serializer = AddPostLikeSerializer(
+            data=request.data, context={"request": request}
+        )
         if add_post_like_serializer.is_valid():
             add_post_like_serializer.delete()
             response = {
-                "status_code" : status.HTTP_204_NO_CONTENT,
-                "messages" : "liked removed"
+                "status_code": status.HTTP_204_NO_CONTENT,
+                "messages": "liked removed",
             }
-            return Response(response,status=status.HTTP_204_NO_CONTENT)
+            return Response(response, status=status.HTTP_204_NO_CONTENT)
 
         response = {
-            "status_code" : status.HTTP_400_BAD_REQUEST,
-            "message" : "bad request",
-            "data" : add_post_like_serializer.errors
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": add_post_like_serializer.errors,
         }
-        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
 """This API will get all the posts of user followings"""
@@ -434,23 +440,25 @@ class AddPostCommentLikeAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def post(self,request):
-        add_post_comment_like_serializer = AddPostCommentLikeSerializer(data=request.data,context={"request":request})
-        
+    def post(self, request):
+        add_post_comment_like_serializer = AddPostCommentLikeSerializer(
+            data=request.data, context={"request": request}
+        )
+
         if add_post_comment_like_serializer.is_valid():
             add_post_comment_like_serializer.save()
             response = {
-                "status_code" : status.HTTP_201_CREATED,
-                "message" : "comment like added"
+                "status_code": status.HTTP_201_CREATED,
+                "message": "comment like added",
             }
-            return Response(response,status=status.HTTP_201_CREATED)
-        
+            return Response(response, status=status.HTTP_201_CREATED)
+
         response = {
-            "status_code" : status.HTTP_400_BAD_REQUEST,
-            "message" : "bad request",
-            "data" : add_post_comment_like_serializer.data
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": add_post_comment_like_serializer.data,
         }
-        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
 """This API will add like to post comment"""
@@ -458,21 +466,23 @@ class AddPostCommentLikeAPIView(APIView):
 class RemovePostCommentLikeAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
-    
-    def delete(self,request):
-        add_post_comment_like_serializer = AddPostCommentLikeSerializer(data=request.data,context={"request":request})
-        
+
+    def delete(self, request):
+        add_post_comment_like_serializer = AddPostCommentLikeSerializer(
+            data=request.data, context={"request": request}
+        )
+
         if add_post_comment_like_serializer.is_valid():
             add_post_comment_like_serializer.delete()
             response = {
-                "status_code" : status.HTTP_204_NO_CONTENT,
-                "message" : "comment like removed"
+                "status_code": status.HTTP_204_NO_CONTENT,
+                "message": "comment like removed",
             }
-            return Response(response,status=status.HTTP_204_NO_CONTENT)
-        
+            return Response(response, status=status.HTTP_204_NO_CONTENT)
+
         response = {
-            "status_code" : status.HTTP_400_BAD_REQUEST,
-            "message" : "bad request",
-            "data" : add_post_comment_like_serializer.data
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": add_post_comment_like_serializer.data,
         }
-        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
