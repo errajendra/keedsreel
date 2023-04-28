@@ -22,6 +22,7 @@ from . import (
     PostCommentModelSerializer,
     DeletePostCommentSerializer,
     AddPostLikeSerializer,
+    FollowingModelSerializer,
 )
 from datetime import datetime
 
@@ -401,3 +402,26 @@ class RemovePostLikeAPIView(APIView):
             "data" : add_post_like_serializer.errors
         }
         return Response(response,status=status.HTTP_400_BAD_REQUEST)
+
+
+"""This API will get all the posts of user followings"""
+
+class GetUserFollowingsPost(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = Talvidouser.objects.get(firebase_uid=request.user)
+        following = user.user_from.all()
+        followings_serializer = FollowingModelSerializer(
+            following, many=True, context={"request": request}
+        )
+        response = {
+            "status_code": status.HTTP_200_OK,
+            "message": "ok",
+            "data": {
+                "users": followings_serializer.data,
+                "followings": following.count(),
+            },
+        }
+        return Response(response, status=status.HTTP_200_OK)

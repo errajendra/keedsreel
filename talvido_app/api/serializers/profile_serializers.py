@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from talvido_app.models import Talvidouser, Profile, Follow
+from talvido_app.models import Talvidouser, Profile, Follow, Post
 
 
 """user model serializer"""
@@ -94,12 +94,18 @@ class FollowersModelSerializer(serializers.ModelSerializer):
 
 class FollowingModelSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField("get_profile")
+    posts = serializers.SerializerMethodField("get_user_post")
 
     class Meta:
         model = Follow
-        fields = ["user", "created_at"]
+        fields = ["user", "posts", "created_at"]
 
     def get_profile(self, data):
         return ProfileModelSerializer(
             Profile.objects.get(user=data.user_to), context=self.context
         ).data
+
+    def get_user_post(self,data):
+        from talvido_app.api.serializers.post_serializers import GetPostModelSerializer
+        posts = Post.objects.filter(user=data.user_to)
+        return GetPostModelSerializer(posts,many=True,context=self.context).data

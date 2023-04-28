@@ -9,7 +9,7 @@ from talvido_app.models import (
     Talvidouser,
     PostLike,
 )
-from talvido_app.api.serializers.profile_serializers import ProfileModelSerializer, UserModelSerializer
+from talvido_app.api.serializers.profile_serializers import ProfileModelSerializer, UserModelSerializer, FollowingModelSerializer
 from datetime import datetime
 import os
 
@@ -143,10 +143,11 @@ class GetPostModelSerializer(serializers.ModelSerializer):
     comments = serializers.SerializerMethodField("get_post_comments")
     total_comments = serializers.SerializerMethodField("count_comments")
     liked_by = serializers.SerializerMethodField("get_post_liked_by_user")
+    total_likes = serializers.SerializerMethodField("get_total_likes")
 
     class Meta:
         model = Post
-        fields = ["id","user","description","post","duration","created_at","updated_at","comments","total_comments","liked_by"]
+        fields = ["id","user","description","post","duration","created_at","updated_at","comments","liked_by","total_comments","total_likes"]
 
     def get_profile(self, data):
         return ProfileModelSerializer(
@@ -174,7 +175,11 @@ class GetPostModelSerializer(serializers.ModelSerializer):
     def get_post_liked_by_user(self,data):
         post = Post.objects.get(id=data.id)
         post_liked_user = post.post_like.values()
+        self.total_likes = post_liked_user.count()
         return [users['user_id'] for users in post_liked_user ]
+
+    def get_total_likes(self,data):
+        return self.total_likes
 
 
 """upload post model serializer"""
