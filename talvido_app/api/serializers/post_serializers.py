@@ -218,9 +218,9 @@ class GetPostModelSerializer(serializers.ModelSerializer):
 
     def get_post_liked_by_user(self, data):
         post = Post.objects.get(id=data.id)
-        post_liked_user = post.post_like.values()
+        post_liked_user = post.post_like.all()
         self.total_likes = post_liked_user.count()
-        return [users["user_id"] for users in post_liked_user]
+        return GetPostLikeModelSerializer(post_liked_user,many=True).data
 
     def get_total_likes(self, data):
         return self.total_likes
@@ -428,4 +428,13 @@ class GetPostCommentLikeModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PostCommentLike
+        fields = ["id", "user"]
+
+
+"""get post like model serializer"""
+
+class GetPostLikeModelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PostComment
         fields = ["id", "user"]
