@@ -9,7 +9,7 @@ from talvido_app.models import (
     Talvidouser,
     PostLike,
 )
-from talvido_app.api.serializers.profile_serializers import ProfileModelSerializer, UserModelSerializer, FollowingModelSerializer
+from talvido_app.api.serializers.profile_serializers import ProfileModelSerializer, UserModelSerializer
 from datetime import datetime
 import os
 
