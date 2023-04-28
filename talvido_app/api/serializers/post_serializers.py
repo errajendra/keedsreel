@@ -11,6 +11,7 @@ from talvido_app.models import (
 )
 from talvido_app.api.serializers.profile_serializers import ProfileModelSerializer, UserModelSerializer
 from datetime import datetime
+import os
 
 
 """ story model serializer"""
@@ -21,6 +22,7 @@ class StoryModelSerializer(serializers.ModelSerializer):
     story = serializers.FileField()
     story_views = serializers.SerializerMethodField("get_story_views",read_only=True)
     finish = serializers.CharField(default=0,read_only=True)
+    story_type = serializers.SerializerMethodField("get_story_type",read_only=True)
 
     def get_story_duration(self, data):
         difference = data.ends_at.replace(tzinfo=None) - datetime.now()
@@ -38,10 +40,20 @@ class StoryModelSerializer(serializers.ModelSerializer):
         story = Story.objects.get(id=data.id)
         story_views = story.story_content.all().count()
         return story_views
+    
+    def get_story_type(self,data):
+        image_formats = [".jpg",".jpeg",".png"]
+        video_formats = [".mp4",".mov",".wmv",".webm",".avi",".fli",".mkv",".mts"]
+        name, extension = os.path.splitext(data.story.name)
+        if extension.lower() in image_formats:
+            return "image"
+        elif extension.lower() in video_formats:
+            return "video"
+        return []
 
     class Meta:
         model = Story
-        fields = ["id", "user", "story", "post_at", "ends_at", "duration","story_views","finish"]
+        fields = ["id", "user", "story", "post_at", "ends_at", "duration","story_views","finish","story_type"]
 
 
 """delete story serializer"""
