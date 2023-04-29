@@ -31,6 +31,7 @@ from . import (
     AddPostCommentLikeAPIView,
     RemovePostCommentLikeAPIView,
     SearchByUsernameAPIView,
+    GetStoryHighlightsAPIView,
 )
 
 
@@ -117,6 +118,11 @@ urlpatterns = [
         "user/posts/delete/",
         DeletePostAPIView.as_view(),
         name="delete-user-posts-api"
+    ),
+    path(
+        "stories/highlights/",
+        GetStoryHighlightsAPIView.as_view(),
+        name="stories-highlights-api"
     ),
     # comment API'S endpoints
     path(

@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from talvido_app.models import Story, StoryViews, Follow, Talvidouser, Post
+from talvido_app.models import Story, StoryViews, Follow, Talvidouser, Post, StoryHighlight
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
 from . import (
@@ -18,6 +18,7 @@ from . import (
     AddPostLikeSerializer,
     FollowingModelSerializer,
     AddPostCommentLikeSerializer,
+    GetStoryHighlightsModelSerializer,
 )
 from datetime import datetime
 
@@ -486,3 +487,21 @@ class RemovePostCommentLikeAPIView(APIView):
             "data": add_post_comment_like_serializer.data,
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+
+"""This API will show the user story highlights"""
+
+class GetStoryHighlightsAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = Talvidouser.objects.get(firebase_uid=request.user)
+        story_highlights = user.story_hightlight_user.all()
+        story_hightlights_serializer = GetStoryHighlightsModelSerializer(story_highlights, many=True, context={"request":request})
+        response = {
+            "status_code" : status.HTTP_200_OK,
+            "message" : "ok",
+            "data" : story_hightlights_serializer.data
+        }
+        return Response(response, status=status.HTTP_200_OK)

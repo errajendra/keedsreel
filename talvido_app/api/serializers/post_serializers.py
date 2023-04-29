@@ -9,6 +9,7 @@ from talvido_app.models import (
     Talvidouser,
     PostLike,
     PostCommentLike,
+    StoryHighlight,
 )
 from talvido_app.api.serializers.profile_serializers import (
     ProfileModelSerializer,
@@ -446,3 +447,15 @@ class GetPostLikeModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostComment
         fields = ["id", "user"]
+
+
+"""get story highlights model serializer"""
+
+class GetStoryHighlightsModelSerializer(serializers.ModelSerializer):
+
+    user = UserModelSerializer()
+    stories = StoryModelSerializer(many=True)
+
+    class Meta:
+        model = StoryHighlight
+        fields = ["user", "title", "stories", "created_at", "updated_at"]
