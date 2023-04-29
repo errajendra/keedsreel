@@ -11,6 +11,10 @@ from .models import (
     PostLike,
     PostCommentLike,
     Notification,
+    Reel,
+    ReelLike,
+    ReelComment,
+    ReelCommentLike
 )
 from django.contrib.auth.admin import UserAdmin
 
@@ -132,3 +136,27 @@ class PostCommentLikeModelAdmin(admin.ModelAdmin):
 @admin.register(Notification)
 class NotificationModelAdmin(admin.ModelAdmin):
     list_display = ["id", "user_to", "user_from", "notification_type", "post_like", "post_comment", "post_comment_like", "created_at", "updated_at"]
+
+
+""" Reel post data register."""
+@admin.register(Reel)
+class ReelAdmin(admin.ModelAdmin):
+    list_display = ["id", "user", "description", "created_at", "updated_at"]
+
+
+""" Reel Like data register."""
+@admin.register(ReelLike)
+class ReelAdmin(admin.ModelAdmin):
+    list_display = ["id", "user", "reel"]
+
+
+""" Reel Comment data register."""
+@admin.register(ReelComment)
+class ReelAdmin(admin.ModelAdmin):
+    list_display = ["id", "user", "reel"]
+
+
+""" Reel Comment Like data register."""
+@admin.register(ReelCommentLike)
+class ReelAdmin(admin.ModelAdmin):
+    list_display = ["id", "user", "comment"]

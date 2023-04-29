@@ -228,3 +228,76 @@ class Notification(BaseModel):
 
     def __str__(self):
         return str(self.id)
+
+
+
+""" Reel data model """
+class Reel(BaseModel):
+    user = models.ForeignKey(
+        Talvidouser,
+        verbose_name="User",
+        on_delete=models.CASCADE,
+        related_name="reel_user",
+    )
+    description = models.TextField(blank=True, null=True)
+    reel = models.FileField(verbose_name="Post", upload_to="reel/")
+
+    def __str__(self):
+        return str(self.user)
+
+
+
+"""This model will store the comments under Reels """
+class ReelComment(BaseModel):
+    user = models.ForeignKey(
+        Talvidouser,
+        verbose_name="User",
+        on_delete=models.CASCADE
+    )
+    reel = models.ForeignKey(
+        Reel, verbose_name="Reel", on_delete=models.CASCADE
+    )
+    comment = models.TextField(verbose_name="Comment")
+
+    def __str__(self):
+        return str(self.id)
+
+
+
+""" This model will store reel like data"""
+class ReelLike(BaseModel):
+    user = models.ForeignKey(
+        Talvidouser,
+        verbose_name="User",
+        on_delete=models.CASCADE,
+        related_name="reel_like_user",
+    )
+    reel = models.ForeignKey(
+        Reel, on_delete=models.CASCADE, related_name="reel_like"
+    )
+    
+    class Meta:
+        unique_together = ('user', 'reel')
+
+    def __str__(self):
+        return str(self.id)
+
+
+""" This model will store Reel Comment like data"""
+class ReelCommentLike(BaseModel):
+    user = models.ForeignKey(
+        Talvidouser,
+        verbose_name="User",
+        on_delete=models.CASCADE,
+        related_name="reel_comment_like_user",
+    )
+    comment = models.ForeignKey(
+        ReelComment,
+        verbose_name="Comment",
+        on_delete=models.CASCADE,
+        related_name="reel_comment"
+    )
+
+    def __str__(self):
+        return str(self.id)
+

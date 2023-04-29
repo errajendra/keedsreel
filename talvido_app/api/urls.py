@@ -1,4 +1,7 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+router = DefaultRouter()
+from .api_reels import ReelViewset
 from . import (
     RegisterMobileOTPAPIView,
     LoginMobileOTPAPIView,
@@ -32,8 +35,12 @@ from . import (
     RemovePostCommentLikeAPIView,
 )
 
+router.register(r'reel', ReelViewset, basename='reel')
 
 urlpatterns = [
+    # router urls
+    path('', include(router.urls)),
+    
     # auth api's endpoints
     path(
         "auth/register/mobile-otp/",
