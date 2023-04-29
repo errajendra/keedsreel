@@ -168,7 +168,7 @@ class GetUserFollowingsStoriesModelSerializer(serializers.ModelSerializer):
 """Get Post model serializer"""
 
 class GetPostModelSerializer(serializers.ModelSerializer):
-    user = UserModelSerializer()
+    user = serializers.SerializerMethodField("get_profile")
     duration = serializers.SerializerMethodField("get_post_duration")
     comments = serializers.SerializerMethodField("get_post_comments")
     total_comments = serializers.SerializerMethodField("count_comments")
@@ -192,10 +192,17 @@ class GetPostModelSerializer(serializers.ModelSerializer):
         ]
 
     def get_profile(self, data):
-        return []
-    # ProfileModelSerializer(
-    #         Profile.objects.get(user=data.user), context=self.context
-    #     ).data
+        user = Talvidouser.objects.get(firebase_uid=data.user)
+        user_serializer = UserModelSerializer(
+            user, context={"request": self.context["request"]}
+        ).data
+        user_serializer["image"] = (
+            "https://"
+            + self.context["request"].META["HTTP_HOST"]
+            + user.profile.image.url
+        )
+        return user_serializer
+
 
     def get_post_duration(self, data):
         difference = datetime.now() - data.created_at.replace(tzinfo=None)
