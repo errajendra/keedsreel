@@ -458,4 +458,4 @@ class GetStoryHighlightsModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StoryHighlight
-        fields = ["user", "title", "stories", "created_at", "updated_at"]
+        fields = ["id", "user", "title", "stories", "created_at", "updated_at"]
