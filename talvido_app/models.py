@@ -228,3 +228,19 @@ class Notification(BaseModel):
 
     def __str__(self):
         return str(self.id)
+
+
+"""This model will store user story highlights"""
+
+class StoryHighlight(BaseModel):
+    user = models.ForeignKey(
+        Talvidouser,
+        verbose_name="User",
+        on_delete=models.CASCADE,
+        related_name="story_hightlight_user",
+    )
+    title = models.CharField(verbose_name="Story Highlight Title", max_length=100)
+    stories = models.ManyToManyField(Story, verbose_name="Stories")
+
+    def __str__(self):
+        return str(self.id)
