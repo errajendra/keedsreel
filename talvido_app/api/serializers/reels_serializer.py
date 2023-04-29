@@ -20,3 +20,10 @@ class GetReelModelSerializer(serializers.ModelSerializer):
             + user.profile.image.url
         )
         return user_serializer
+
+
+class UploadUserReelsModelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Reel
+        fields = ["reel", "description"]

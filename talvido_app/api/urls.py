@@ -33,6 +33,7 @@ from . import (
     SearchByUsernameAPIView,
     GetStoryHighlightsAPIView,
     GetUserReelsAPIView,
+    UploadUserReelsAPIView,
 )
 
 
@@ -172,5 +173,10 @@ urlpatterns = [
         "user/reels/active/",
         GetUserReelsAPIView.as_view(),
         name="get-current-user-all-reels-api"
+    ),
+    path(
+        "user/reels/upload/",
+        UploadUserReelsAPIView.as_view(),
+        name="upload-current-user-reels-api"
     ),
 ]
