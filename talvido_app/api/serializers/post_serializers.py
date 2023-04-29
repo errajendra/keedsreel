@@ -11,7 +11,7 @@ from talvido_app.models import (
     PostCommentLike,
 )
 from talvido_app.api.serializers.profile_serializers import (
-    # ProfileModelSerializer,
+    ProfileModelSerializer,
     UserModelSerializer,
 )
 from datetime import datetime
