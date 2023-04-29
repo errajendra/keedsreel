@@ -207,3 +207,24 @@ class PostCommentLike(BaseModel):
 
     def __str__(self):
         return str(self.id)
+
+
+"""This model will store notifications"""
+
+class Notification(BaseModel):
+
+    NOTIFICATION_TYPE = (
+        ("POST_LIKE","POST_LIKE"),
+        ("POST_COMMENT","POST_COMMENT"),
+        ("POST_COMMENT_LIKE","POST_COMMENT_LIKE"),
+    )
+
+    user_to = models.ForeignKey(Talvidouser, verbose_name="User To", on_delete=models.CASCADE, related_name="notification_user_to")
+    user_from = models.ForeignKey(Talvidouser, verbose_name="User From", on_delete=models.CASCADE, related_name="notification_user_from")
+    notification_type = models.CharField(max_length=100, verbose_name="Notification Type", choices=NOTIFICATION_TYPE)
+    post_like = models.ForeignKey(PostLike, verbose_name="Post Like", on_delete=models.CASCADE, null=True, blank=True)
+    post_comment = models.ForeignKey(PostComment, verbose_name="Post Comment", on_delete=models.CASCADE, null=True, blank=True)
+    post_comment_like = models.ForeignKey(PostCommentLike, verbose_name="Post Comment Like", on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.id)

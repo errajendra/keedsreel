@@ -10,6 +10,7 @@ from .models import (
     PostComment,
     PostLike,
     PostCommentLike,
+    Notification,
 )
 from django.contrib.auth.admin import UserAdmin
 
@@ -124,3 +125,10 @@ class PostLikeModelAdmin(admin.ModelAdmin):
 @admin.register(PostCommentLike)
 class PostCommentLikeModelAdmin(admin.ModelAdmin):
     list_display = ["id", "user", "comment", "created_at", "updated_at"]
+
+
+"""Register notification model in django admin"""
+
+@admin.register(Notification)
+class NotificationModelAdmin(admin.ModelAdmin):
+    list_display = ["id", "user_to", "user_from", "notification_type", "post_like", "post_comment", "post_comment_like", "created_at", "updated_at"]
