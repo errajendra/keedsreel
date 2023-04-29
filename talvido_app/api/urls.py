@@ -32,6 +32,7 @@ from . import (
     RemovePostCommentLikeAPIView,
     SearchByUsernameAPIView,
     GetStoryHighlightsAPIView,
+    GetUserReelsAPIView,
 )
 
 
@@ -165,5 +166,11 @@ urlpatterns = [
         "search/account/",
         SearchByUsernameAPIView.as_view(),
         name="search-account-api"
+    ),
+    # reels API
+    path(
+        "user/reels/active/",
+        GetUserReelsAPIView.as_view(),
+        name="get-current-user-all-reels-api"
     ),
 ]
