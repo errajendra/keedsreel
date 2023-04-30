@@ -34,6 +34,8 @@ from . import (
     GetStoryHighlightsAPIView,
     GetUserReelsAPIView,
     UploadUserReelsAPIView,
+    GetUsersAllReelsAPIView,
+    GetTrendingReelsAPIView,
 )
 
 
@@ -173,6 +175,21 @@ urlpatterns = [
         "user/reels/active/",
         GetUserReelsAPIView.as_view(),
         name="get-current-user-all-reels-api"
+    ),
+    path(
+        "user/reels/active/<int:id>/",
+        GetUserReelsAPIView.as_view(),
+        name="get-particular-reels-api"
+    ),
+    path(
+        "users/reels/",
+        GetUsersAllReelsAPIView.as_view(),
+        name="get-users-all-reels-api"
+    ),
+    path(
+        "trending/reels/",
+        GetTrendingReelsAPIView.as_view(),
+        name="get-trending-reels-api"
     ),
     path(
         "user/reels/upload/",
