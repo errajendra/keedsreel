@@ -6,12 +6,17 @@ from talvido_app.api.serializers.search_serializers import (
 )
 from talvido_app.api.serializers.post_serializers import GetPostModelSerializer
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from talvido_app.firebase.authentication import FirebaseAuthentication
 
 
 """This API will search the user account by username and 
     return the result if matched"""
 
 class SearchByUsernameAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         search_username = request.query_params.get("username", " ")
         user = Talvidouser.objects.filter(username__icontains=search_username)
@@ -29,6 +34,9 @@ class SearchByUsernameAPIView(APIView):
 """This API will search the post by its description"""
 
 class SearchPostAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         post_query = request.query_params.get("post", " ")
         post = Post.objects.filter(description__icontains=post_query)
