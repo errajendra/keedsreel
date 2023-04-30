@@ -99,7 +99,7 @@ class GetTrendingReelsAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        reels = Reel.objects.select_related()[:2]
+        reels = Reel.objects.select_related()[:5]
         all_reels_serializer = GetReelModelSerializer(
             reels, many=True, context={"request": request}
         )

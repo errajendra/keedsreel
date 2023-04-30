@@ -36,6 +36,7 @@ from . import (
     UploadUserReelsAPIView,
     GetUsersAllReelsAPIView,
     GetTrendingReelsAPIView,
+    SearchPostAPIView,
 )
 
 
@@ -169,6 +170,11 @@ urlpatterns = [
         "search/account/",
         SearchByUsernameAPIView.as_view(),
         name="search-account-api"
+    ),
+    path(
+        "search/post/",
+        SearchPostAPIView.as_view(),
+        name="search-post-api"
     ),
     # reels API
     path(
