@@ -51,7 +51,7 @@ class UpdateProfileModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ["first_name", "last_name", "username", "mobile_number"]
+        fields = ["first_name", "last_name", "username", "mobile_number", "gender", "description", "location"]
 
     """override update method and update the talvido user information"""
 
