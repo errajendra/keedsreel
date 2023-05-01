@@ -20,7 +20,7 @@ from . import (
     AddPostCommentLikeSerializer,
     GetStoryHighlightsModelSerializer,
 )
-from rest_framework.parsers import MultiPartParser, JSONParser
+from rest_framework.parsers import MultiPartParser, JSONParser, FormParser, FileUploadParser
 from datetime import datetime
 # import the logging library
 import logging
@@ -251,7 +251,7 @@ class GetAuthUserActivePosts(APIView):
 class UploadPostAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
-    parser_classes = [MultiPartParser, JSONParser]
+    parser_classes = [MultiPartParser, JSONParser, FileUploadParser, FormParser]
 
     def post(self, request):
         logger.info('upload post api accessed at '+ str(datetime.now())+' hours! ' + " - " + str(request.data))
