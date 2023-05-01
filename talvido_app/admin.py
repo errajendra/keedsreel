@@ -15,7 +15,8 @@ from .models import (
     Reel,
     ReelLike,
     ReelComment,
-    ReelCommentLike
+    ReelCommentLike,
+    ReelView,
 )
 from django.contrib.auth.admin import UserAdmin
 
@@ -144,26 +145,38 @@ class NotificationModelAdmin(admin.ModelAdmin):
 @admin.register(StoryHighlight)
 class StoryHighlightModelAdmin(admin.ModelAdmin):
     list_display = ["id", "user", "title", "created_at", "updated_at"]
-    
-""" Reel post data register."""
+
+
+"""Register reel model in django admin"""
+
 @admin.register(Reel)
 class ReelAdmin(admin.ModelAdmin):
     list_display = ["id", "user", "description", "created_at", "updated_at"]
 
 
-""" Reel Like data register."""
+"""Register reel like model in django admin"""
+
 @admin.register(ReelLike)
-class ReelAdmin(admin.ModelAdmin):
+class ReelLikeAdmin(admin.ModelAdmin):
     list_display = ["id", "user", "reel"]
 
 
-""" Reel Comment data register."""
+"""Register reel comment model in django admin"""
+
 @admin.register(ReelComment)
-class ReelAdmin(admin.ModelAdmin):
+class ReelCommentAdmin(admin.ModelAdmin):
     list_display = ["id", "user", "reel"]
 
 
-""" Reel Comment Like data register."""
+"""Register reel comment model in django admin"""
+
 @admin.register(ReelCommentLike)
-class ReelAdmin(admin.ModelAdmin):
+class ReelCommentLikeAdmin(admin.ModelAdmin):
     list_display = ["id", "user", "comment"]
+
+
+"""Register reel comment model in django admin"""
+
+@admin.register(ReelView)
+class ReelViewAdmin(admin.ModelAdmin):
+    list_display = ["id", "reel", "views"]

@@ -318,3 +318,14 @@ class ReelCommentLike(BaseModel):
     def __str__(self):
         return str(self.id)
 
+
+"""This model will store the total views on reels"""
+
+class ReelView(BaseModel):
+    reel = models.OneToOneField(
+        Reel, on_delete=models.CASCADE, related_name="reel_view_reel", verbose_name="Reel"
+    )
+    views = models.IntegerField(verbose_name="Reel Views", default=0)
+
+    def __str__(self):
+        return str(self.reel)
