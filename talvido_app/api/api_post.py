@@ -257,10 +257,13 @@ class UploadPostAPIView(APIView):
         logger.info('upload post api accessed at '+ str(datetime.now())+' hours! ' + " - " + str(request.data))
         upload_post_serializer = UploadPostModelSerializer(data=request.data)
         if upload_post_serializer.is_valid():
-            upload_post_serializer.save(user=request.user)
+            post = upload_post_serializer.save(user=request.user)
             response = {
                 "status_code": status.HTTP_201_CREATED,
                 "message": "ok",
+                "data" : {
+                    "image" : "https://" + request.META["HTTP_HOST"] + post.post.url
+                }
             }
             return Response(response, status=status.HTTP_201_CREATED)
 
