@@ -255,6 +255,7 @@ class UploadPostAPIView(APIView):
 
     def post(self, request):
         logger.info('upload post api accessed at '+ str(datetime.now())+' hours! ' + " - " + str(request.data))
+        return Response(request.data)
         upload_post_serializer = UploadPostModelSerializer(data=request.data)
         if upload_post_serializer.is_valid():
             upload_post_serializer.save(user=request.user)
@@ -267,7 +268,7 @@ class UploadPostAPIView(APIView):
         response = {
             "status_code": status.HTTP_400_BAD_REQUEST,
             "message": "bad request",
-            "data": upload_post_serializer.errors,
+            "data": request.data
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
