@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from .serializers.reels_serializer import (
     GetReelModelSerializer,
     UploadUserReelsModelSerializer,
+    AddReelViewsSerializer,
 )
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
@@ -109,3 +110,22 @@ class GetTrendingReelsAPIView(APIView):
             "data": all_reels_serializer.data,
         }
         return Response(response, status=status.HTTP_200_OK)
+
+
+class AddReelViewAPIView(APIView):
+    def post(self, request):
+        reel_view_serializer = AddReelViewsSerializer(data=request.data)
+        if reel_view_serializer.is_valid():
+            reel_view_serializer.save()
+            response = {
+                "status_code" : status.HTTP_201_CREATED,
+                "message" : "reels view count"
+            }
+            return Response(response, status=status.HTTP_201_CREATED)
+        
+        response = {
+            "status_code" : status.HTTP_400_BAD_REQUEST,
+            "message" : "bad request",
+            "data" : reel_view_serializer.errors
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)

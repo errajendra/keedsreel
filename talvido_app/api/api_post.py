@@ -21,6 +21,10 @@ from . import (
     GetStoryHighlightsModelSerializer,
 )
 from datetime import datetime
+# import the logging library
+import logging
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 
 """This api return the active stories of an user"""
@@ -248,6 +252,7 @@ class UploadPostAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        logger.info('upload post api accessed at '+ str(datetime.now())+' hours! ' + " - " + str(request.data))
         upload_post_serializer = UploadPostModelSerializer(data=request.data)
         if upload_post_serializer.is_valid():
             upload_post_serializer.save(user=request.user)

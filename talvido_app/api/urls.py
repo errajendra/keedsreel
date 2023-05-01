@@ -37,6 +37,7 @@ from . import (
     GetUsersAllReelsAPIView,
     GetTrendingReelsAPIView,
     SearchPostAPIView,
+    AddReelViewAPIView,
 )
 
 
@@ -201,5 +202,10 @@ urlpatterns = [
         "user/reels/upload/",
         UploadUserReelsAPIView.as_view(),
         name="upload-current-user-reels-api"
+    ),
+    path(
+        "reels/views/add/",
+        AddReelViewAPIView.as_view(),
+        name="add-reel-view-api"
     ),
 ]
