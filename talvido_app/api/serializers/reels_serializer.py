@@ -8,10 +8,11 @@ class GetReelModelSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField("get_user_profile")
     reel_views = serializers.SerializerMethodField("get_reel_views")
     reel_liked_by = serializers.SerializerMethodField("get_liked_by_user_reel")
+    comments = serializers.SerializerMethodField("get_reel_comments")
 
     class Meta:
         model = Reel
-        fields = ["id", "user", "reel", "description", "reel_views", "reel_liked_by", "created_at", "updated_at"]
+        fields = ["id", "user", "reel", "description", "reel_views", "reel_liked_by", "comments", "created_at", "updated_at"]
     
     def get_user_profile(self, data):
         user = Talvidouser.objects.get(firebase_uid=data.user.firebase_uid)
@@ -29,6 +30,10 @@ class GetReelModelSerializer(serializers.ModelSerializer):
     def get_liked_by_user_reel(self, data):
         reel_like = data.user.reel_like_user.all()
         return GetReelLikeModelSerializer(reel_like, many=True, context=self.context).data
+    
+    def get_reel_comments(self, data):
+        reel_comment = data.reelcomment_set.all()
+        return GetReelCommentModelSerializer(reel_comment, many=True, context=self.context).data
 
 
 class UploadUserReelsModelSerializer(serializers.ModelSerializer):
@@ -123,6 +128,57 @@ class DeleteReelLikeSerializer(serializers.Serializer):
                     "data" : {
                         "reel_id" : [
                             "reel_liked_id is invalid or not associate with current user"
+                        ]
+                    }
+                }
+            )
+
+    def delete(self):
+        self.get_queryset().delete()
+        return None
+
+
+class AddReelCommentSerializer(serializers.ModelSerializer):
+    reel_id = serializers.CharField()
+
+    class Meta:
+        model = ReelComment
+        fields = ["reel_id", "comment"]
+
+
+class GetReelCommentModelSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField("get_user_profile")
+
+    class Meta:
+        model = ReelComment
+        fields = ["user", "reel", "comment", "created_at", "updated_at"]
+
+    def get_user_profile(self, data):
+        user = Talvidouser.objects.get(firebase_uid=data.user.firebase_uid)
+        user_serializer = UserModelSerializer(user).data
+        user_serializer["image"] = (
+            "https://"
+            + self.context["request"].META["HTTP_HOST"]
+            + user.profile.image.url
+        )
+        return user_serializer
+
+
+class RemoveReelCommentSerializer(serializers.Serializer):
+    reel_comment_id = serializers.CharField()
+
+    def get_queryset(self):
+        try:
+            reel_comment = ReelComment.objects.get(id=self.data.get("reel_comment_id"),user=self.context["request"].user)
+            return reel_comment
+        except ReelComment.DoesNotExist:
+            raise serializers.ValidationError(
+                {
+                    "status_code" : status.HTTP_400_BAD_REQUEST,
+                    "message" : "bad request",
+                    "data" : {
+                        "reel_id" : [
+                            "reel_comment_id is invalid or not associate with current user"
                         ]
                     }
                 }

@@ -6,7 +6,9 @@ from .serializers.reels_serializer import (
     UploadUserReelsModelSerializer,
     AddReelViewsSerializer,
     AddReelLikeSerializer,
-    DeleteReelLikeSerializer
+    DeleteReelLikeSerializer,
+    AddReelCommentSerializer,
+    RemoveReelCommentSerializer,
 )
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
@@ -173,5 +175,62 @@ class RemoveReelLikeAPIView(APIView):
             "status_code" : status.HTTP_400_BAD_REQUEST,
             "message" : "bad request",
             "data" : delete_reel_like_serializer.errors
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AddReelCommentAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        add_reel_comment_serializer = AddReelCommentSerializer(data=request.data)
+        if add_reel_comment_serializer.is_valid():
+            try:
+                reel = Reel.objects.get(id=add_reel_comment_serializer.validated_data.get("reel_id"))
+            except Reel.DoesNotExist:
+                response = {
+                    "status_code" : status.HTTP_400_BAD_REQUEST,
+                    "message" : "bad request",
+                    "data" : {
+                        "reel_id" : [
+                            "reel_id is invalid"
+                        ]
+                    }
+                }
+                return Response(response, status=status.HTTP_400_BAD_REQUEST)
+            add_reel_comment_serializer.save(user=request.user,reel=reel)
+            response = {
+                    "status_code" : status.HTTP_201_CREATED,
+                    "message" : "comment added on reel",
+                }
+            return Response(response, status=status.HTTP_201_CREATED)
+        
+        response = {
+            "status_code" : status.HTTP_400_BAD_REQUEST,
+            "message" : "bad request",
+            "data" : add_reel_comment_serializer.errors
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RemoveReelCommentAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        remove_reel_comment_serializer = RemoveReelCommentSerializer(data = request.data, context={"request":request})
+        if remove_reel_comment_serializer.is_valid():
+            remove_reel_comment_serializer.delete()
+            response = {
+                "status_code" : status.HTTP_204_NO_CONTENT,
+                "message" : "comment remove from reel"
+            }
+            return Response(response, status=status.HTTP_204_NO_CONTENT)
+        
+        response = {
+            "status_code" : status.HTTP_400_BAD_REQUEST,
+            "message" : "bad request",
+            "data" : remove_reel_comment_serializer.errors
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
