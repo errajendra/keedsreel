@@ -1,10 +1,15 @@
 from rest_framework import serializers, status
-from talvido_app.models import Reel, ReelComment, ReelLike, ReelCommentLike, Talvidouser, ReelView
+from talvido_app.models import (
+    Reel,
+    ReelComment,
+    ReelLike,
+    ReelCommentLike,
+    Talvidouser,
+)
 from talvido_app.api.serializers.profile_serializers import UserModelSerializer
 from datetime import datetime
 
 
-""" Reel List, Create, delete Serializer """
 class GetReelModelSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField("get_user_profile")
     reel_views = serializers.SerializerMethodField("get_reel_views")
@@ -16,8 +21,21 @@ class GetReelModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Reel
-        fields = ["id", "user", "reel", "description", "reel_views", "reel_liked_by", "comments", "duration", "total_likes", "total_comments","created_at", "updated_at"]
-    
+        fields = [
+            "id",
+            "user",
+            "reel",
+            "description",
+            "reel_views",
+            "reel_liked_by",
+            "comments",
+            "duration",
+            "total_likes",
+            "total_comments",
+            "created_at",
+            "updated_at",
+        ]
+
     def get_user_profile(self, data):
         user = Talvidouser.objects.get(firebase_uid=data.user.firebase_uid)
         user_serializer = UserModelSerializer(user).data
@@ -34,16 +52,20 @@ class GetReelModelSerializer(serializers.ModelSerializer):
     def get_liked_by_user_reel(self, data):
         reel_like = data.user.reel_like_user.all()
         self.total_likes = reel_like.count()
-        return GetReelLikeModelSerializer(reel_like, many=True, context=self.context).data
-    
+        return GetReelLikeModelSerializer(
+            reel_like, many=True, context=self.context
+        ).data
+
     def get_reel_comments(self, data):
         reel_comment = data.reelcomment_set.all()
         self.total_comments = reel_comment.count()
-        return GetReelCommentModelSerializer(reel_comment, many=True, context=self.context).data
+        return GetReelCommentModelSerializer(
+            reel_comment, many=True, context=self.context
+        ).data
 
     def get_total_likes(self, data):
         return self.total_likes
-    
+
     def get_total_comments(self, data):
         return self.total_comments
 
@@ -58,7 +80,6 @@ class GetReelModelSerializer(serializers.ModelSerializer):
 
 
 class UploadUserReelsModelSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Reel
         fields = ["reel", "description"]
@@ -73,13 +94,9 @@ class AddReelViewsSerializer(serializers.Serializer):
         except Reel.DoesNotExist:
             raise serializers.ValidationError(
                 {
-                    "status_code" : status.HTTP_400_BAD_REQUEST,
-                    "message" : "bad request",
-                    "data" : {
-                        "reel_id" : [
-                            "reel_id is invalid"
-                        ]
-                    }
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "bad request",
+                    "data": {"reel_id": ["reel_id is invalid"]},
                 }
             )
         reel_view = reel.reel_view_reel
@@ -98,20 +115,15 @@ class AddReelLikeSerializer(serializers.Serializer):
         except Reel.DoesNotExist:
             raise serializers.ValidationError(
                 {
-                    "status_code" : status.HTTP_400_BAD_REQUEST,
-                    "message" : "bad request",
-                    "data" : {
-                        "reel_id" : [
-                            "reel_id is invalid"
-                        ]
-                    }
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "bad request",
+                    "data": {"reel_id": ["reel_id is invalid"]},
                 }
             )
 
     def create(self, validate_data):
         reel_like = ReelLike.objects.get_or_create(
-            user = self.context["request"].user,
-            reel = self.get_queryset()
+            user=self.context["request"].user, reel=self.get_queryset()
         )
         return reel_like
 
@@ -139,18 +151,20 @@ class DeleteReelLikeSerializer(serializers.Serializer):
 
     def get_queryset(self):
         try:
-            reel_liked = ReelLike.objects.get(id=self.data.get("reel_liked_id"),user=self.context["request"].user)
+            reel_liked = ReelLike.objects.get(
+                id=self.data.get("reel_liked_id"), user=self.context["request"].user
+            )
             return reel_liked
         except ReelLike.DoesNotExist:
             raise serializers.ValidationError(
                 {
-                    "status_code" : status.HTTP_400_BAD_REQUEST,
-                    "message" : "bad request",
-                    "data" : {
-                        "reel_id" : [
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "bad request",
+                    "data": {
+                        "reel_id": [
                             "reel_liked_id is invalid or not associate with current user"
                         ]
-                    }
+                    },
                 }
             )
 
@@ -190,18 +204,20 @@ class RemoveReelCommentSerializer(serializers.Serializer):
 
     def get_queryset(self):
         try:
-            reel_comment = ReelComment.objects.get(id=self.data.get("reel_comment_id"),user=self.context["request"].user)
+            reel_comment = ReelComment.objects.get(
+                id=self.data.get("reel_comment_id"), user=self.context["request"].user
+            )
             return reel_comment
         except ReelComment.DoesNotExist:
             raise serializers.ValidationError(
                 {
-                    "status_code" : status.HTTP_400_BAD_REQUEST,
-                    "message" : "bad request",
-                    "data" : {
-                        "reel_id" : [
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "bad request",
+                    "data": {
+                        "reel_id": [
                             "reel_comment_id is invalid or not associate with current user"
                         ]
-                    }
+                    },
                 }
             )
 
