@@ -6,10 +6,11 @@ from talvido_app.api.serializers.profile_serializers import UserModelSerializer
 """ Reel List, Create, delete Serializer """
 class GetReelModelSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField("get_user_profile")
+    reel_views = serializers.SerializerMethodField("get_reel_views")
 
     class Meta:
         model = Reel
-        fields = ["id", "user", "reel", "description", "created_at", "updated_at"]
+        fields = ["id", "user", "reel", "description", "reel_views", "created_at", "updated_at"]
     
     def get_user_profile(self, data):
         user = Talvidouser.objects.get(firebase_uid=data.user.firebase_uid)
@@ -20,6 +21,9 @@ class GetReelModelSerializer(serializers.ModelSerializer):
             + user.profile.image.url
         )
         return user_serializer
+
+    def get_reel_views(self, data):
+        return Reel.objects.get(id=data.id).reel_view_reel.views
 
 
 class UploadUserReelsModelSerializer(serializers.ModelSerializer):
@@ -47,7 +51,7 @@ class AddReelViewsSerializer(serializers.Serializer):
                     }
                 }
             )
-        import pdb;pdb.set_trace()
-        reel_view = reel.reelview.views + 1
-        reel = reel_view.save()
+        reel_view = reel.reel_view_reel
+        reel_view.views += 1
+        reel_view.save()
         return reel

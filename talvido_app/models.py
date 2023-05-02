@@ -259,7 +259,7 @@ class Reel(BaseModel):
     reel = models.FileField(verbose_name="Reel", upload_to="reel/")
 
     def __str__(self):
-        return str(self.user)
+        return str(self.id)
 
 
 
