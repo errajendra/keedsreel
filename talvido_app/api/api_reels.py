@@ -5,6 +5,8 @@ from .serializers.reels_serializer import (
     GetReelModelSerializer,
     UploadUserReelsModelSerializer,
     AddReelViewsSerializer,
+    AddReelLikeSerializer,
+    DeleteReelLikeSerializer
 )
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
@@ -127,5 +129,49 @@ class AddReelViewAPIView(APIView):
             "status_code" : status.HTTP_400_BAD_REQUEST,
             "message" : "bad request",
             "data" : reel_view_serializer.errors
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AddReelLikeAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        add_reel_like_serializer = AddReelLikeSerializer(data = request.data, context={"request":request})
+        if add_reel_like_serializer.is_valid():
+            add_reel_like_serializer.save()
+            response = {
+                "status_code" : status.HTTP_201_CREATED,
+                "message" : "like added on reel"
+            }
+            return Response(response, status=status.HTTP_201_CREATED)
+        
+        response = {
+            "status_code" : status.HTTP_400_BAD_REQUEST,
+            "message" : "bad request",
+            "data" : add_reel_like_serializer.errors
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RemoveReelLikeAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        delete_reel_like_serializer = DeleteReelLikeSerializer(data = request.data, context={"request":request})
+        if delete_reel_like_serializer.is_valid():
+            delete_reel_like_serializer.delete()
+            response = {
+                "status_code" : status.HTTP_204_NO_CONTENT,
+                "message" : "like remove on reel"
+            }
+            return Response(response, status=status.HTTP_204_NO_CONTENT)
+        
+        response = {
+            "status_code" : status.HTTP_400_BAD_REQUEST,
+            "message" : "bad request",
+            "data" : delete_reel_like_serializer.errors
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)

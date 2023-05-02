@@ -38,6 +38,8 @@ from . import (
     GetTrendingReelsAPIView,
     SearchPostAPIView,
     AddReelViewAPIView,
+    AddReelLikeAPIView,
+    RemoveReelLikeAPIView,
 )
 
 
@@ -207,5 +209,15 @@ urlpatterns = [
         "reels/views/add/",
         AddReelViewAPIView.as_view(),
         name="add-reel-view-api"
+    ),
+    path(
+        "reels/like/add/",
+        AddReelLikeAPIView.as_view(),
+        name="add-reel-like-api"
+    ),
+    path(
+        "reels/like/remove/",
+        RemoveReelLikeAPIView.as_view(),
+        name="remove-reel-like-api"
     ),
 ]
