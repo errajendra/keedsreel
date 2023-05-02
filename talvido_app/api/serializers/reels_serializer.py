@@ -1,6 +1,7 @@
 from rest_framework import serializers, status
 from talvido_app.models import Reel, ReelComment, ReelLike, ReelCommentLike, Talvidouser, ReelView
 from talvido_app.api.serializers.profile_serializers import UserModelSerializer
+from datetime import datetime
 
 
 """ Reel List, Create, delete Serializer """
@@ -9,10 +10,13 @@ class GetReelModelSerializer(serializers.ModelSerializer):
     reel_views = serializers.SerializerMethodField("get_reel_views")
     reel_liked_by = serializers.SerializerMethodField("get_liked_by_user_reel")
     comments = serializers.SerializerMethodField("get_reel_comments")
+    total_likes = serializers.SerializerMethodField("get_total_likes")
+    total_comments = serializers.SerializerMethodField("get_total_comments")
+    duration = serializers.SerializerMethodField("get_reel_duration")
 
     class Meta:
         model = Reel
-        fields = ["id", "user", "reel", "description", "reel_views", "reel_liked_by", "comments", "created_at", "updated_at"]
+        fields = ["id", "user", "reel", "description", "reel_views", "reel_liked_by", "comments", "duration", "total_likes", "total_comments","created_at", "updated_at"]
     
     def get_user_profile(self, data):
         user = Talvidouser.objects.get(firebase_uid=data.user.firebase_uid)
@@ -29,11 +33,28 @@ class GetReelModelSerializer(serializers.ModelSerializer):
 
     def get_liked_by_user_reel(self, data):
         reel_like = data.user.reel_like_user.all()
+        self.total_likes = reel_like.count()
         return GetReelLikeModelSerializer(reel_like, many=True, context=self.context).data
     
     def get_reel_comments(self, data):
         reel_comment = data.reelcomment_set.all()
+        self.total_comments = reel_comment.count()
         return GetReelCommentModelSerializer(reel_comment, many=True, context=self.context).data
+
+    def get_total_likes(self, data):
+        return self.total_likes
+    
+    def get_total_comments(self, data):
+        return self.total_comments
+
+    def get_reel_duration(self, data):
+        difference = datetime.now() - data.created_at.replace(tzinfo=None)
+        m, s = divmod(difference.total_seconds(), 60)
+        hours = int(m // 60)
+        if hours > 1:
+            return f"{hours} hours ago"
+        else:
+            return f"{int(m%60)} minutes ago"
 
 
 class UploadUserReelsModelSerializer(serializers.ModelSerializer):
