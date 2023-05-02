@@ -186,7 +186,7 @@ class GetReelCommentModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ReelComment
-        fields = ["user", "reel", "comment", "created_at", "updated_at"]
+        fields = ["id", "user", "reel", "comment", "created_at", "updated_at"]
 
     def get_user_profile(self, data):
         user = Talvidouser.objects.get(firebase_uid=data.user.firebase_uid)
