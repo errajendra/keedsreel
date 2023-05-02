@@ -42,6 +42,8 @@ from . import (
     RemoveReelLikeAPIView,
     AddReelCommentAPIView,
     RemoveReelCommentAPIView,
+    AddReelCommentLikeAPIView,
+    RemoveReelCommentLikeAPIView,
 )
 
 
@@ -231,5 +233,15 @@ urlpatterns = [
         "reels/comment/remove/",
         RemoveReelCommentAPIView.as_view(),
         name="remove-reel-comment-api"
+    ),
+    path(
+        "reels/comment/add/like/",
+        AddReelCommentLikeAPIView.as_view(),
+        name="add-reel-comment-like-api"
+    ),
+    path(
+        "reels/comment/remove/like/",
+        RemoveReelCommentLikeAPIView.as_view(),
+        name="remove-reel-comment-like-api"
     ),
 ]

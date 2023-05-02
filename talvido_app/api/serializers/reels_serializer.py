@@ -183,10 +183,11 @@ class AddReelCommentSerializer(serializers.ModelSerializer):
 
 class GetReelCommentModelSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField("get_user_profile")
+    liked_by = serializers.SerializerMethodField("get_liked_comment")
 
     class Meta:
         model = ReelComment
-        fields = ["id", "user", "reel", "comment", "created_at", "updated_at"]
+        fields = ["id", "user", "reel", "comment", "created_at", "updated_at", "liked_by"]
 
     def get_user_profile(self, data):
         user = Talvidouser.objects.get(firebase_uid=data.user.firebase_uid)
@@ -197,6 +198,10 @@ class GetReelCommentModelSerializer(serializers.ModelSerializer):
             + user.profile.image.url
         )
         return user_serializer
+
+    def get_liked_comment(self, data):
+        reel_comment_like = data.reel_comment.all()
+        return GetReelCommentLikeModelSerializer(reel_comment_like, many=True, context=self.context).data
 
 
 class RemoveReelCommentSerializer(serializers.Serializer):
@@ -216,6 +221,74 @@ class RemoveReelCommentSerializer(serializers.Serializer):
                     "data": {
                         "reel_id": [
                             "reel_comment_id is invalid or not associate with current user"
+                        ]
+                    },
+                }
+            )
+
+    def delete(self):
+        self.get_queryset().delete()
+        return None
+
+
+class AddReelCommentLikeSerializer(serializers.Serializer):
+    reel_comment_id = serializers.CharField()
+
+    def get_queryset(self):
+        try:
+            reel_comment = ReelComment.objects.get(id=self.data.get("reel_comment_id"))
+            return reel_comment
+        except ReelComment.DoesNotExist:
+            raise serializers.ValidationError(
+                {
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "bad request",
+                    "data": {"reel_comment_id": ["reel_comment_id is invalid"]},
+                }
+            )
+
+    def create(self, validate_data):
+        reel_comment_like = ReelCommentLike.objects.get_or_create(
+            user=self.context["request"].user, comment=self.get_queryset()
+        )
+        return reel_comment_like
+
+
+class GetReelCommentLikeModelSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField("get_user_profile")
+    
+    class Meta:
+        model = ReelComment
+        fields = ["id", "user", "comment", "created_at", "updated_at"]
+
+    def get_user_profile(self, data):
+        user = Talvidouser.objects.get(firebase_uid=data.user.firebase_uid)
+        user_serializer = UserModelSerializer(user).data
+        user_serializer["image"] = (
+            "https://"
+            + self.context["request"].META["HTTP_HOST"]
+            + user.profile.image.url
+        )
+        return user_serializer
+
+
+class RemoveReelCommentLikeSerializer(serializers.Serializer):
+    reel_comment_like_id = serializers.CharField()
+
+    def get_queryset(self):
+        try:
+            reel_comment = ReelCommentLike.objects.get(
+                id=self.data.get("reel_comment_like_id"), user=self.context["request"].user
+            )
+            return reel_comment
+        except ReelCommentLike.DoesNotExist:
+            raise serializers.ValidationError(
+                {
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "bad request",
+                    "data": {
+                        "reel_comment_like_id": [
+                            "reel_comment_like_id is invalid or not associate with current user"
                         ]
                     },
                 }
