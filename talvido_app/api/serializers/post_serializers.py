@@ -73,7 +73,14 @@ class StoryModelSerializer(serializers.ModelSerializer):
         return []
     
     def get_story_view_status(self, data):
-        return []
+        return (
+            1 
+            if StoryViews.objects.select_related().filter(
+                user=self.context["request"].user, story=data
+            ).exists() 
+            else 
+            0
+        )
 
     class Meta:
         model = Story
