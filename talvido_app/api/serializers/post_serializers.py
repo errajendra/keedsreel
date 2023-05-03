@@ -28,6 +28,7 @@ class StoryModelSerializer(serializers.ModelSerializer):
     story_views = serializers.SerializerMethodField("get_story_views", read_only=True)
     finish = serializers.CharField(default=0, read_only=True)
     story_type = serializers.SerializerMethodField("get_story_type", read_only=True)
+    story_view_status = serializers.SerializerMethodField("get_story_view_status", read_only=True)
 
     def get_story_duration(self, data):
         difference = data.ends_at.replace(tzinfo=None) - datetime.now()
@@ -70,6 +71,9 @@ class StoryModelSerializer(serializers.ModelSerializer):
         elif extension.lower() in video_formats:
             return "video"
         return []
+    
+    def get_story_view_status(self, data):
+        return []
 
     class Meta:
         model = Story
@@ -83,6 +87,7 @@ class StoryModelSerializer(serializers.ModelSerializer):
             "story_views",
             "finish",
             "story_type",
+            "story_view_status"
         ]
 
 
@@ -209,10 +214,12 @@ class GetPostModelSerializer(serializers.ModelSerializer):
         difference = datetime.now() - data.created_at.replace(tzinfo=None)
         m, s = divmod(difference.total_seconds(), 60)
         hours = int(m // 60)
-        if hours > 1:
-            return f"{hours} hours ago"
+        if hours > 1 and hours <= 24:
+            return f"{hours}h ago"
+        elif hours > 24:
+            return f"{hours//24}d ago"
         else:
-            return f"{int(m%60)} minutes ago"
+            return f"{int(m%60)}m ago"
 
     def get_post_comments(self, data):
         post = Post.objects.get(id=data.id)
