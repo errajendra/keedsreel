@@ -131,9 +131,10 @@ class FollowingModelSerializer(serializers.ModelSerializer):
 class UserFollowSerializer(serializers.Serializer):
     user_firebase_uid = serializers.CharField()
 
-    def create(self, validated_data):
+    def get_queryset(self):
         try:
-            user = Talvidouser.objects.get(firebase_uid=validated_data.get("user_firebase_uid"))
+            user = Talvidouser.objects.get(firebase_uid=self.data.get("user_firebase_uid"))
+            return user
         except Talvidouser.DoesNotExist:
             raise serializers.ValidationError(
                 {
@@ -146,9 +147,22 @@ class UserFollowSerializer(serializers.Serializer):
                     }
                 }
             )
-        
+
+    def create(self, validated_data):
         follow  = Follow.objects.get_or_create(
-            user_to = user,
+            user_to = self.get_queryset(),
             user_from = self.context["request"].user
         )
         return follow
+
+    def delete(self):
+        follow = Follow.objects.filter(user_to=self.get_queryset(),user_from=self.context["request"].user)
+        if follow.exists():
+            follow.first().delete()
+            return None
+        raise serializers.ValidationError(
+            {
+                "status": status.HTTP_400_BAD_REQUEST,
+                "message": "bad request ! you can't unfollow, you need follow first"
+            }
+        )

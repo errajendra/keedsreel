@@ -215,3 +215,20 @@ class UserFollowAPIView(APIView):
             "data" : user_follow_serializer.errors
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request):
+        user_unfollow_serializer = UserFollowSerializer(data=request.data, context={"request": request})
+        if user_unfollow_serializer.is_valid():
+            user_unfollow_serializer.delete()
+            response = {
+                "status_code" : status.HTTP_204_NO_CONTENT,
+                "message" : "user unfollow",
+            }
+            return Response(response, status=status.HTTP_204_NO_CONTENT)
+        
+        response = {
+            "status_code" : status.HTTP_400_BAD_REQUEST,
+            "message" : "bad request",
+            "data" : user_unfollow_serializer.errors
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
