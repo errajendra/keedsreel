@@ -18,23 +18,7 @@ class GetReelModelSerializer(serializers.ModelSerializer):
     total_likes = serializers.SerializerMethodField("get_total_likes")
     total_comments = serializers.SerializerMethodField("get_total_comments")
     duration = serializers.SerializerMethodField("get_reel_duration")
-
-    class Meta:
-        model = Reel
-        fields = [
-            "id",
-            "user",
-            "reel",
-            "description",
-            "reel_views",
-            "reel_liked_by",
-            "comments",
-            "duration",
-            "total_likes",
-            "total_comments",
-            "created_at",
-            "updated_at",
-        ]
+    is_like = serializers.SerializerMethodField("is_reel_like")
 
     def get_user_profile(self, data):
         user = Talvidouser.objects.get(firebase_uid=data.user.firebase_uid)
@@ -73,11 +57,40 @@ class GetReelModelSerializer(serializers.ModelSerializer):
         difference = datetime.now() - data.created_at.replace(tzinfo=None)
         m, s = divmod(difference.total_seconds(), 60)
         hours = int(m // 60)
-        if hours > 1:
-            return f"{hours} hours ago"
+        if hours > 1 and hours <= 24:
+            return f"{hours}h ago"
+        elif hours > 24:
+            return f"{hours//24}d ago"
         else:
-            return f"{int(m%60)} minutes ago"
+            return f"{int(m%60)}m ago"
 
+    def is_reel_like(self, data):
+        return (
+            1
+            if ReelLike.objects.select_related().filter(
+                user=self.context['request'].user,reel=data
+            ).exists()
+            else
+            0
+        )
+
+    class Meta:
+        model = Reel
+        fields = [
+            "id",
+            "user",
+            "reel",
+            "description",
+            "reel_views",
+            "reel_liked_by",
+            "comments",
+            "duration",
+            "total_likes",
+            "total_comments",
+            "is_like",
+            "created_at",
+            "updated_at",
+        ]
 
 class UploadUserReelsModelSerializer(serializers.ModelSerializer):
     class Meta:
