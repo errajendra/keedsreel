@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .import (
+from . import (
     TalvidoMobileRegisterSerializer,
     TalvidoMobileLoginSerializer,
     TavlidoGoogleLoginSerializer,
@@ -196,45 +196,55 @@ class RegenerateAccessTokenAPIVIew(APIView):
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
-"""This API handle registeration with email"""
+"""This API handle registration with email"""
 
 class RegsiterEmailAPIView(APIView):
-    def post(self,request):
+    def post(self, request):
+        """deserialize the request data"""
         email_regsiter_serializer = TalvidoEmailRegisterSerializer(data=request.data)
+
+        """validate the data if validation success it will 
+            call the save method and save the data"""
         if email_regsiter_serializer.is_valid():
             user = email_regsiter_serializer.save()
             response = {
-                "status_code" : status.HTTP_201_CREATED,
-                "message" : "created",
-                "data" : user
+                "status_code": status.HTTP_201_CREATED,
+                "message": "created",
+                "data": user,
             }
-            return Response(response,status=status.HTTP_201_CREATED)
-        
+            return Response(response, status=status.HTTP_201_CREATED)
+
+        """if validation fails it will response this"""
         response = {
-            "status_code" : status.HTTP_400_BAD_REQUEST,
-            "message" : "bad request",
-            "data" : email_regsiter_serializer.errors
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": email_regsiter_serializer.errors,
         }
-        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
 """This API handle login with email"""
 
 class LoginEmailAPIView(APIView):
-    def post(self,request):
+    def post(self, request):
+        """deserialize the request data"""
         email_login_serializer = TalvidoEmailLoginSerializer(data=request.data)
+
+        """validate the data if validation success it will 
+            check the credentails and return this response if crendentials is correct"""
         if email_login_serializer.is_valid():
             user = email_login_serializer.check_credentials()
             response = {
-                "status_code" : status.HTTP_200_OK,
-                "message" : "ok",
-                "data" : user
+                "status_code": status.HTTP_200_OK,
+                "message": "ok",
+                "data": user,
             }
-            return Response(response,status=status.HTTP_200_OK)
-        
+            return Response(response, status=status.HTTP_200_OK)
+
+        """if validation fails it will response this"""
         response = {
-            "status_code" : status.HTTP_401_UNAUTHORIZED,
-            "message" : "bad request",
-            "data" : email_login_serializer.errors
+            "status_code": status.HTTP_401_UNAUTHORIZED,
+            "message": "bad request",
+            "data": email_login_serializer.errors,
         }
-        return Response(response,status=status.HTTP_401_UNAUTHORIZED)
+        return Response(response, status=status.HTTP_401_UNAUTHORIZED)

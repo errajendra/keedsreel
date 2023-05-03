@@ -196,65 +196,85 @@ class RegenerateAccessTokenSerializer(serializers.Serializer):
 """Email register model serializer"""
 
 class TalvidoEmailRegisterSerializer(serializers.Serializer):
+    
+    """serializers fields"""
     first_name = serializers.CharField()
     last_name = serializers.CharField()
     email = serializers.EmailField()
     password = serializers.CharField()
     referral_code = serializers.CharField(required=False)
 
+    """This method validating the email is exists or not"""
+
     def validate_email(self, value):
         if Talvidouser.objects.filter(email=value).exists():
             raise serializers.ValidationError("This email is already exists")
         return value
-    
+
+    """This method validating the password should atleast 
+        contain more than 6 characters"""
+
     def validate_password(self, value):
         if len(value) <= 6:
-            raise serializers.ValidationError("Password should atleast contain more than 6 characters")
+            raise serializers.ValidationError(
+                "Password should atleast contain more than 6 characters"
+            )
         return value
+
+    """overriding the create method"""
 
     def create(self, validated_data):
         email = validated_data.get("email")
         password = validated_data.get("password")
-        auth.create_user(
-            email = email,
-            password = password
-        )
+        auth.create_user(email=email, password=password)
         user = generate_firebase_token(email=email, password=password).json()
         talvido_user = Talvidouser.objects.create(
-            first_name = validated_data.get("first_name"),
-            last_name = validated_data.get("last_name"),
-            email = email,
-            password = make_password(password),
-            referral_code = validated_data.get("referral_code",""),
-            firebase_uid = user["localId"]
+            first_name=validated_data.get("first_name"),
+            last_name=validated_data.get("last_name"),
+            email=email,
+            password=make_password(password),
+            referral_code=validated_data.get("referral_code", ""),
+            firebase_uid=user["localId"],
         )
-        user['first_name'] = talvido_user.first_name
-        user['last_name'] = talvido_user.last_name
+        user["first_name"] = talvido_user.first_name
+        user["last_name"] = talvido_user.last_name
         return user
 
 
 """Email login serializer"""
 
+
 class TalvidoEmailLoginSerializer(serializers.Serializer):
+    
+    """serializers fields"""
     email = serializers.EmailField()
     password = serializers.CharField()
 
+    """This method validating the email is exists or not"""
+
     def validate_password(self, value):
         if len(value) <= 6:
-            raise serializers.ValidationError("Password should atleast contain more than 6 characters")
+            raise serializers.ValidationError(
+                "Password should atleast contain more than 6 characters"
+            )
         return value
+
+    """This method will check login credentials"""
 
     def check_credentials(self):
         email = self.validated_data.get("email")
         password = self.validated_data.get("password")
 
+        """it will generate the firebase tokens"""
         user = generate_firebase_token(email=email, password=password)
+
+        """if status code is 400 then it will raise validation error"""
         if user.status_code == 400:
             raise serializers.ValidationError(
                 {
-                    "status_code" : status.HTTP_401_UNAUTHORIZED,
-                    "message" : "unauthorized",
-                    "data" : user.json()['error']['message']
+                    "status_code": status.HTTP_401_UNAUTHORIZED,
+                    "message": "unauthorized",
+                    "data": user.json()["error"]["message"],
                 }
             )
         return user.json()

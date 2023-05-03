@@ -50,8 +50,7 @@ class GetReelModelSerializer(serializers.ModelSerializer):
         return Reel.objects.get(id=data.id).reel_view_reel.views
 
     def get_liked_by_user_reel(self, data):
-        reel = Reel.objects.get(id=data.id)
-        reel_liked_user = reel.reel_like.all()
+        reel_liked_user = data.reel_like.all()
         self.total_reel_likes = reel_liked_user.count()
         return GetReelLikeModelSerializer(
             reel_liked_user, many=True, context=self.context
