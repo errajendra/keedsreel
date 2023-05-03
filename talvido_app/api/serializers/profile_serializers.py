@@ -18,11 +18,11 @@ class ProfileModelSerializer(serializers.ModelSerializer):
     followings = serializers.SerializerMethodField("get_user_followings")
     total_post = serializers.SerializerMethodField("get_user_total_posts")
     posts = serializers.SerializerMethodField("get_user_posts")
-
+    is_follow = serializers.SerializerMethodField("is_follows")
 
     class Meta:
         model = Profile
-        fields = ["user", "image", "gender","location", "description", "posts", "followers","followings","total_post"]
+        fields = ["user", "image", "gender","location", "description", "posts", "followers", "followings", "total_post", "is_follow"]
 
     def get_user_followers(self,data):
         return Talvidouser.objects.get(firebase_uid=data.user).user_to.all().count()
@@ -37,8 +37,17 @@ class ProfileModelSerializer(serializers.ModelSerializer):
         from talvido_app.api.serializers.post_serializers import GetPostModelSerializer
         user = Talvidouser.objects.get(firebase_uid=data.user.firebase_uid)
         user_posts = user.post_user.all()
-        # return []
         return GetPostModelSerializer(user_posts, many=True, context=self.context).data
+
+    def is_follows(self, data):
+        return (
+            1
+            if Follow.objects.select_related().filter(
+                user_to=data.user.firebase_uid, user_from=self.context["request"].user
+            ).exists()
+            else
+            0
+        )
 
 
 """update profile model serializer"""
