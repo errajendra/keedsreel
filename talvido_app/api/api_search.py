@@ -18,8 +18,13 @@ class SearchByUsernameAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        """get the query parameter username"""
         search_username = request.query_params.get("username", " ")
+
+        """checking the username is avaliable in database"""
         user = Talvidouser.objects.filter(username__icontains=search_username)
+
+        """serialize the data and return the response"""
         user_serializer = SearchByUsernameModelSerializer(
             user, many=True, context={"request": request}
         )
@@ -38,8 +43,13 @@ class SearchPostAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        """get the query parameter post"""
         post_query = request.query_params.get("post", " ")
+
+        """checking the post is avaliable in database"""
         post = Post.objects.filter(description__icontains=post_query)
+
+        """serialize the data and return the response"""
         post_serializer = GetPostModelSerializer(
             post, many=True, context={"request": request}
         )
