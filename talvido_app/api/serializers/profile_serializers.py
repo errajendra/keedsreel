@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework import serializers, status
 from talvido_app.models import Talvidouser, Profile, Follow, Post
 
 
@@ -117,3 +117,29 @@ class FollowingModelSerializer(serializers.ModelSerializer):
         from talvido_app.api.serializers.post_serializers import GetPostModelSerializer
         posts = Post.objects.filter(user=data.user_to)
         return GetPostModelSerializer(posts,many=True,context=self.context).data
+
+
+class UserFollowSerializer(serializers.Serializer):
+    user_firebase_uid = serializers.CharField()
+
+    def create(self, validated_data):
+        try:
+            user = Talvidouser.objects.get(firebase_uid=validated_data.get("user_firebase_uid"))
+        except Talvidouser.DoesNotExist:
+            raise serializers.ValidationError(
+                {
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "bad request",
+                    "data": {
+                        "user_firebase_uid" : [
+                            "firebase uid is invalid"
+                        ]
+                    }
+                }
+            )
+        
+        follow  = Follow.objects.get_or_create(
+            user_to = user,
+            user_from = self.context["request"].user
+        )
+        return follow

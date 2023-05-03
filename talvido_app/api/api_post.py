@@ -270,7 +270,7 @@ class UploadPostAPIView(APIView):
         response = {
             "status_code": status.HTTP_400_BAD_REQUEST,
             "message": "bad request",
-            "data": request.data
+            "data": upload_post_serializer.errors
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
@@ -467,7 +467,7 @@ class AddPostCommentLikeAPIView(APIView):
         response = {
             "status_code": status.HTTP_400_BAD_REQUEST,
             "message": "bad request",
-            "data": add_post_comment_like_serializer.data,
+            "data": add_post_comment_like_serializer.errors,
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
 

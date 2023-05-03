@@ -10,6 +10,7 @@ from . import (
     UpdateuserProfilePictureModelSerializer,
     FollowersModelSerializer,
     FollowingModelSerializer,
+    UserFollowSerializer,
 )
 
 
@@ -167,6 +168,9 @@ class FollowingsAPIView(APIView):
 """This API's will get the any user profile using its firebase uid"""
 
 class GetAnyUserProfileAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self,request,firebase_uid):
         try:
             profile = Profile.objects.get(user=firebase_uid)
@@ -189,3 +193,25 @@ class GetAnyUserProfileAPIView(APIView):
             "data" : user_serializer.data
         }
         return Response(response,status=status.HTTP_200_OK)
+
+
+class UserFollowAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user_follow_serializer = UserFollowSerializer(data=request.data, context={"request": request})
+        if user_follow_serializer.is_valid():
+            user_follow_serializer.save()
+            response = {
+                "status_code" : status.HTTP_201_CREATED,
+                "message" : "user follow",
+            }
+            return Response(response, status=status.HTTP_201_CREATED)
+        
+        response = {
+            "status_code" : status.HTTP_400_BAD_REQUEST,
+            "message" : "bad request",
+            "data" : user_follow_serializer.errors
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
