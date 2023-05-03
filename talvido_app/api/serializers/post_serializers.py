@@ -375,7 +375,7 @@ class AddPostLikeSerializer(serializers.Serializer):
             user=request.user, post=self.validated_data.get("post_id")
         )
         if post_like.exists():
-            post_like.delete()
+            post_like.first().delete()
             return None
         raise serializers.ValidationError(
             {
@@ -420,7 +420,7 @@ class AddPostCommentLikeSerializer(serializers.Serializer):
             user=request.user, comment=self.validated_data.get("comment_id")
         )
         if post_comment_like.exists():
-            post_comment_like.delete()
+            post_comment_like.first().delete()
             return None
         raise serializers.ValidationError(
             {
