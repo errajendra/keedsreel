@@ -187,22 +187,7 @@ class GetPostModelSerializer(serializers.ModelSerializer):
     total_comments = serializers.SerializerMethodField("count_comments")
     liked_by = serializers.SerializerMethodField("get_post_liked_by_user")
     total_likes = serializers.SerializerMethodField("get_total_likes")
-
-    class Meta:
-        model = Post
-        fields = [
-            "id",
-            "user",
-            "description",
-            "post",
-            "duration",
-            "created_at",
-            "updated_at",
-            "comments",
-            "liked_by",
-            "total_comments",
-            "total_likes",
-        ]
+    is_like = serializers.SerializerMethodField("is_post_like")
 
     def get_profile(self, data):
         user = Talvidouser.objects.get(firebase_uid=data.user)
@@ -247,7 +232,33 @@ class GetPostModelSerializer(serializers.ModelSerializer):
 
     def get_total_likes(self, data):
         return self.total_likes
+    
+    def is_post_like(self, data):
+        return (
+            1
+            if PostLike.objects.select_related().filter(
+                user=self.context['request'].user,post=data
+            ).exists()
+            else
+            0
+        )
 
+    class Meta:
+        model = Post
+        fields = [
+            "id",
+            "user",
+            "description",
+            "post",
+            "duration",
+            "created_at",
+            "updated_at",
+            "comments",
+            "liked_by",
+            "total_comments",
+            "total_likes",
+            "is_like",
+        ]
 
 """upload post model serializer"""
 
