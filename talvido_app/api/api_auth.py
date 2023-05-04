@@ -14,9 +14,11 @@ from . import (
 )
 
 
-"""This API handle registration with mobile otp"""
-
 class RegisterMobileOTPAPIView(APIView):
+    """
+    This API will register new user using mobile otp
+    """
+
     def post(self, request):
         """Adding login_with field data"""
         request.data["login_with"] = "Mobile Number"
@@ -42,9 +44,11 @@ class RegisterMobileOTPAPIView(APIView):
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
-"""This API handle login with mobile otp"""
-
 class LoginMobileOTPAPIView(APIView):
+    """
+    This API will handle login with mobile otp
+    """
+
     def post(self, request):
         """serialize the data"""
         mobile_login_serializer = TalvidoMobileLoginSerializer(data=request.data)
@@ -86,11 +90,14 @@ class LoginMobileOTPAPIView(APIView):
         return Response(response, status=status.HTTP_401_UNAUTHORIZED)
 
 
-"""This API check mobile number exist or not"""
-
 class CheckMobileNumberExistAPIView(APIView):
+    """
+    This API will check mobile number exist in our database, 
+    it return status 1 if it's exists other status 0
+    """
+
     def post(self, request):
-        """serialize the data"""
+        """deserialize the data"""
         check_mobile_serializer = CheckMobileNumberExistSerializer(data=request.data)
 
         """validate the data"""
@@ -116,11 +123,13 @@ class CheckMobileNumberExistAPIView(APIView):
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
-"""This API handle login with google"""
-
 class LoginGoogleAPIView(APIView):
+    """
+    This API will handle login with google
+    """
+
     def post(self, request):
-        """serialize the data"""
+        """deserialize the data"""
         google_login_serializer = TavlidoGoogleLoginSerializer(data=request.data)
 
         """validate the data"""
@@ -141,9 +150,11 @@ class LoginGoogleAPIView(APIView):
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
-"""This API handle login with facebook"""
-
 class LoginFacebookAPIView(APIView):
+    """
+    This API will handle login with facebook
+    """
+
     def post(self, request):
         """serialize the data"""
         facebook_login_serializer = TavlidoFacebokLoginSerializer(data=request.data)
@@ -166,11 +177,13 @@ class LoginFacebookAPIView(APIView):
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
-"""This api generate the access token using refresh token"""
-
 class RegenerateAccessTokenAPIVIew(APIView):
+    """
+    This api will generate the access token on the base refresh token
+    """
+
     def post(self, request):
-        """serialize the data"""
+        """deserialize the data"""
         regenerate_access_token_serialzier = RegenerateAccessTokenSerializer(
             data=request.data
         )
@@ -197,9 +210,11 @@ class RegenerateAccessTokenAPIVIew(APIView):
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
-"""This API handle registration with email"""
-
 class RegsiterEmailAPIView(APIView):
+    """
+    This API will handle registration with email address and password
+    """
+
     def post(self, request):
         """deserialize the request data"""
         email_regsiter_serializer = TalvidoEmailRegisterSerializer(data=request.data)
@@ -224,9 +239,11 @@ class RegsiterEmailAPIView(APIView):
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
-"""This API handle login with email"""
-
 class LoginEmailAPIView(APIView):
+    """
+    This API will handle login with email address and password
+    """
+
     def post(self, request):
         """deserialize the request data"""
         email_login_serializer = TalvidoEmailLoginSerializer(data=request.data)
@@ -251,12 +268,21 @@ class LoginEmailAPIView(APIView):
         return Response(response, status=status.HTTP_401_UNAUTHORIZED)
 
 
-"""This API will send reset password email"""
-
 class ResetEmailPasswordAPIView(APIView):
+    """
+    This API will send reset password link to registered email address
+    """
+
     def post(self, request):
+        """deserialize the data"""
         reset_email_password_serializer = ResetEmailPasswordSerializer(data=request.data)
+
+        """validate the data"""
         if reset_email_password_serializer.is_valid():
+            """
+            this will send a reset password link to email address 
+            if email address and requestType is correct and return the response
+            """
             reset_email_password_serializer.send_reset_password_email()
             response = {
                 "status_code" : status.HTTP_200_OK,
@@ -264,6 +290,7 @@ class ResetEmailPasswordAPIView(APIView):
             }
             return Response(response, status=status.HTTP_200_OK)
         
+        """if validation fails it will return this response"""
         response = {
             "status_code" : status.HTTP_400_BAD_REQUEST,
             "message" : "bad request",

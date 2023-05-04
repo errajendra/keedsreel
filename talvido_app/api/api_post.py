@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from talvido_app.models import Story, StoryViews, Follow, Talvidouser, Post, StoryHighlight
+from talvido_app.models import Story, StoryViews, Follow, Talvidouser, Post
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
 from . import (
@@ -20,10 +20,17 @@ from . import (
     AddPostCommentLikeSerializer,
     GetStoryHighlightsModelSerializer,
 )
-from rest_framework.parsers import MultiPartParser, JSONParser, FormParser, FileUploadParser
+from rest_framework.parsers import (
+    MultiPartParser,
+    JSONParser,
+    FormParser,
+    FileUploadParser,
+)
 from datetime import datetime
+
 # import the logging library
 import logging
+
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
@@ -254,23 +261,29 @@ class UploadPostAPIView(APIView):
     parser_classes = [MultiPartParser, JSONParser, FileUploadParser, FormParser]
 
     def post(self, request):
-        logger.info('upload post api accessed at '+ str(datetime.now())+' hours! ' + " - " + str(request.data))
+        logger.info(
+            "upload post api accessed at "
+            + str(datetime.now())
+            + " hours! "
+            + " - "
+            + str(request.data)
+        )
         upload_post_serializer = UploadPostModelSerializer(data=request.data)
         if upload_post_serializer.is_valid():
             post = upload_post_serializer.save(user=request.user)
             response = {
                 "status_code": status.HTTP_201_CREATED,
                 "message": "ok",
-                "data" : {
-                    "image" : "https://" + request.META["HTTP_HOST"] + post.post.url
-                }
+                "data": {
+                    "image": "https://" + request.META["HTTP_HOST"] + post.post.url
+                },
             }
             return Response(response, status=status.HTTP_201_CREATED)
 
         response = {
             "status_code": status.HTTP_400_BAD_REQUEST,
             "message": "bad request",
-            "data": upload_post_serializer.errors
+            "data": upload_post_serializer.errors,
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
@@ -508,10 +521,12 @@ class GetStoryHighlightsAPIView(APIView):
     def get(self, request):
         user = Talvidouser.objects.get(firebase_uid=request.user)
         story_highlights = user.story_hightlight_user.all()
-        story_hightlights_serializer = GetStoryHighlightsModelSerializer(story_highlights, many=True, context={"request":request})
+        story_hightlights_serializer = GetStoryHighlightsModelSerializer(
+            story_highlights, many=True, context={"request": request}
+        )
         response = {
-            "status_code" : status.HTTP_200_OK,
-            "message" : "ok",
-            "data" : story_hightlights_serializer.data
+            "status_code": status.HTTP_200_OK,
+            "message": "ok",
+            "data": story_hightlights_serializer.data,
         }
         return Response(response, status=status.HTTP_200_OK)

@@ -171,64 +171,66 @@ class GetAnyUserProfileAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self,request,firebase_uid):
+    def get(self, request, firebase_uid):
         try:
             profile = Profile.objects.get(user=firebase_uid)
         except Profile.DoesNotExist:
             response = {
-                "status_code" : status.HTTP_400_BAD_REQUEST,
-                "message" : "bad request",
-                "data" : {
-                    "firebase_uid" : [
-                        "firebase_uid is invalid or doesn't exists"
-                    ]
-                }
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": "bad request",
+                "data": {"firebase_uid": ["firebase_uid is invalid or doesn't exists"]},
             }
-            return Response(response,status=status.HTTP_400_BAD_REQUEST)
-        
-        user_serializer = ProfileModelSerializer(profile,context={"request":request})
-        response = {
-            "status_code" : status.HTTP_200_OK,
-            "message" : "ok",
-            "data" : user_serializer.data
-        }
-        return Response(response,status=status.HTTP_200_OK)
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
+        user_serializer = ProfileModelSerializer(profile, context={"request": request})
+        response = {
+            "status_code": status.HTTP_200_OK,
+            "message": "ok",
+            "data": user_serializer.data,
+        }
+        return Response(response, status=status.HTTP_200_OK)
+
+
+"""This API will follow and unfollow user"""
 
 class UserFollowAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        user_follow_serializer = UserFollowSerializer(data=request.data, context={"request": request})
+        user_follow_serializer = UserFollowSerializer(
+            data=request.data, context={"request": request}
+        )
         if user_follow_serializer.is_valid():
             user_follow_serializer.save()
             response = {
-                "status_code" : status.HTTP_201_CREATED,
-                "message" : "user follow",
+                "status_code": status.HTTP_201_CREATED,
+                "message": "user follow",
             }
             return Response(response, status=status.HTTP_201_CREATED)
-        
+
         response = {
-            "status_code" : status.HTTP_400_BAD_REQUEST,
-            "message" : "bad request",
-            "data" : user_follow_serializer.errors
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": user_follow_serializer.errors,
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request):
-        user_unfollow_serializer = UserFollowSerializer(data=request.data, context={"request": request})
+        user_unfollow_serializer = UserFollowSerializer(
+            data=request.data, context={"request": request}
+        )
         if user_unfollow_serializer.is_valid():
             user_unfollow_serializer.delete()
             response = {
-                "status_code" : status.HTTP_204_NO_CONTENT,
-                "message" : "user unfollow",
+                "status_code": status.HTTP_204_NO_CONTENT,
+                "message": "user unfollow",
             }
             return Response(response, status=status.HTTP_204_NO_CONTENT)
-        
+
         response = {
-            "status_code" : status.HTTP_400_BAD_REQUEST,
-            "message" : "bad request",
-            "data" : user_unfollow_serializer.errors
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": user_unfollow_serializer.errors,
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
