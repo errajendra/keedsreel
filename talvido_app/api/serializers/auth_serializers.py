@@ -1,7 +1,11 @@
 from rest_framework import serializers
 from talvido_app.models import Talvidouser
 from django.conf import settings
-from talvido_app.firebase.helpers import verify_firebase_uid, generate_firebase_token
+from talvido_app.firebase.helpers import (
+    verify_firebase_uid,
+    generate_firebase_token,
+    send_reset_password_email,
+)
 from talvido_app.firebase.exceptions import InvalidFirebaseUID, FirebaseUIDExists
 from django.contrib.auth.hashers import make_password
 import requests
@@ -278,3 +282,22 @@ class TalvidoEmailLoginSerializer(serializers.Serializer):
                 }
             )
         return user.json()
+
+
+class ResetEmailPasswordSerializer(serializers.Serializer):
+    requestType = serializers.CharField()
+    email = serializers.EmailField()
+
+    def send_reset_password_email(self):
+        reset_email = send_reset_password_email(
+            self.validated_data.get("email"),self.validated_data.get("requestType")
+        )
+        if reset_email.status_code == 400:
+            raise serializers.ValidationError(
+                {
+                    "status_code" : status.HTTP_400_BAD_REQUEST,
+                    "message" : "bad request",
+                    "data" : reset_email.json()["error"]["errors"]
+                }
+            )
+        return reset_email

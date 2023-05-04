@@ -17,3 +17,12 @@ def generate_firebase_token(email, password):
     data = {"email": email, "password": password, "returnSecureToken": True}
     response = requests.post(data=data, url=url)
     return response
+
+
+"""send reset password email"""
+
+def send_reset_password_email(email, requestType):
+    url = f"https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key={settings.FIREBASE_API_KEY}"
+    data = {"requestType": requestType, "email": email}
+    response = requests.post(data=data, url=url)
+    return response

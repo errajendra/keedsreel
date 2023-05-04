@@ -10,6 +10,7 @@ from . import (
     CheckMobileNumberExistSerializer,
     TalvidoEmailRegisterSerializer,
     TalvidoEmailLoginSerializer,
+    ResetEmailPasswordSerializer,
 )
 
 
@@ -248,3 +249,22 @@ class LoginEmailAPIView(APIView):
             "data": email_login_serializer.errors,
         }
         return Response(response, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class ResetEmailPasswordAPIView(APIView):
+    def post(self, request):
+        reset_email_password_serializer = ResetEmailPasswordSerializer(data=request.data)
+        if reset_email_password_serializer.is_valid():
+            reset_email_password_serializer.send_reset_password_email()
+            response = {
+                "status_code" : status.HTTP_200_OK,
+                "message" : "reset password email send"
+            }
+            return Response(response, status=status.HTTP_200_OK)
+        
+        response = {
+            "status_code" : status.HTTP_400_BAD_REQUEST,
+            "message" : "bad request",
+            "data" : reset_email_password_serializer.errors
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)

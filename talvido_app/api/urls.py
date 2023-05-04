@@ -8,6 +8,7 @@ from . import (
     LoginEmailAPIView,
     RegenerateAccessTokenAPIVIew,
     CheckMobileNumberExistAPIView,
+    ResetEmailPasswordAPIView,
     ProfileAPIView,
     UpdateProfilePictureAPIView,
     RemoveProfilePictureAPIView,
@@ -85,6 +86,11 @@ urlpatterns = [
         "auth/regenerate-access-token/",
         RegenerateAccessTokenAPIVIew.as_view(),
         name="regenerate-access-token-api",
+    ),
+    path(
+        "auth/email/reset/password/",
+        ResetEmailPasswordAPIView.as_view(),
+        name="reset-email-password-api",
     ),
     # profile api's endpoints
     path("user/profile/", ProfileAPIView.as_view(), name="get-current-user-profile-api"),
