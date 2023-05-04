@@ -251,6 +251,8 @@ class LoginEmailAPIView(APIView):
         return Response(response, status=status.HTTP_401_UNAUTHORIZED)
 
 
+"""This API will send reset password email"""
+
 class ResetEmailPasswordAPIView(APIView):
     def post(self, request):
         reset_email_password_serializer = ResetEmailPasswordSerializer(data=request.data)

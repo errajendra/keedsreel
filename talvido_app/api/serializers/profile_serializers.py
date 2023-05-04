@@ -19,35 +19,55 @@ class ProfileModelSerializer(serializers.ModelSerializer):
     total_post = serializers.SerializerMethodField("get_user_total_posts")
     posts = serializers.SerializerMethodField("get_user_posts")
     is_follow = serializers.SerializerMethodField("is_follows")
+    reels = serializers.SerializerMethodField("get_user_reels")
 
-    class Meta:
-        model = Profile
-        fields = ["user", "image", "gender","location", "description", "posts", "followers", "followings", "total_post", "is_follow"]
+    def get_queryset(self, data):
+        user = Talvidouser.objects.get(firebase_uid=data.user)
+        return user
 
-    def get_user_followers(self,data):
-        return Talvidouser.objects.get(firebase_uid=data.user).user_to.all().count()
+    def get_user_followers(self, data):
+        return self.get_queryset(data).user_to.all().count()
 
-    def get_user_followings(self,data):
-        return Talvidouser.objects.get(firebase_uid=data.user).user_from.all().count()
+    def get_user_followings(self, data):
+        return self.get_queryset(data).user_from.all().count()
 
-    def get_user_total_posts(self,data):
-        return Talvidouser.objects.get(firebase_uid=data.user).post_user.all().count()
-    
+    def get_user_total_posts(self, data):
+        return self.get_queryset(data).post_user.all().count()
+
     def get_user_posts(self, data):
         from talvido_app.api.serializers.post_serializers import GetPostModelSerializer
-        user = Talvidouser.objects.get(firebase_uid=data.user.firebase_uid)
-        user_posts = user.post_user.all()
-        return GetPostModelSerializer(user_posts, many=True, context=self.context).data
+        return GetPostModelSerializer(self.get_queryset(data).post_user.all(), many=True, context=self.context).data
 
     def is_follows(self, data):
         return (
             1
-            if Follow.objects.select_related().filter(
+            if Follow.objects.select_related()
+            .filter(
                 user_to=data.user.firebase_uid, user_from=self.context["request"].user
-            ).exists()
-            else
-            0
+            )
+            .exists()
+            else 0
         )
+    
+    def get_user_reels(self, data):
+        from talvido_app.api.serializers.reels_serializer import GetReelModelSerializer
+        return GetReelModelSerializer(self.get_queryset(data).reel_user.all(), many=True, context=self.context).data
+
+    class Meta:
+        model = Profile
+        fields = [
+            "user",
+            "image",
+            "gender",
+            "location",
+            "description",
+            "posts",
+            "reels",
+            "followers",
+            "followings",
+            "total_post",
+            "is_follow",
+        ]
 
 
 """update profile model serializer"""
@@ -60,7 +80,15 @@ class UpdateProfileModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ["first_name", "last_name", "username", "mobile_number", "gender", "description", "location"]
+        fields = [
+            "first_name",
+            "last_name",
+            "username",
+            "mobile_number",
+            "gender",
+            "description",
+            "location",
+        ]
 
     """override update method and update the talvido user information"""
 
@@ -122,47 +150,49 @@ class FollowingModelSerializer(serializers.ModelSerializer):
             Profile.objects.get(user=data.user_to), context=self.context
         ).data
 
-    def get_user_post(self,data):
+    def get_user_post(self, data):
         from talvido_app.api.serializers.post_serializers import GetPostModelSerializer
-        posts = Post.objects.filter(user=data.user_to)
-        return GetPostModelSerializer(posts,many=True,context=self.context).data
 
+        posts = Post.objects.filter(user=data.user_to)
+        return GetPostModelSerializer(posts, many=True, context=self.context).data
+
+
+""""user follow serializer"""
 
 class UserFollowSerializer(serializers.Serializer):
     user_firebase_uid = serializers.CharField()
 
     def get_queryset(self):
         try:
-            user = Talvidouser.objects.get(firebase_uid=self.data.get("user_firebase_uid"))
+            user = Talvidouser.objects.get(
+                firebase_uid=self.data.get("user_firebase_uid")
+            )
             return user
         except Talvidouser.DoesNotExist:
             raise serializers.ValidationError(
                 {
                     "status_code": status.HTTP_400_BAD_REQUEST,
                     "message": "bad request",
-                    "data": {
-                        "user_firebase_uid" : [
-                            "firebase uid is invalid"
-                        ]
-                    }
+                    "data": {"user_firebase_uid": ["firebase uid is invalid"]},
                 }
             )
 
     def create(self, validated_data):
-        follow  = Follow.objects.get_or_create(
-            user_to = self.get_queryset(),
-            user_from = self.context["request"].user
+        follow = Follow.objects.get_or_create(
+            user_to=self.get_queryset(), user_from=self.context["request"].user
         )
         return follow
 
     def delete(self):
-        follow = Follow.objects.filter(user_to=self.get_queryset(),user_from=self.context["request"].user)
+        follow = Follow.objects.filter(
+            user_to=self.get_queryset(), user_from=self.context["request"].user
+        )
         if follow.exists():
             follow.first().delete()
             return None
         raise serializers.ValidationError(
             {
                 "status": status.HTTP_400_BAD_REQUEST,
-                "message": "bad request ! you can't unfollow, you need follow first"
+                "message": "bad request ! you can't unfollow, you need follow first",
             }
         )
