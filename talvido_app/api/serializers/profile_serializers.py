@@ -32,11 +32,18 @@ class ProfileModelSerializer(serializers.ModelSerializer):
         return self.get_queryset(data).user_from.all().count()
 
     def get_user_total_posts(self, data):
-        return self.get_queryset(data).post_user.all().count()
+        total_posts = (
+            self.get_queryset(data).post_user.all().count()
+            + self.get_queryset(data).reel_user.all().count()
+        )
+        return total_posts
 
     def get_user_posts(self, data):
         from talvido_app.api.serializers.post_serializers import GetPostModelSerializer
-        return GetPostModelSerializer(self.get_queryset(data).post_user.all(), many=True, context=self.context).data
+
+        return GetPostModelSerializer(
+            self.get_queryset(data).post_user.all(), many=True, context=self.context
+        ).data
 
     def is_follows(self, data):
         return (
@@ -48,10 +55,13 @@ class ProfileModelSerializer(serializers.ModelSerializer):
             .exists()
             else 0
         )
-    
+
     def get_user_reels(self, data):
         from talvido_app.api.serializers.reels_serializer import GetReelModelSerializer
-        return GetReelModelSerializer(self.get_queryset(data).reel_user.all(), many=True, context=self.context).data
+
+        return GetReelModelSerializer(
+            self.get_queryset(data).reel_user.all(), many=True, context=self.context
+        ).data
 
     class Meta:
         model = Profile
