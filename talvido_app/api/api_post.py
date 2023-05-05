@@ -27,7 +27,7 @@ from rest_framework.parsers import (
     FileUploadParser,
 )
 from datetime import datetime
-from rest_framework.pagination import PageNumberPagination
+from talvido_app.pagination import PageNumberPaginationView
 import logging
 
 
@@ -430,7 +430,7 @@ class RemovePostLikeAPIView(APIView):
 
 """This API will get all the posts of user followings"""
 
-class GetUserFollowingsPost(APIView, PageNumberPagination):
+class GetUserFollowingsPost(APIView, PageNumberPaginationView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -443,17 +443,6 @@ class GetUserFollowingsPost(APIView, PageNumberPagination):
         results = self.paginate_queryset(posts, request, view=self)
         followings_serializer = GetPostModelSerializer(results, many=True, context={"request": request})
         return self.get_paginated_response(followings_serializer.data)
-
-    def get_paginated_response(self, data):
-        response = {
-            "status_code" : status.HTTP_200_OK,
-            "message" : "ok",
-            "count" : self.page.paginator.count,
-            "next" : self.get_next_link(),
-            "previous" : self.get_previous_link(),
-            "data" : data
-        }
-        return Response(response, status=status.HTTP_200_OK)
        
 
 """This API will add like to post comment"""
