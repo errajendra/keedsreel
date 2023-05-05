@@ -228,7 +228,7 @@ urlpatterns = [
         name="add-reel-like-api"
     ),
     path(
-        "reels/like/remove/",
+        "reels/like/remove/<int:id>/",
         RemoveReelLikeAPIView.as_view(),
         name="remove-reel-like-api"
     ),

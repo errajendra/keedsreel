@@ -139,26 +139,6 @@ class AddReelLikeSerializer(serializers.Serializer):
             user=self.context["request"].user, reel=self.get_queryset()
         )
         return reel_like
-    
-    def delete(self):
-        request = self.context["request"]
-        reel_like = ReelLike.objects.select_related().filter(
-            user=request.user, reel=self.validated_data.get("reel_id")
-        )
-        if reel_like.exists():
-            reel_like.first().delete()
-            return None
-        raise serializers.ValidationError(
-            {
-                "status_code": status.HTTP_400_BAD_REQUEST,
-                "message": "bad request",
-                "data": {
-                    "comment_id": [
-                        "reel_id is either invalid nor like associate with current user"
-                    ]
-                },
-            }
-        )
 
 
 class GetReelLikeModelSerializer(serializers.ModelSerializer):
