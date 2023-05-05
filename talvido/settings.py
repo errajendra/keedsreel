@@ -120,7 +120,7 @@ FIREBASE_API_KEY = os.environ.get("FIREBASE_API_KEY")
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR/'media'
 
-LOGGING = {
+"""LOGGING = {
     'version': 1,
     # The version number of our log
     'disable_existing_loggers': False,
@@ -142,4 +142,4 @@ LOGGING = {
             'propagate': True,
         },
     },
-}
+}"""

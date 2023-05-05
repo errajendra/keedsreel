@@ -8,8 +8,7 @@ from .serializers.reels_serializer import (
     AddReelLikeSerializer,
     AddReelCommentSerializer,
     RemoveReelCommentSerializer,
-    AddReelCommentLikeSerializer,
-    RemoveReelCommentLikeSerializer,
+    AddReelCommentLikeSerializer
 )
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
@@ -263,7 +262,7 @@ class RemoveReelCommentLikeAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def delete(self, request):
-        remove_reel_comment_like_serializer = RemoveReelCommentLikeSerializer(
+        remove_reel_comment_like_serializer = AddReelCommentLikeSerializer(
             data=request.data, context={"request": request}
         )
         if remove_reel_comment_like_serializer.is_valid():

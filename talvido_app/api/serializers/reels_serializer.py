@@ -259,6 +259,26 @@ class AddReelCommentLikeSerializer(serializers.Serializer):
         )
         return reel_comment_like
 
+    def delete(self):
+        request = self.context["request"]
+        reel_comment_like = ReelCommentLike.objects.select_related().filter(
+            user=request.user, comment=self.validated_data.get("reel_comment_id")
+        )
+        if reel_comment_like.exists():
+            reel_comment_like.first().delete()
+            return None
+        raise serializers.ValidationError(
+            {
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": "bad request",
+                "data": {
+                    "comment_id": [
+                        "reel_comment_id is either invalid nor like associate with current user"
+                    ]
+                },
+            }
+        )
+
 
 class GetReelCommentLikeModelSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField("get_user_profile")
@@ -276,30 +296,3 @@ class GetReelCommentLikeModelSerializer(serializers.ModelSerializer):
             + user.profile.image.url
         )
         return user_serializer
-
-
-class RemoveReelCommentLikeSerializer(serializers.Serializer):
-    reel_comment_like_id = serializers.CharField()
-
-    def get_queryset(self):
-        try:
-            reel_comment = ReelCommentLike.objects.get(
-                id=self.data.get("reel_comment_like_id"), user=self.context["request"].user
-            )
-            return reel_comment
-        except ReelCommentLike.DoesNotExist:
-            raise serializers.ValidationError(
-                {
-                    "status_code": status.HTTP_400_BAD_REQUEST,
-                    "message": "bad request",
-                    "data": {
-                        "reel_comment_like_id": [
-                            "reel_comment_like_id is invalid or not associate with current user"
-                        ]
-                    },
-                }
-            )
-
-    def delete(self):
-        self.get_queryset().delete()
-        return None
