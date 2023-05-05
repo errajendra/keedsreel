@@ -437,9 +437,11 @@ class GetUserFollowingsPost(APIView, PageNumberPagination):
     page_size = 5
     def get(self, request):
         user = Talvidouser.objects.get(firebase_uid=request.user)
-        following = user.user_from.all()
-        results = self.paginate_queryset(following, request, view=self)
-        followings_serializer = FollowingModelSerializer(results, many=True, context={"request": request})
+        followings = user.user_from.all()
+        following_user = [ following.user_to for following in followings]
+        posts = Post.objects.select_related().filter(user__in=following_user).order_by("-created_at")
+        results = self.paginate_queryset(posts, request, view=self)
+        followings_serializer = GetPostModelSerializer(results, many=True, context={"request": request})
         return self.get_paginated_response(followings_serializer.data)
 
     def get_paginated_response(self, data):
