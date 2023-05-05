@@ -203,6 +203,6 @@ class UserFollowSerializer(serializers.Serializer):
         raise serializers.ValidationError(
             {
                 "status": status.HTTP_400_BAD_REQUEST,
-                "message": "bad request ! you can't unfollow, you need follow first",
+                "message": "bad request ! you can't unfollow, you need to follow first",
             }
         )

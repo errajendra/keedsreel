@@ -6,7 +6,6 @@ from .serializers.reels_serializer import (
     UploadUserReelsModelSerializer,
     AddReelViewsSerializer,
     AddReelLikeSerializer,
-    DeleteReelLikeSerializer,
     AddReelCommentSerializer,
     RemoveReelCommentSerializer,
     AddReelCommentLikeSerializer,
@@ -18,7 +17,6 @@ from talvido_app.models import Talvidouser, Reel
 
 
 """This API will get the user all and particular reels"""
-
 
 class GetUserReelsAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
@@ -59,7 +57,6 @@ class GetUserReelsAPIView(APIView):
 
 """This API will upload new reel for current authenticate user"""
 
-
 class UploadUserReelsAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
@@ -84,7 +81,6 @@ class UploadUserReelsAPIView(APIView):
 
 """This API will get all user reels"""
 
-
 class GetUsersAllReelsAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
@@ -104,7 +100,6 @@ class GetUsersAllReelsAPIView(APIView):
 
 """This API will get all the trendings reels"""
 
-
 class GetTrendingReelsAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
@@ -120,7 +115,6 @@ class GetTrendingReelsAPIView(APIView):
             "data": all_reels_serializer.data,
         }
         return Response(response, status=status.HTTP_200_OK)
-
 
 class AddReelViewAPIView(APIView):
     def post(self, request):
@@ -139,7 +133,6 @@ class AddReelViewAPIView(APIView):
             "data": reel_view_serializer.errors,
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
-
 
 class AddReelLikeAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
@@ -164,13 +157,12 @@ class AddReelLikeAPIView(APIView):
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-
 class RemoveReelLikeAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
     def delete(self, request):
-        delete_reel_like_serializer = DeleteReelLikeSerializer(
+        delete_reel_like_serializer = AddReelLikeSerializer(
             data=request.data, context={"request": request}
         )
         if delete_reel_like_serializer.is_valid():
@@ -187,7 +179,6 @@ class RemoveReelLikeAPIView(APIView):
             "data": delete_reel_like_serializer.errors,
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
-
 
 class AddReelCommentAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
@@ -221,7 +212,6 @@ class AddReelCommentAPIView(APIView):
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-
 class RemoveReelCommentAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
@@ -245,7 +235,6 @@ class RemoveReelCommentAPIView(APIView):
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-
 class AddReelCommentLikeAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
@@ -268,7 +257,6 @@ class AddReelCommentLikeAPIView(APIView):
             "data": add_reel_comment_like_serializer.errors,
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
-
 
 class RemoveReelCommentLikeAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]

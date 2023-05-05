@@ -261,13 +261,6 @@ class UploadPostAPIView(APIView):
     parser_classes = [MultiPartParser, JSONParser, FileUploadParser, FormParser]
 
     def post(self, request):
-        logger.info(
-            "upload post api accessed at "
-            + str(datetime.now())
-            + " hours! "
-            + " - "
-            + str(request.data)
-        )
         upload_post_serializer = UploadPostModelSerializer(data=request.data)
         if upload_post_serializer.is_valid():
             post = upload_post_serializer.save(user=request.user)

@@ -139,6 +139,26 @@ class AddReelLikeSerializer(serializers.Serializer):
             user=self.context["request"].user, reel=self.get_queryset()
         )
         return reel_like
+    
+    def delete(self):
+        request = self.context["request"]
+        reel_like = ReelLike.objects.select_related().filter(
+            user=request.user, reel=self.validated_data.get("reel_id")
+        )
+        if reel_like.exists():
+            reel_like.first().delete()
+            return None
+        raise serializers.ValidationError(
+            {
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": "bad request",
+                "data": {
+                    "comment_id": [
+                        "reel_id is either invalid nor like associate with current user"
+                    ]
+                },
+            }
+        )
 
 
 class GetReelLikeModelSerializer(serializers.ModelSerializer):
@@ -157,33 +177,6 @@ class GetReelLikeModelSerializer(serializers.ModelSerializer):
             + user.profile.image.url
         )
         return user_serializer
-
-
-class DeleteReelLikeSerializer(serializers.Serializer):
-    reel_liked_id = serializers.CharField()
-
-    def get_queryset(self):
-        try:
-            reel_liked = ReelLike.objects.get(
-                id=self.data.get("reel_liked_id"), user=self.context["request"].user
-            )
-            return reel_liked
-        except ReelLike.DoesNotExist:
-            raise serializers.ValidationError(
-                {
-                    "status_code": status.HTTP_400_BAD_REQUEST,
-                    "message": "bad request",
-                    "data": {
-                        "reel_id": [
-                            "reel_liked_id is invalid or not associate with current user"
-                        ]
-                    },
-                }
-            )
-
-    def delete(self):
-        self.get_queryset().delete()
-        return None
 
 
 class AddReelCommentSerializer(serializers.ModelSerializer):
