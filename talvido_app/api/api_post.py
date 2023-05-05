@@ -27,9 +27,9 @@ from rest_framework.parsers import (
     FileUploadParser,
 )
 from datetime import datetime
-
-# import the logging library
+from rest_framework.pagination import PageNumberPagination
 import logging
+
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -430,26 +430,29 @@ class RemovePostLikeAPIView(APIView):
 
 """This API will get all the posts of user followings"""
 
-class GetUserFollowingsPost(APIView):
+class GetUserFollowingsPost(APIView, PageNumberPagination):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
+    page_size = 5
     def get(self, request):
         user = Talvidouser.objects.get(firebase_uid=request.user)
         following = user.user_from.all()
-        followings_serializer = FollowingModelSerializer(
-            following, many=True, context={"request": request}
-        )
+        results = self.paginate_queryset(following, request, view=self)
+        followings_serializer = FollowingModelSerializer(results, many=True, context={"request": request})
+        return self.get_paginated_response(followings_serializer.data)
+
+    def get_paginated_response(self, data):
         response = {
-            "status_code": status.HTTP_200_OK,
-            "message": "ok",
-            "data": {
-                "users": followings_serializer.data,
-                "followings": following.count(),
-            },
+            "status_code" : status.HTTP_200_OK,
+            "message" : "ok",
+            "count" : self.page.paginator.count,
+            "next" : self.get_next_link(),
+            "previous" : self.get_previous_link(),
+            "data" : data
         }
         return Response(response, status=status.HTTP_200_OK)
-
+       
 
 """This API will add like to post comment"""
 
