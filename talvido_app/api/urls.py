@@ -32,7 +32,7 @@ from . import (
     GetUserFollowingsPost,
     AddPostCommentLikeAPIView,
     RemovePostCommentLikeAPIView,
-    SearchByUsernameAPIView,
+    SearchAccountAPIView,
     GetStoryHighlightsAPIView,
     GetUserReelsAPIView,
     UploadUserReelsAPIView,
@@ -184,7 +184,7 @@ urlpatterns = [
     # search API
     path(
         "search/account/",
-        SearchByUsernameAPIView.as_view(),
+        SearchAccountAPIView.as_view(),
         name="search-account-api"
     ),
     path(

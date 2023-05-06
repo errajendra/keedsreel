@@ -4,7 +4,7 @@ from talvido_app.models import Talvidouser, Profile
 
 """search by username model serializer"""
 
-class SearchByUsernameModelSerializer(serializers.ModelSerializer):
+class SearchAccountModelSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField("get_image")
 
     class Meta:

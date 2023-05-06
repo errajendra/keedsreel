@@ -2,18 +2,19 @@ from rest_framework import status
 from rest_framework.response import Response
 from talvido_app.models import Talvidouser, Post
 from talvido_app.api.serializers.search_serializers import (
-    SearchByUsernameModelSerializer,
+    SearchAccountModelSerializer,
 )
 from talvido_app.api.serializers.post_serializers import GetPostModelSerializer
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
+from django.db.models import Q
 
 
 """This API will search the user account by username and 
     return the result if matched"""
 
-class SearchByUsernameAPIView(APIView):
+class SearchAccountAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -21,11 +22,17 @@ class SearchByUsernameAPIView(APIView):
         """get the query parameter username"""
         search_username = request.query_params.get("username", " ")
 
-        """checking the username is avaliable in database"""
-        user = Talvidouser.objects.filter(username__icontains=search_username)
+        """checking the account is avaliable in database"""
+        user = Talvidouser.objects.filter(
+                Q(username__icontains=search_username)
+                |
+                Q(first_name__icontains=search_username)
+                |
+                Q(last_name__icontains=search_username)
+            )
 
         """serialize the data and return the response"""
-        user_serializer = SearchByUsernameModelSerializer(
+        user_serializer = SearchAccountModelSerializer(
             user, many=True, context={"request": request}
         )
         response = {
