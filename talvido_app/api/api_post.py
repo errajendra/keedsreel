@@ -16,7 +16,6 @@ from . import (
     PostCommentModelSerializer,
     DeletePostCommentSerializer,
     AddPostLikeSerializer,
-    FollowingModelSerializer,
     AddPostCommentLikeSerializer,
     GetStoryHighlightsModelSerializer,
 )
