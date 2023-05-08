@@ -47,6 +47,7 @@ from . import (
     AddReelCommentLikeAPIView,
     RemoveReelCommentLikeAPIView,
     DeleteUserReelAPIView,
+    BankDetailsAPIView,
 )
 
 
@@ -257,5 +258,8 @@ urlpatterns = [
         "user/reels/delete/<int:id>/",
         DeleteUserReelAPIView.as_view(),
         name="delete-user-reel-api"
+    ),
+    path(
+        "user/bank/", BankDetailsAPIView.as_view(), name="user-bank-details-api"
     ),
 ]

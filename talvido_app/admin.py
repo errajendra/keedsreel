@@ -187,4 +187,4 @@ class ReelViewAdmin(admin.ModelAdmin):
 
 @admin.register(BankDetail)
 class BankDetailAdmin(admin.ModelAdmin):
-    list_display = ["id", "bank_name", "account_number", "account_holder_name"]
+    list_display = ["id", "user", "bank_name", "account_number", "account_holder_name"]
