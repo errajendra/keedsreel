@@ -329,3 +329,19 @@ class ReelView(BaseModel):
 
     def __str__(self):
         return str(self.reel)
+
+
+
+class BankDetail(BaseModel):
+    user = models.OneToOneField(
+        Talvidouser,
+        verbose_name="User",
+        on_delete=models.CASCADE
+    )
+    bank_name = models.CharField(verbose_name="Bank Name", max_length=100)
+    account_number = models.CharField(verbose_name="Account Number", max_length=100)
+    ifsc_code = models.CharField(verbose_name="IFSC Code", max_length=100)
+    account_holder_name = models.CharField(verbose_name="Account Holder Name", max_length=100)
+
+    def __str__(self):
+        return str(self.user)

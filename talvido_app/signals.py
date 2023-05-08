@@ -4,7 +4,8 @@ from .models import (
     Talvidouser,
     Profile,
     Reel,
-    ReelView
+    ReelView,
+    BankDetail,
 )
 
 
@@ -20,3 +21,10 @@ def create_profile(sender, instance, created, **kwargs):
 def create_reelview(sender, instance, created, **kwargs):
     if created:
         ReelView.objects.create(reel=instance)
+
+
+"""this signal will create bank details, when new user get created"""
+@receiver(post_save, sender=Talvidouser)
+def create_bank_details(sender, instance, created, **kwargs):
+    if created:
+        BankDetail.objects.create(user=instance)
