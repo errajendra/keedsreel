@@ -160,18 +160,18 @@ class GetUserFollowingsStoriesModelSerializer(serializers.ModelSerializer):
     stories = serializers.SerializerMethodField("get_stories")
 
     class Meta:
-        model = Follow
+        model = Story
         fields = ["user", "stories"]
 
     def get_profile(self, data):
         return ProfileModelSerializer(
-            Profile.objects.get(user=data.user_to), context=self.context
+            Profile.objects.get(user=data.user), context=self.context
         ).data
 
     def get_stories(self, data):
         return StoryModelSerializer(
             Story.objects.select_related().filter(
-                user=data.user_to, ends_at__gt=datetime.today()
+                user=data.user, ends_at__gt=datetime.today()
             ),
             many=True,
             context=self.context,
@@ -396,7 +396,7 @@ class AddPostLikeSerializer(serializers.Serializer):
 
     def delete(self):
         request = self.context["request"]
-        post_like = PostLike.objects.filter(
+        post_like = PostLike.objects.select_related().filter(
             user=request.user, post=self.validated_data.get("post_id")
         )
         if post_like.exists():

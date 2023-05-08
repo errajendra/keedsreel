@@ -199,29 +199,30 @@ class StoryViewAPIView(APIView):
 
 """This api will get the user following stories"""
 
-class GetUserFollowingStories(APIView):
+class GetUserFollowingStories(APIView, PageNumberPaginationView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
+    page_size = 6
     def get(self, request):
-        following = Follow.objects.select_related().filter(user_from=request.user)
+        following_stories = Follow.objects.select_related().filter(user_from=request.user)
+        active_stories = Story.objects.select_related().filter(
+            user__in=following_stories.values_list("user_to", flat=True), ends_at__gt=datetime.today()
+        ).distinct("user")
+        following_stories_paginated = self.paginate_queryset(active_stories, request, view=self)
         followings_stories_serializer = GetUserFollowingsStoriesModelSerializer(
-            following, many=True, context={"request": request}
+            following_stories_paginated, many=True, context={"request": request}
         )
-        response = {
-            "status_code": status.HTTP_200_OK,
-            "message": "ok",
-            "data": followings_stories_serializer.data,
-        }
-        return Response(response, status=status.HTTP_200_OK)
+        return self.get_paginated_response(followings_stories_serializer.data)
 
 
 """This APi will show all the active posts of authenticated user"""
 
-class GetAuthUserActivePosts(APIView):
+class GetAuthUserActivePosts(APIView, PageNumberPaginationView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
+    page_size = 9    
     def get(self, request, id=None):
         user = Talvidouser.objects.get(firebase_uid=request.user)
         if id is not None:
@@ -239,17 +240,19 @@ class GetAuthUserActivePosts(APIView):
                 }
                 return Response(response, status=status.HTTP_400_BAD_REQUEST)
             post_serializer = GetPostModelSerializer(post, context={"request": request})
+            response = {
+                "status_code": status.HTTP_200_OK,
+                "message": "ok",
+                "data": post_serializer.data,
+            }
+            return Response(response, status=status.HTTP_200_OK)
         else:
             posts = user.post_user.all().order_by("-created_at")
+            posts_paginated = self.paginate_queryset(posts, request, view=self)
             post_serializer = GetPostModelSerializer(
-                posts, many=True, context={"request": request}
+                posts_paginated, many=True, context={"request": request}
             )
-        response = {
-            "status_code": status.HTTP_200_OK,
-            "message": "ok",
-            "data": post_serializer.data,
-        }
-        return Response(response, status=status.HTTP_200_OK)
+            return self.get_paginated_response(post_serializer.data)
 
 
 """This API will upload post for authenticated user"""
@@ -437,8 +440,9 @@ class GetUserFollowingsPost(APIView, PageNumberPaginationView):
     def get(self, request):
         user = Talvidouser.objects.get(firebase_uid=request.user)
         followings = user.user_from.all()
-        following_user = [ following.user_to for following in followings]
-        posts = Post.objects.select_related().filter(user__in=following_user).order_by("-created_at")
+        posts = Post.objects.select_related().filter(
+            user__in=followings.values_list("user_to", flat=True)
+        ).order_by("-created_at")
         results = self.paginate_queryset(posts, request, view=self)
         followings_serializer = GetPostModelSerializer(results, many=True, context={"request": request})
         return self.get_paginated_response(followings_serializer.data)

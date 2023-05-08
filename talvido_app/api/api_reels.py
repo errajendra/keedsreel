@@ -13,26 +13,25 @@ from .serializers.reels_serializer import (
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
 from talvido_app.models import Talvidouser, Reel, ReelLike
+from talvido_app.pagination import PageNumberPaginationView
 
 
 """This API will get the user all and particular reels"""
 
-class GetUserReelsAPIView(APIView):
+class GetUserReelsAPIView(APIView, PageNumberPaginationView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
+    page_size = 9
     def get(self, request, id=None):
         if id is None:
             user = Talvidouser.objects.get(firebase_uid=request.user)
             user_reels = user.reel_user.all()
+            reels_paginated = self.paginate_queryset(user_reels, request, view=self)
             reels_serializer = GetReelModelSerializer(
-                user_reels, many=True, context={"request": request}
+                reels_paginated, many=True, context={"request": request}
             )
-            response = {
-                "status_code": status.HTTP_200_OK,
-                "message": "ok",
-                "data": reels_serializer.data,
-            }
+            return self.get_paginated_response(reels_serializer.data)
         else:
             try:
                 reel = Reel.objects.get(id=id)
