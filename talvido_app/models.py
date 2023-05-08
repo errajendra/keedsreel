@@ -358,3 +358,24 @@ class BankPayment(BaseModel):
 
     def __str__(self):
         return str(self.id)
+
+
+class CompanyPaymentInfo(BaseModel):
+    name = models.CharField(verbose_name="Display Name", max_length=100)
+    qrcode = models.ImageField(verbose_name="QRCode", upload_to="qrcode/")
+
+    def __str__(self):
+        return str(self.name)
+
+
+class UPIPayment(BaseModel):
+    user = models.ForeignKey(
+        Talvidouser,
+        verbose_name="User",
+        on_delete=models.CASCADE,
+        related_name="user_upi_payment",
+    )
+    screenshot = models.FileField(verbose_name="Payment Screenshot", upload_to="upi/")
+
+    def __str__(self):
+        return str(self.id)

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from talvido_app.models import BankDetail, BankPayment
+from talvido_app.models import BankDetail, BankPayment, CompanyPaymentInfo, UPIPayment
 
 
 class BankDetailsModelSerializer(serializers.ModelSerializer):
@@ -22,4 +22,18 @@ class BankPaymentModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BankPayment
+        fields = ["screenshot"]
+
+
+class CompanyPaymentInfoModelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CompanyPaymentInfo
+        fields = ["name", "qrcode"]
+
+
+class UPIPaymentModelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UPIPayment
         fields = ["screenshot"]

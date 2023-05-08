@@ -1,8 +1,8 @@
 from rest_framework.response import Response
 from rest_framework import status
-from .import BankDetailsModelSerializer, BankPaymentModelSerializer
+from .import BankDetailsModelSerializer, BankPaymentModelSerializer, CompanyPaymentInfoModelSerializer, UPIPaymentModelSerializer
 from rest_framework.views import APIView
-from talvido_app.models import BankDetail
+from talvido_app.models import BankDetail, CompanyPaymentInfo
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
 
@@ -45,7 +45,7 @@ class BankDetailsAPIView(APIView):
 class BankPaymentAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
-    
+
     def post(self, request):
         upload_bank_payment_serializer = BankPaymentModelSerializer(data=request.data)
         if upload_bank_payment_serializer.is_valid():
@@ -60,5 +60,42 @@ class BankPaymentAPIView(APIView):
             "status_code" : status.HTTP_400_BAD_REQUEST,
             "message" : "bad request",
             "data" : upload_bank_payment_serializer.errors
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CompanyPaymentInfoAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        company_payment_info = CompanyPaymentInfo.objects.all().order_by("-created_at")[0]
+        company_payment_info_serializer = CompanyPaymentInfoModelSerializer(company_payment_info, context={"request": request})
+        response = {
+            "status_code" : status.HTTP_200_OK,
+            "message" : "ok",
+            "data" : company_payment_info_serializer.data
+        }
+        return Response(response, status=status.HTTP_200_OK)
+
+
+class UPIPaymentAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        upload_upi_payment_serializer = UPIPaymentModelSerializer(data=request.data)
+        if upload_upi_payment_serializer.is_valid():
+            upload_upi_payment_serializer.save(user=request.user)
+            response = {
+                "status_code" : status.HTTP_201_CREATED,
+                "message": "created",
+            }
+            return Response(response, status=status.HTTP_201_CREATED)
+        
+        response = {
+            "status_code" : status.HTTP_400_BAD_REQUEST,
+            "message" : "bad request",
+            "data" : upload_upi_payment_serializer.errors
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
