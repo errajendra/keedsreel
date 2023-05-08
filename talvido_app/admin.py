@@ -18,6 +18,7 @@ from .models import (
     ReelCommentLike,
     ReelView,
     BankDetail,
+    BankPayment,
 )
 from django.contrib.auth.admin import UserAdmin
 
@@ -188,3 +189,10 @@ class ReelViewAdmin(admin.ModelAdmin):
 @admin.register(BankDetail)
 class BankDetailAdmin(admin.ModelAdmin):
     list_display = ["id", "user", "bank_name", "account_number", "account_holder_name"]
+
+
+"""Register bank payment model in django admin"""
+
+@admin.register(BankPayment)
+class BankPaymentAdmin(admin.ModelAdmin):
+    list_display = ["id", "user", "screenshot", "created_at"]

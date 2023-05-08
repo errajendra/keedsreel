@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from talvido_app.models import BankDetail
+from talvido_app.models import BankDetail, BankPayment
 
 
 class BankDetailsModelSerializer(serializers.ModelSerializer):
@@ -16,3 +16,10 @@ class BankDetailsModelSerializer(serializers.ModelSerializer):
         Bank_details.account_holder_name = validated_data.get("account_holder_name")
         Bank_details.save()
         return Bank_details
+
+
+class BankPaymentModelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = BankPayment
+        fields = ["screenshot"]

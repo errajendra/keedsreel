@@ -345,3 +345,16 @@ class BankDetail(BaseModel):
 
     def __str__(self):
         return str(self.user)
+
+
+class BankPayment(BaseModel):
+    user = models.ForeignKey(
+        Talvidouser,
+        verbose_name="User",
+        on_delete=models.CASCADE,
+        related_name="user_bank_payment",
+    )
+    screenshot = models.FileField(verbose_name="Payment Screenshot", upload_to="bank/")
+
+    def __str__(self):
+        return str(self.id)

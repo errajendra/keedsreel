@@ -1,8 +1,8 @@
 from rest_framework.response import Response
 from rest_framework import status
-from .import BankDetailsModelSerializer
+from .import BankDetailsModelSerializer, BankPaymentModelSerializer
 from rest_framework.views import APIView
-from talvido_app.models import BankDetail, Talvidouser
+from talvido_app.models import BankDetail
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
 
@@ -39,4 +39,26 @@ class BankDetailsAPIView(APIView):
                 "message" : "bad request",
                 "data" :  update_bank_detail_serializer.errors
             }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+
+class BankPaymentAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        upload_bank_payment_serializer = BankPaymentModelSerializer(data=request.data)
+        if upload_bank_payment_serializer.is_valid():
+            upload_bank_payment_serializer.save(user=request.user)
+            response = {
+                "status_code" : status.HTTP_201_CREATED,
+                "message": "created",
+            }
+            return Response(response, status=status.HTTP_201_CREATED)
+        
+        response = {
+            "status_code" : status.HTTP_400_BAD_REQUEST,
+            "message" : "bad request",
+            "data" : upload_bank_payment_serializer.errors
+        }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
