@@ -191,7 +191,7 @@ class RegenerateAccessTokenAPIVIew(APIView):
         """validate the data"""
         if regenerate_access_token_serialzier.is_valid():
             """generate the new token on the base of refresh token"""
-            token_data = regenerate_access_token_serialzier.get_access_token(
+            response, response_data = regenerate_access_token_serialzier.get_access_token(
                 grant_type=regenerate_access_token_serialzier.validated_data.get(
                     "grant_type"
                 ),
@@ -199,7 +199,7 @@ class RegenerateAccessTokenAPIVIew(APIView):
                     "refresh_token"
                 ),
             )
-            return Response(token_data.json(), status=token_data.status_code)
+            return Response(response, status=response_data.status_code)
 
         """return this response if validation failed"""
         response = {

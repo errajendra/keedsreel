@@ -193,8 +193,20 @@ class RegenerateAccessTokenSerializer(serializers.Serializer):
     def get_access_token(self, grant_type, refresh_token):
         url = f"https://securetoken.googleapis.com/v1/token?key={settings.FIREBASE_API_KEY}"
         data = {"grant_type": grant_type, "refresh_token": refresh_token}
-        response = requests.post(url=url, data=data)
-        return response
+        response_data = requests.post(url=url, data=data)
+        res = response_data.json()
+        response = {
+            "status_code": 200,
+            "message": "ok",
+            "data": {
+                "localId": res["user_id"],  
+                "displayName": "",
+                "idToken": res["access_token"],
+                "refreshToken": res["refresh_token"],
+                "expiresIn": res["expires_in"]
+            }
+        }
+        return response, response_data
 
 
 """Email register model serializer"""
