@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .import BankDetailsModelSerializer, BankPaymentModelSerializer, CompanyPaymentInfoModelSerializer, UPIPaymentModelSerializer
 from rest_framework.views import APIView
-from talvido_app.models import BankDetail, CompanyPaymentInfo
+from talvido_app.models import BankDetail, CompanyPaymentInfo, BankPayment, UPIPayment
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
 
@@ -99,3 +99,25 @@ class UPIPaymentAPIView(APIView):
             "data" : upload_upi_payment_serializer.errors
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserSubscriptionAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        response = {
+            "status_code" : status.HTTP_200_OK,
+            "message" : "ok",
+            "status" : (
+                1 
+                if 
+                BankPayment.objects.filter(user=request.user).exists() 
+                or 
+                UPIPayment.objects.filter(user=request.user).exists()
+                else
+                0
+            )
+        }
+        return Response(response, status=status.HTTP_200_OK)
+            

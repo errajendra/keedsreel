@@ -51,6 +51,7 @@ from . import (
     BankPaymentAPIView,
     CompanyPaymentInfoAPIView,
     UPIPaymentAPIView,
+    UserSubscriptionAPIView,
 )
 
 
@@ -267,4 +268,5 @@ urlpatterns = [
     path("user/bank/upload/payment/", BankPaymentAPIView.as_view(), name="user-bank-payment-api"),
     path("user/upi/upload/payment/", UPIPaymentAPIView.as_view(), name="user-upi-payment-api"),
     path("company/payment/info/", CompanyPaymentInfoAPIView.as_view(), name="company-payment-info-api"),
+    path("user/subscription/", UserSubscriptionAPIView.as_view(), name="user-subscription-api"),
 ]
