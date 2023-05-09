@@ -203,7 +203,7 @@ class GetUserFollowingStories(APIView, PageNumberPaginationView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
-    page_size = 6
+    page_size = 3
     def get(self, request):
         following_stories = Follow.objects.select_related().filter(user_from=request.user)
         active_stories = Story.objects.select_related().filter(
