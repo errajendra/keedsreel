@@ -209,11 +209,15 @@ class GetUserFollowingStories(APIView, PageNumberPaginationView):
         active_stories = Story.objects.select_related().filter(
             user__in=following_stories.values_list("user_to", flat=True), ends_at__gt=datetime.today()
         ).distinct("user")
-        following_stories_paginated = self.paginate_queryset(active_stories, request, view=self)
         followings_stories_serializer = GetUserFollowingsStoriesModelSerializer(
-            following_stories_paginated, many=True, context={"request": request}
+            active_stories, many=True, context={"request": request}
         )
-        return self.get_paginated_response(followings_stories_serializer.data)
+        response = {
+            "status_code" : status.HTTP_200_OK,
+            "message" : "ok",
+            "data" : followings_stories_serializer.data
+        }
+        return Response(response, status=status.HTTP_200_OK)
 
 
 """This APi will show all the active posts of authenticated user"""
