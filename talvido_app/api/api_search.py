@@ -1,6 +1,6 @@
 from rest_framework import status
 from rest_framework.response import Response
-from talvido_app.models import Talvidouser, Post
+from talvido_app.models import Talvidouser, Post, RecentAccountSearch
 from talvido_app.api.serializers.search_serializers import (
     SearchAccountModelSerializer,
     AddRecentSearchSerializer,
@@ -100,5 +100,22 @@ class RecentAccountSearchAPIView(APIView):
             "status_code" : status.HTTP_400_BAD_REQUEST,
             "message" : "bad request",
             "data" : add_recent_account_search_serializer.errors
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request):
+        delete_recent_account_search_serializer = AddRecentSearchSerializer(data=request.data, context={"request": request})
+        if delete_recent_account_search_serializer.is_valid():
+            delete_recent_account_search_serializer.delete()
+            response = {
+                "status_code" : status.HTTP_204_NO_CONTENT,
+                "message" : "created",
+            }
+            return Response(response, status=status.HTTP_204_NO_CONTENT)
+        
+        response = {
+            "status_code" : status.HTTP_400_BAD_REQUEST,
+            "message" : "bad request",
+            "data" : delete_recent_account_search_serializer.errors
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)

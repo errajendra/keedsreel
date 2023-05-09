@@ -208,6 +208,11 @@ urlpatterns = [
         RecentAccountSearchAPIView.as_view(),
         name="recent-account-search-api"
     ),
+     path(
+        "search/recent/delete/",
+        RecentAccountSearchAPIView.as_view(),
+        name="delete-recent-account-search-api"
+    ),
     # reels API
     path(
         "user/reels/active/",

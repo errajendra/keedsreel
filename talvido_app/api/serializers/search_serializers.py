@@ -21,10 +21,11 @@ class SearchAccountModelSerializer(serializers.ModelSerializer):
 class AddRecentSearchSerializer(serializers.Serializer):
     user_firebase_id = serializers.CharField()
 
-    def create(self, validated_data):
-        search_user = validated_data.get("user_firebase_id")
+    def get_queryset(self):
+        search_user = self.data.get("user_firebase_id")
         try:
             user = Talvidouser.objects.get(firebase_uid=search_user)
+            return user
         except Talvidouser.DoesNotExist:
             raise serializers.ValidationError(
                 {
@@ -37,7 +38,23 @@ class AddRecentSearchSerializer(serializers.Serializer):
                     }
                 }
             )
+
+    def create(self, validated_data):
         return RecentAccountSearch.objects.get_or_create(
             user = self.context["request"].user,
-            search_user = user
+            search_user = self.get_queryset()
+        )
+
+    def delete(self):
+        recent_search = RecentAccountSearch.objects.filter(
+            user=self.context["request"].user, search_user=self.get_queryset()
+        )
+        if recent_search.exists():
+            recent_search.first().delete()
+            return None
+        raise serializers.ValidationError(
+            {
+                "status_code" : status.HTTP_400_BAD_REQUEST,
+                "message" : "bad request"
+            }
         )
