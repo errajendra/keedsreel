@@ -21,6 +21,7 @@ from .models import (
     BankPayment,
     CompanyPaymentInfo,
     UPIPayment,
+    RecentAccountSearch,
 )
 from django.contrib.auth.admin import UserAdmin
 
@@ -212,3 +213,10 @@ class CompanyPaymentInfoAdmin(admin.ModelAdmin):
 @admin.register(UPIPayment)
 class UPIPaymentAdmin(admin.ModelAdmin):
     list_display = ["id", "user", "screenshot", "created_at"]
+
+
+"""Register upi payment model in django admin"""
+
+@admin.register(RecentAccountSearch)
+class RecentAccountSearchAdmin(admin.ModelAdmin):
+    list_display = ["id", "user", "search_user", "created_at"]

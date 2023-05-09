@@ -52,6 +52,7 @@ from . import (
     CompanyPaymentInfoAPIView,
     UPIPaymentAPIView,
     UserSubscriptionAPIView,
+    RecentAccountSearchAPIView,
 )
 
 
@@ -196,6 +197,16 @@ urlpatterns = [
         "search/post/",
         SearchPostAPIView.as_view(),
         name="search-post-api"
+    ),
+    path(
+        "search/recent/add/",
+        RecentAccountSearchAPIView.as_view(),
+        name="add-recent-account-search-api"
+    ),
+    path(
+        "search/recent/",
+        RecentAccountSearchAPIView.as_view(),
+        name="recent-account-search-api"
     ),
     # reels API
     path(

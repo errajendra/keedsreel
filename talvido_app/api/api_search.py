@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from talvido_app.models import Talvidouser, Post
 from talvido_app.api.serializers.search_serializers import (
     SearchAccountModelSerializer,
+    AddRecentSearchSerializer,
 )
 from talvido_app.api.serializers.post_serializers import GetPostModelSerializer
 from rest_framework.views import APIView
@@ -66,3 +67,38 @@ class SearchPostAPIView(APIView):
             "data": post_serializer.data,
         }
         return Response(response, status=status.HTTP_200_OK)
+
+
+class RecentAccountSearchAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        recent_search_account = Talvidouser.objects.get(firebase_uid=request.user).user_recent_search.all()
+        users = Talvidouser.objects.filter(firebase_uid__in=recent_search_account.values_list("search_user", flat=True))
+        user_serializer = SearchAccountModelSerializer(
+            users, many=True, context={"request": request}
+        )
+        response = {
+            "status_code": status.HTTP_200_OK,
+            "message": "ok",
+            "data": user_serializer.data,
+        }
+        return Response(response, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        add_recent_account_search_serializer = AddRecentSearchSerializer(data=request.data, context={"request": request})
+        if add_recent_account_search_serializer.is_valid():
+            add_recent_account_search_serializer.save()
+            response = {
+                "status_code" : status.HTTP_201_CREATED,
+                "message" : "created",
+            }
+            return Response(response, status=status.HTTP_201_CREATED)
+        
+        response = {
+            "status_code" : status.HTTP_400_BAD_REQUEST,
+            "message" : "bad request",
+            "data" : add_recent_account_search_serializer.errors
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)

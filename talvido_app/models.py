@@ -379,3 +379,21 @@ class UPIPayment(BaseModel):
 
     def __str__(self):
         return str(self.id)
+
+
+class RecentAccountSearch(BaseModel):
+    user = models.ForeignKey(
+        Talvidouser,
+        verbose_name="User",
+        on_delete=models.CASCADE,
+        related_name="user_recent_search",
+    )
+    search_user = models.ForeignKey(
+        Talvidouser,
+        verbose_name="Search User",
+        on_delete=models.CASCADE,
+        related_name="search_user_recent_search",
+    )
+
+    def __str__(self):
+        return str(self.id)
