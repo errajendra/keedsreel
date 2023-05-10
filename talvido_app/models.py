@@ -1,6 +1,8 @@
+from typing import Iterable, Optional
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
+from django.utils.crypto import get_random_string
 from .utils import phone_regex
 from .manager import TalvidouserManager
 from datetime import datetime, timedelta
@@ -26,7 +28,7 @@ class Talvidouser(AbstractUser):
     )
     firebase_uid = models.CharField(_("Firebase UID"), max_length=100, primary_key=True)
     referral_code = models.CharField(
-        _("Referral Code"), max_length=200, blank=True, null=True
+        _("Referral Code"), max_length=200, unique=True, blank=True, null=True
     )
     username = models.CharField(
         _("Username"), max_length=100, unique=True, blank=True, null=True
@@ -55,6 +57,19 @@ class Talvidouser(AbstractUser):
 
     def __str__(self):
         return str(self.firebase_uid)
+    
+    def save(self, *args, **kwargs):
+        if not self.referral_code:
+            code = get_random_string(length=8).upper()
+            check = False
+            while not check:
+                if Talvidouser.objects.filter(referral_code=code).exists():
+                    code = get_random_string(length=8).upper()
+                else:
+                    check = True
+            self.referral_code = code
+        super().save(*args, **kwargs)
+    
 
 
 """profile model that will store extra information of user"""
@@ -397,3 +412,44 @@ class RecentAccountSearch(BaseModel):
 
     def __str__(self):
         return str(self.id)
+
+
+class Subscription(BaseModel):
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=200)
+    validity = models.CharField(choices=[('1','1'), ('3','3'), ('6','6'), ('12','12')],
+                                max_length=2, default="12", verbose_name="Validity In Months")
+    image = models.ImageField(upload_to='subscription-image/', null=True, blank=True)
+    
+    def __str__(self) -> str:
+        return self.name
+    
+
+class Level(BaseModel):
+    level = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=200)
+    min_points = models.IntegerField(verbose_name="Minimum point")
+    image = models.ImageField(upload_to='levels/', verbose_name="Image", null=True, blank=True)
+    
+    def __str__(self) -> str:
+        return self.name
+    
+
+class ReferralUser(BaseModel):
+    user = models.ForeignKey(
+        Talvidouser,
+        verbose_name="Joined User",
+        on_delete=models.CASCADE,
+        related_name="referral_user",
+    )
+    referral_user = models.ForeignKey(
+        Talvidouser,
+        verbose_name="Refered by User",
+        on_delete=models.CASCADE,
+        related_name="referral_by_user",
+    )
+    
+    def __str__(self) -> str:
+        return str(self.id)
+    
