@@ -453,3 +453,26 @@ class ReferralUser(BaseModel):
     def __str__(self) -> str:
         return str(self.id)
     
+
+class PointSetting(BaseModel):
+    activity = models.CharField(
+        choices=[
+            ('Time Spends', 'Time Spends'),
+            ('Referral', 'Referral'),
+            ('Share', 'Share'),
+            ('Comments', 'Comments'),
+            ('Like', 'Like'),
+        ],
+        verbose_name="User Activity",
+        unique=True)
+    count = models.IntegerField(
+        verbose_name="Activity Perform Count")
+    points = models.IntegerField(
+        verbose_name="Points",
+        help_text="""Point will be added on user points when user perform activity on
+        given Activity Perform Count."""
+        )
+    
+    def __str__(self) -> str:
+        return f"{self.activity} - {self.count} - {self.points}"
+    
