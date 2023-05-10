@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from talvido_app.models import Talvidouser
+from talvido_app.models import Talvidouser, ReferralUser
 from django.conf import settings
 from talvido_app.firebase.helpers import (
     verify_firebase_uid,
@@ -249,11 +249,16 @@ class TalvidoEmailRegisterSerializer(serializers.Serializer):
             last_name=validated_data.get("last_name"),
             email=email,
             password=make_password(password),
-            referral_code=validated_data.get("referral_code", ""),
             firebase_uid=user["localId"],
         )
         user["first_name"] = talvido_user.first_name
         user["last_name"] = talvido_user.last_name
+        
+        referral_code=validated_data.get("referral_code", None)
+        referral_user = Talvidouser.objects.filter(referral_code=referral_code)
+        if referral_user.exists():
+            ref_user = referral_user.first()
+            ReferralUser.objects.get_or_create(user=talvido_user, referral_user=ref_user)
         return user
 
 
