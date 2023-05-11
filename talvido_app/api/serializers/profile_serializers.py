@@ -1,5 +1,5 @@
 from rest_framework import serializers, status
-from talvido_app.models import Talvidouser, Profile, Follow, Post, ReferralUser
+from talvido_app.models import Talvidouser, Profile, Follow, Post, ReferralUser, Point
 
 
 """user model serializer"""
@@ -230,3 +230,18 @@ class GetReferralUserModelSerializer(serializers.ModelSerializer):
         return ProfileModelSerializer(
             Profile.objects.get(user=data.user), context=self.context
         ).data
+
+
+class GetUserPointsModelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Point
+        fields = ["user", "points"]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["points"] = int(instance.points)
+        data["user"] = ProfileModelSerializer(
+            Profile.objects.get(user=instance.user), context=self.context
+        ).data
+        return data
