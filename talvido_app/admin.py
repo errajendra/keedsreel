@@ -23,6 +23,8 @@ from .models import (
     UPIPayment,
     RecentAccountSearch,
     ReferralUser,
+    PointSetting,
+    Point,
 )
 from django.contrib.auth.admin import UserAdmin
 
@@ -227,4 +229,18 @@ class RecentAccountSearchAdmin(admin.ModelAdmin):
 
 @admin.register(ReferralUser)
 class ReferalUserAdmin(admin.ModelAdmin):
-    list_display = ["id", "jonied_user", "referred_user", "created_at"]
+    list_display = ["id", "user", "referral_user", "created_at"]
+
+
+"""Register point setting model in django admin"""
+
+@admin.register(PointSetting)
+class PointSettingAdmin(admin.ModelAdmin):
+    list_display = ["id", "activity", "count", "points", "created_at"]
+
+
+"""Register point setting model in django admin"""
+
+@admin.register(Point)
+class PointSettingAdmin(admin.ModelAdmin):
+    list_display = ["id", 'user', "activity", "points", "created_at"]
