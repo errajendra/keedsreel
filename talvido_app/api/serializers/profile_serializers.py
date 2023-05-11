@@ -213,7 +213,7 @@ class GetReferralUserModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ReferralUser
-        fields = ["user"]
+        fields = ["id", "user"]
 
     def to_representation(self, instance):
         from django.utils.dateformat import DateFormat
