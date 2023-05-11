@@ -249,7 +249,12 @@ class GetUserReferralAPIView(APIView):
         response = {
             "status_code" : status.HTTP_200_OK,
             "message": "ok",
-            "data": referral_user_serializer.data 
+            "data": {
+                "referral_users" : referral_user_serializer.data,
+                "image" : "https://" + request.META["HTTP_HOST"] + request.user.profile.image.url,
+                "total_score" : referral_users.count() * 50,
+                "total_referred_users" : referral_users.count(),
+            } 
         }
         return Response(response, status=status.HTTP_200_OK)
 
@@ -259,8 +264,9 @@ class GetUserPointsAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        points = Point.objects.get(user=request.user)
-        user_points_serializer = GetUserPointsModelSerializer(points, context={"request": request})
+        user = Talvidouser.objects.get(firebase_uid=request.user)
+        referral_users_points  = user.referral_by_user.all()
+        user_points_serializer = GetUserPointsModelSerializer(referral_users_points, many=True, context={"request": request})
         response = {
             "status_code" : status.HTTP_200_OK,
             "message": "ok",

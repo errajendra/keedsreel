@@ -233,15 +233,16 @@ class GetReferralUserModelSerializer(serializers.ModelSerializer):
 
 
 class GetUserPointsModelSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField("get_user_image")
 
     class Meta:
-        model = Point
-        fields = ["user", "points"]
+        model = ReferralUser
+        fields = ["user", "image"]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data["points"] = int(instance.points)
-        data["user"] = ProfileModelSerializer(
-            Profile.objects.get(user=instance.user), context=self.context
-        ).data
+        data["referral_users"] = {}
         return data
+
+    def get_user_image(self, data):
+        return []
