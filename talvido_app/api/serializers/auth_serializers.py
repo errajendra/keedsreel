@@ -218,7 +218,7 @@ class TalvidoEmailRegisterSerializer(serializers.Serializer):
     last_name = serializers.CharField()
     email = serializers.EmailField()
     password = serializers.CharField()
-    referral = serializers.CharField(required=False)
+    referral = serializers.CharField(required=False, allow_blank=True)
 
     """This method validating the email is exists or not"""
 
