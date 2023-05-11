@@ -227,4 +227,4 @@ class RecentAccountSearchAdmin(admin.ModelAdmin):
 
 @admin.register(ReferralUser)
 class ReferalUserAdmin(admin.ModelAdmin):
-    list_display = ["id", "user", "referral_user", "created_at"]
+    list_display = ["id", "jonied_user", "referred_user", "created_at"]
