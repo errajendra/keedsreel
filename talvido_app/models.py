@@ -470,7 +470,9 @@ class PointSetting(BaseModel):
             ('Like', 'Like'),
         ],
         verbose_name="User Activity",
-        unique=True)
+        unique=True,
+        max_length=100
+        )
     count = models.IntegerField(
         verbose_name="Activity Perform Count")
     points = models.FloatField(
