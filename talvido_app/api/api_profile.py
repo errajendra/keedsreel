@@ -11,8 +11,7 @@ from . import (
     FollowersModelSerializer,
     FollowingModelSerializer,
     UserFollowSerializer,
-    GetReferralUserModelSerializer,
-    GetUserPointsModelSerializer,
+    GetReferralUserModelSerializer
 )
 
 
@@ -255,21 +254,5 @@ class GetUserReferralAPIView(APIView):
                 "total_score" : referral_users.count() * 50,
                 "total_referred_users" : referral_users.count(),
             } 
-        }
-        return Response(response, status=status.HTTP_200_OK)
-
-
-class GetUserPointsAPIView(APIView):
-    authentication_classes = [FirebaseAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        user = Talvidouser.objects.get(firebase_uid=request.user)
-        referral_users_points  = user.referral_by_user.all()
-        user_points_serializer = GetUserPointsModelSerializer(referral_users_points, many=True, context={"request": request})
-        response = {
-            "status_code" : status.HTTP_200_OK,
-            "message": "ok",
-            "data": user_points_serializer.data 
         }
         return Response(response, status=status.HTTP_200_OK)
