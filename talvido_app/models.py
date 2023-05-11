@@ -490,4 +490,19 @@ class Point(BaseModel):
         on_delete=models.CASCADE,
         related_name="user_point",
     )
+    activity = models.CharField(
+        choices=[
+            ('Time Spends', 'Time Spends'),
+            ('Referral', 'Referral'),
+            ('Share', 'Share'),
+            ('Comments', 'Comments'),
+            ('Like', 'Like'),
+        ],
+        verbose_name="User Activity"
+    )
+    points = models.FloatField(verbose_name="Points")
+    
+    def __str__(self) -> str:
+        return f"{self.activity} - {self.points}"
+    
     

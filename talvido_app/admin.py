@@ -24,6 +24,7 @@ from .models import (
     RecentAccountSearch,
     ReferralUser,
     PointSetting,
+    Point,
 )
 from django.contrib.auth.admin import UserAdmin
 
@@ -236,3 +237,10 @@ class ReferalUserAdmin(admin.ModelAdmin):
 @admin.register(PointSetting)
 class PointSettingAdmin(admin.ModelAdmin):
     list_display = ["id", "activity", "count", "points", "created_at"]
+
+
+"""Register point setting model in django admin"""
+
+@admin.register(Point)
+class PointSettingAdmin(admin.ModelAdmin):
+    list_display = ["id", 'user', "activity", "points", "created_at"]
