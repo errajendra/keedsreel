@@ -218,7 +218,7 @@ class TalvidoEmailRegisterSerializer(serializers.Serializer):
     last_name = serializers.CharField()
     email = serializers.EmailField()
     password = serializers.CharField()
-    referral_code = serializers.CharField(required=False)
+    referral = serializers.CharField(required=False, allow_blank=True)
 
     """This method validating the email is exists or not"""
 
@@ -254,7 +254,7 @@ class TalvidoEmailRegisterSerializer(serializers.Serializer):
         user["first_name"] = talvido_user.first_name
         user["last_name"] = talvido_user.last_name
         
-        referral_code=validated_data.get("referral_code", None)
+        referral_code=validated_data.get("referral", None)
         referral_user = Talvidouser.objects.filter(referral_code=referral_code)
         if referral_user.exists():
             ref_user = referral_user.first()

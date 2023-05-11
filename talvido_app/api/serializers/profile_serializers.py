@@ -1,5 +1,5 @@
 from rest_framework import serializers, status
-from talvido_app.models import Talvidouser, Profile, Follow, Post
+from talvido_app.models import Talvidouser, Profile, Follow, Post, ReferralUser
 
 
 """user model serializer"""
@@ -206,3 +206,27 @@ class UserFollowSerializer(serializers.Serializer):
                 "message": "bad request ! you can't unfollow, you need to follow first",
             }
         )
+
+
+class GetReferralUserModelSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField("get_profile")
+
+    class Meta:
+        model = ReferralUser
+        fields = ["user"]
+
+    def to_representation(self, instance):
+        from django.utils.dateformat import DateFormat
+        from django.utils.formats import get_format
+        data  = super().to_representation(instance)
+        create_at = instance.created_at
+        df = DateFormat(create_at)
+        df = df.format(get_format('DATE_FORMAT'))
+        data["joined_at"] = df
+        data["points"] = 50
+        return data
+
+    def get_profile(self, data):
+        return ProfileModelSerializer(
+            Profile.objects.get(user=data.user), context=self.context
+        ).data

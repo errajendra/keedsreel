@@ -18,6 +18,7 @@ from . import (
     AddPostLikeSerializer,
     AddPostCommentLikeSerializer,
     GetStoryHighlightsModelSerializer,
+    GetPostCommentModelSerializer,
 )
 from rest_framework.parsers import (
     MultiPartParser,
@@ -340,10 +341,11 @@ class PostCommentAPIView(APIView):
             data=request.data, context={"request": request}
         )
         if post_comment_serializer.is_valid():
-            post_comment_serializer.save()
+            post_comment = post_comment_serializer.save()
             response = {
                 "status_code": status.HTTP_201_CREATED,
                 "message": "comment created",
+                "data" : GetPostCommentModelSerializer(post_comment, context={"request": request}).data
             }
             return Response(response, status=status.HTTP_201_CREATED)
 

@@ -10,6 +10,7 @@ from . import (
     CheckMobileNumberExistAPIView,
     ResetEmailPasswordAPIView,
     ProfileAPIView,
+    GetUserReferralAPIView,
     UpdateProfilePictureAPIView,
     RemoveProfilePictureAPIView,
     UserFollowAPIView,
@@ -115,6 +116,7 @@ urlpatterns = [
     path("user/profile/followings/",FollowingsAPIView.as_view(),name="user-followings-api"),
     path("user/profile/<str:firebase_uid>/",GetAnyUserProfileAPIView.as_view(),name="get-any-user-profile-api"),
     path("user/follow/",UserFollowAPIView.as_view(),name="user-follow-api"),
+    path("user/referrals/",GetUserReferralAPIView.as_view(),name="user-referrals-api"),
     # post API's enpoints
     path("stories/active/", ActiveStoryAPIView.as_view(), name="active-stories-api"),
     path("stories/archive/", ArchiveStoryAPIView.as_view(), name="archive-stories-api"),

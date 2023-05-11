@@ -476,3 +476,8 @@ class PointSetting(BaseModel):
     def __str__(self) -> str:
         return f"{self.activity} - {self.count} - {self.points}"
     
+    def jonied_user(self):
+        return str(self.user.first_name) + " " + str(self.user.last_name)
+
+    def referred_user(self):
+        return str(self.referral_user.first_name) + " " + str(self.referral_user.last_name)
