@@ -453,6 +453,12 @@ class ReferralUser(BaseModel):
     def __str__(self) -> str:
         return str(self.id)
     
+    def jonied_user(self):
+        return str(self.user.first_name) + " " + str(self.user.last_name)
+
+    def referred_user(self):
+        return str(self.referral_user.first_name) + " " + str(self.referral_user.last_name)
+
 
 class PointSetting(BaseModel):
     activity = models.CharField(
@@ -467,7 +473,7 @@ class PointSetting(BaseModel):
         unique=True)
     count = models.IntegerField(
         verbose_name="Activity Perform Count")
-    points = models.IntegerField(
+    points = models.FloatField(
         verbose_name="Points",
         help_text="""Point will be added on user points when user perform activity on
         given Activity Perform Count."""
@@ -476,8 +482,12 @@ class PointSetting(BaseModel):
     def __str__(self) -> str:
         return f"{self.activity} - {self.count} - {self.points}"
     
-    def jonied_user(self):
-        return str(self.user.first_name) + " " + str(self.user.last_name)
 
-    def referred_user(self):
-        return str(self.referral_user.first_name) + " " + str(self.referral_user.last_name)
+class Point(BaseModel):
+    user = models.ForeignKey(
+        Talvidouser,
+        verbose_name="User",
+        on_delete=models.CASCADE,
+        related_name="user_point",
+    )
+    
