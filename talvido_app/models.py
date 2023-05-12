@@ -496,3 +496,6 @@ class Point(BaseModel):
     
     def __str__(self) -> str:
         return f"{self.activity} - {self.points}"
+    
+    class Meta:
+        verbose_name = "User Activity Point"
