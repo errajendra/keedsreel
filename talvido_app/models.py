@@ -470,7 +470,9 @@ class PointSetting(BaseModel):
             ('Like', 'Like'),
         ],
         verbose_name="User Activity",
-        unique=True)
+        unique=True,
+        max_length=100
+        )
     count = models.IntegerField(
         verbose_name="Activity Perform Count")
     points = models.FloatField(
@@ -484,21 +486,11 @@ class PointSetting(BaseModel):
     
 
 class Point(BaseModel):
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         Talvidouser,
         verbose_name="User",
         on_delete=models.CASCADE,
         related_name="user_point",
-    )
-    activity = models.CharField(
-        choices=[
-            ('Time Spends', 'Time Spends'),
-            ('Referral', 'Referral'),
-            ('Share', 'Share'),
-            ('Comments', 'Comments'),
-            ('Like', 'Like'),
-        ],
-        verbose_name="User Activity"
     )
     points = models.FloatField(verbose_name="Points")
     
@@ -507,5 +499,3 @@ class Point(BaseModel):
     
     class Meta:
         verbose_name = "User Activity Point"
-    
-    

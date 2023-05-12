@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from talvido_app.models import Profile, Follow, Talvidouser
+from talvido_app.models import Profile, Follow, Talvidouser, Point
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
 from . import (
@@ -11,7 +11,7 @@ from . import (
     FollowersModelSerializer,
     FollowingModelSerializer,
     UserFollowSerializer,
-    GetReferralUserModelSerializer,
+    GetReferralUserModelSerializer
 )
 
 
@@ -248,6 +248,11 @@ class GetUserReferralAPIView(APIView):
         response = {
             "status_code" : status.HTTP_200_OK,
             "message": "ok",
-            "data": referral_user_serializer.data 
+            "data": {
+                "referral_users" : referral_user_serializer.data,
+                "image" : "https://" + request.META["HTTP_HOST"] + request.user.profile.image.url,
+                "total_score" : referral_users.count() * 50,
+                "total_referred_users" : referral_users.count(),
+            } 
         }
         return Response(response, status=status.HTTP_200_OK)

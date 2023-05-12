@@ -8,7 +8,8 @@ from .serializers.reels_serializer import (
     AddReelLikeSerializer,
     AddReelCommentSerializer,
     RemoveReelCommentSerializer,
-    AddReelCommentLikeSerializer
+    AddReelCommentLikeSerializer,
+    GetReelCommentModelSerializer,
 )
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
@@ -196,10 +197,11 @@ class AddReelCommentAPIView(APIView):
                     "data": {"reel_id": ["reel_id is invalid"]},
                 }
                 return Response(response, status=status.HTTP_400_BAD_REQUEST)
-            add_reel_comment_serializer.save(user=request.user, reel=reel)
+            reel_comment = add_reel_comment_serializer.save(user=request.user, reel=reel)
             response = {
                 "status_code": status.HTTP_201_CREATED,
                 "message": "comment added on reel",
+                "data" : GetReelCommentModelSerializer(reel_comment, context={"request": request}).data
             }
             return Response(response, status=status.HTTP_201_CREATED)
 

@@ -239,8 +239,8 @@ class PointSettingAdmin(admin.ModelAdmin):
     list_display = ["id", "activity", "count", "points", "created_at"]
 
 
-"""Register point setting model in django admin"""
+"""Register point model in django admin"""
 
 @admin.register(Point)
-class PointSettingAdmin(admin.ModelAdmin):
-    list_display = ["id", 'user', "activity", "points", "created_at"]
+class PointAdmin(admin.ModelAdmin):
+    list_display = ["id", 'user', "points", "created_at"]

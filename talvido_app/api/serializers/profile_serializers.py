@@ -1,5 +1,5 @@
 from rest_framework import serializers, status
-from talvido_app.models import Talvidouser, Profile, Follow, Post, ReferralUser
+from talvido_app.models import Talvidouser, Profile, Follow, Post, ReferralUser, Point
 
 
 """user model serializer"""
@@ -213,7 +213,7 @@ class GetReferralUserModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ReferralUser
-        fields = ["user"]
+        fields = ["id", "user"]
 
     def to_representation(self, instance):
         from django.utils.dateformat import DateFormat
