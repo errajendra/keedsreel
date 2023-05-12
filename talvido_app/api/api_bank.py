@@ -12,12 +12,14 @@ class BankDetailsAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        bank_detail = BankDetail.objects.get(user=request.user)
-        bank_detail_serializer = BankDetailsModelSerializer(bank_detail)
+        bank_detail = BankDetail.objects.order_by('-id').all()[:2]
+        bank_detail_serializer = BankDetailsModelSerializer(bank_detail, many=True)
         response = {
             "status_code" : status.HTTP_200_OK,
             "message" : "ok",
-            "data" : bank_detail_serializer.data
+            "data" : {
+                "bank_detail": bank_detail_serializer.data
+            }
         }
         return Response(response, status=status.HTTP_200_OK)
 

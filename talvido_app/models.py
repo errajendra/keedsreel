@@ -348,18 +348,18 @@ class ReelView(BaseModel):
 
 
 class BankDetail(BaseModel):
-    user = models.OneToOneField(
-        Talvidouser,
-        verbose_name="User",
-        on_delete=models.CASCADE
-    )
+    # user = models.OneToOneField(
+    #     Talvidouser,
+    #     verbose_name="User",
+    #     on_delete=models.CASCADE
+    # )
     bank_name = models.CharField(verbose_name="Bank Name", max_length=100)
     account_number = models.CharField(verbose_name="Account Number", max_length=100)
     ifsc_code = models.CharField(verbose_name="IFSC Code", max_length=100)
     account_holder_name = models.CharField(verbose_name="Account Holder Name", max_length=100)
 
     def __str__(self):
-        return str(self.user)
+        return str(self.bank_name)
 
 
 class BankPayment(BaseModel):
@@ -496,6 +496,3 @@ class Point(BaseModel):
     
     def __str__(self) -> str:
         return f"{self.activity} - {self.points}"
-    
-    class Meta:
-        verbose_name = "User Activity Point"
