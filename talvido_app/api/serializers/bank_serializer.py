@@ -29,7 +29,7 @@ class CompanyPaymentInfoModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CompanyPaymentInfo
-        fields = ["name", "qrcode"]
+        fields = ["name", "qrcode", "upi_id"]
 
 
 class UPIPaymentModelSerializer(serializers.ModelSerializer):

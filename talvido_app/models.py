@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from django.utils.crypto import get_random_string
+from django.core.validators import RegexValidator
 from .utils import phone_regex
 from .manager import TalvidouserManager
 from datetime import datetime, timedelta
@@ -378,6 +379,10 @@ class BankPayment(BaseModel):
 class CompanyPaymentInfo(BaseModel):
     name = models.CharField(verbose_name="Display Name", max_length=100)
     qrcode = models.ImageField(verbose_name="QRCode", upload_to="qrcode/")
+    upi_id = models.CharField(verbose_name="UPI ID", max_length=256, validators=[RegexValidator(
+        regex="^[a-zA-Z0-9.-]{2,100}@[a-zA-Z][a-zA-Z]{2,64}$",
+        message="Enter a valid UPI ID.")]
+    )
 
     def __str__(self):
         return str(self.name)

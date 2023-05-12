@@ -208,7 +208,7 @@ class BankPaymentAdmin(admin.ModelAdmin):
 
 @admin.register(CompanyPaymentInfo)
 class CompanyPaymentInfoAdmin(admin.ModelAdmin):
-    list_display = ["id", "name", "qrcode", "created_at"]
+    list_display = ["id", "name", "qrcode", "upi_id", "created_at"]
 
 
 """Register upi payment model in django admin"""
