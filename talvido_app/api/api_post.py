@@ -209,10 +209,6 @@ class GetUserFollowingStories(APIView):
         active_stories = Story.objects.select_related().filter(
             user__in=following_stories.values_list("user_to", flat=True), ends_at__gt=datetime.today()
         ).distinct("user")
-        if active_stories.count() < 1:
-            active_stories = Story.objects.select_related().filter(
-                ends_at__gt=datetime.today()
-            ).distinct("user")
         followings_stories_serializer = GetUserFollowingsStoriesModelSerializer(
             active_stories, many=True, context={"request": request}
         )

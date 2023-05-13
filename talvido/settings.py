@@ -9,7 +9,7 @@ SECRET_KEY = 'django-insecure-sc@s_h6%*k(8(2cvdy+uta59b1ba2$#u+82$*aff&(rdko(roy
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS = ["talvido.wooshelf.com"]
+ALLOWED_HOSTS = []
 
 
 # Application definition
