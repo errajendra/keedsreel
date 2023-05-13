@@ -209,6 +209,10 @@ class GetUserFollowingStories(APIView):
         active_stories = Story.objects.select_related().filter(
             user__in=following_stories.values_list("user_to", flat=True), ends_at__gt=datetime.today()
         ).distinct("user")
+        if active_stories.count() < 1:
+            active_stories = Story.objects.select_related().filter(
+                ends_at__gt=datetime.today()
+            ).distinct("user")
         followings_stories_serializer = GetUserFollowingsStoriesModelSerializer(
             active_stories, many=True, context={"request": request}
         )
@@ -448,6 +452,8 @@ class GetUserFollowingsPost(APIView, PageNumberPaginationView):
         posts = Post.objects.select_related().filter(
             user__in=followings.values_list("user_to", flat=True)
         ).order_by("-created_at")
+        if posts.count() < 1:
+            posts = Post.objects.select_related().order_by("-created_at")
         results = self.paginate_queryset(posts, request, view=self)
         followings_serializer = GetPostModelSerializer(results, many=True, context={"request": request})
         return self.get_paginated_response(followings_serializer.data)
