@@ -24,7 +24,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'debug_toolbar',
     'talvido_app.apps.TalvidoAppConfig',
-    'drf_api_logger',
 ]
 
 MIDDLEWARE = [
@@ -36,8 +35,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
-    
-    'drf_api_logger.middleware.api_logger_middleware.APILoggerMiddleware',
 ]
 
 ROOT_URLCONF = 'talvido.urls'
