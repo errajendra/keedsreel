@@ -18,7 +18,9 @@ class FirebaseAuthentication(BaseAuthentication):
         auth_header = request.META.get("HTTP_AUTHORIZATION")
 
         if not auth_header:
-            raise NoAuthToken()
+            auth_header = request.META.get("HTTP_AUTH")
+            if not auth_header:
+                raise NoAuthToken()
         
         """Decoding the Token It rasie exception when decode failed."""
         id_token = auth_header.split(" ").pop()

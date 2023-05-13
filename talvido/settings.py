@@ -61,6 +61,7 @@ TEMPLATES = [
 # WSGI_APPLICATION = 'talvido.wsgi.application'
 ASGI_APPLICATION = 'talvido.asgi.application'
 
+DRF_API_LOGGER_DATABASE = True 
 
 # Database
 

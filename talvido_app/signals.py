@@ -24,7 +24,7 @@ def create_reelview(sender, instance, created, **kwargs):
 
 
 """this signal will create bank details, when new user get created"""
-@receiver(post_save, sender=Talvidouser)
-def create_bank_details(sender, instance, created, **kwargs):
-    if created:
-        BankDetail.objects.create(user=instance)
+# @receiver(post_save, sender=Talvidouser)
+# def create_bank_details(sender, instance, created, **kwargs):
+#     if created:
+#         BankDetail.objects.create(user=instance)
