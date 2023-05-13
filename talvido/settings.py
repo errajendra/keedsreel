@@ -15,6 +15,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -24,6 +26,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'debug_toolbar',
     'talvido_app.apps.TalvidoAppConfig',
+    'chat.apps.ChatConfig',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +58,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'talvido.wsgi.application'
+# WSGI_APPLICATION = 'talvido.wsgi.application'
+ASGI_APPLICATION = 'talvido.asgi.application'
 
 
 # Database
