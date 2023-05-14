@@ -26,7 +26,7 @@ class GetParticularUserChatModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chat
-        fields = ["id", "sender", "message", "seen"]
+        fields = ["id", "sender", "message", "seen", "created_at"]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

@@ -46,7 +46,7 @@ class GetParticularUserChatAPIView(APIView):
         users_chats = Chat.objects.select_related().filter(
             sender__in=[request.user, reciever_user],
             reciever__in=[reciever_user, request.user],
-        )
+        ).order_by("-created_at")
         get_chats_serializer = GetParticularUserChatModelSerializer(
             users_chats, many=True, context={"request": request}
         )
