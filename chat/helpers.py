@@ -41,5 +41,4 @@ def decrypt_message(encoded_message):
     
     # Decode the decrypted message as a string
     message = unpadded_message.decode('utf-8')
-    
     return message
