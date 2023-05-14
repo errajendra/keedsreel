@@ -133,6 +133,10 @@ INTERNAL_IPS = [
     # ...
 ]
 
+# ENCRYPTION_KEY
+
+ENCRYPTION_KEY = os.environ.get("ENCRYPTION_KEY")
+
 """LOGGING = {
     'version': 1,
     # The version number of our log
