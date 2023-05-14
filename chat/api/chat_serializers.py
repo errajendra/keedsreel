@@ -19,3 +19,22 @@ class GetChatModelSerializer(serializers.ModelSerializer):
             instance.reciever.profile.image.url
         )
         return data
+
+
+class GetParticularUserChatModelSerializer(serializers.ModelSerializer):
+    sender = UserModelSerializer()
+    # reciever = UserModelSerializer()
+
+    class Meta:
+        model = Chat
+        fields = ["sender", "message", "seen"]
+
+    def to_representation(self, instance):
+        data  = super().to_representation(instance)
+        data["sender"]["image"] = (
+            "https://" + 
+            self.context["request"].META["HTTP_HOST"] 
+            + 
+            instance.sender.profile.image.url
+        )
+        return data
