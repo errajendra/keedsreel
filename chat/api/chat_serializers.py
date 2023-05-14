@@ -11,12 +11,11 @@ class GetChatModelSerializer(serializers.ModelSerializer):
         fields = ["reciever"]
 
     def to_representation(self, instance):
-        data  = super().to_representation(instance)
+        data = super().to_representation(instance)
         data["reciever"]["image"] = (
-            "https://" + 
-            self.context["request"].META["HTTP_HOST"] 
-            + 
-            instance.reciever.profile.image.url
+            "https://"
+            + self.context["request"].META["HTTP_HOST"]
+            + instance.reciever.profile.image.url
         )
         return data
 
@@ -29,11 +28,10 @@ class GetParticularUserChatModelSerializer(serializers.ModelSerializer):
         fields = ["sender", "message", "seen"]
 
     def to_representation(self, instance):
-        data  = super().to_representation(instance)
+        data = super().to_representation(instance)
         data["sender"]["image"] = (
-            "https://" + 
-            self.context["request"].META["HTTP_HOST"] 
-            + 
-            instance.sender.profile.image.url
+            "https://"
+            + self.context["request"].META["HTTP_HOST"]
+            + instance.sender.profile.image.url
         )
         return data
