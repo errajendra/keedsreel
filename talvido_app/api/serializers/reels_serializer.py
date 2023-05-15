@@ -81,7 +81,6 @@ class GetReelModelSerializer(serializers.ModelSerializer):
             "user",
             "reel",
             "description",
-            "thumbnail",
             "reel_views",
             "reel_liked_by",
             "comments",
@@ -96,7 +95,7 @@ class GetReelModelSerializer(serializers.ModelSerializer):
 class UploadUserReelsModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reel
-        fields = ["reel", "description", "thumbnail"]
+        fields = ["reel", "description"]
 
 
 class AddReelViewsSerializer(serializers.Serializer):
