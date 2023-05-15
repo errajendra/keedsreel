@@ -273,6 +273,7 @@ class Reel(BaseModel):
     )
     description = models.TextField(blank=True, null=True)
     reel = models.FileField(verbose_name="Reel", upload_to="reel/")
+    thumbnail = models.ImageField(verbose_name="Reel Thumbnail", upload_to="reel/thumbnail/")
 
     def __str__(self):
         return str(self.id)
