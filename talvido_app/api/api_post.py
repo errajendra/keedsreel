@@ -449,7 +449,7 @@ class GetUserFollowingsPost(APIView, PageNumberPaginationView):
             user__in=followings.values_list("user_to", flat=True)
         ).order_by("-created_at")
         if posts.count() < 1:
-            posts = Post.objects.select_related().order_by("-created_at")[:5]
+            posts = Post.objects.select_related().order_by("-created_at")
         results = self.paginate_queryset(posts, request, view=self)
         followings_serializer = GetPostModelSerializer(results, many=True, context={"request": request})
         return self.get_paginated_response(followings_serializer.data)
