@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'debug_toolbar',
     'talvido_app.apps.TalvidoAppConfig',
+    'dashbord',
 ]
 
 MIDDLEWARE = [
