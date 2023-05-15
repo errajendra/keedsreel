@@ -188,6 +188,7 @@ class GetPostModelSerializer(serializers.ModelSerializer):
     liked_by = serializers.SerializerMethodField("get_post_liked_by_user")
     total_likes = serializers.SerializerMethodField("get_total_likes")
     is_like = serializers.SerializerMethodField("is_post_like")
+    is_follow = serializers.SerializerMethodField("get_is_follow")
 
     def get_profile(self, data):
         user = Talvidouser.objects.get(firebase_uid=data.user)
@@ -243,6 +244,18 @@ class GetPostModelSerializer(serializers.ModelSerializer):
             0
         )
 
+    def get_is_follow(self, data):
+        return (
+            1
+            if Follow.objects.select_related()
+            .filter(
+                user_to=data.user.firebase_uid, user_from=self.context["request"].user
+            )
+            .exists()
+            else 0
+        )
+
+
     class Meta:
         model = Post
         fields = [
@@ -258,6 +271,7 @@ class GetPostModelSerializer(serializers.ModelSerializer):
             "total_comments",
             "total_likes",
             "is_like",
+            "is_follow",
         ]
 
 """upload post model serializer"""
