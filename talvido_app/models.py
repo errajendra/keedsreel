@@ -501,4 +501,4 @@ class Point(BaseModel):
     points = models.FloatField(verbose_name="Points")
     
     def __str__(self) -> str:
-        return f"{self.activity} - {self.points}"
+        return f"{self.user} - {self.points}"
