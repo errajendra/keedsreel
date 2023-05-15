@@ -1,13 +1,20 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-{% include 'base/header.html' %}
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Talvido {{title}}</title>
+    
+        {% include 'base/header.html' %}
+        {% block header %}{% endblock header %}
+    </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
 
     <!-- Preloader -->
     <div class="preloader flex-column justify-content-center align-items-center">
-        <img class="animation__shake" src="dist/img/logo.png" alt="Talvido Admin" height="60" width="60">
+        <img class="animation__shake" src="{% static 'dist/img/logo.png' %}" alt="Talvido" height="60" width="60">
     </div>
 
     <!-- Navbar -->
@@ -164,5 +171,6 @@
     </div>
 
     {% include 'base/footer.html' %}
+    {% block scripts %}{% endblock scripts %}
 </body>
 </html>

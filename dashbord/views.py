@@ -63,13 +63,18 @@ def index(request):
     return render(request, 'index.html', context)
 
 
+def home(request):
+    return redirect(index)
+
+
 """ List of all Users """
-@login_required(login_url='login')
+@login_required
 def user_list(request):
     users = User.objects.select_related().order_by('-date_joined')
     context = {
         "title": "All Users",
         'users': users
     }
+    print(dir(users.first()))
     return render(request, 'users/list.html', context)
 
