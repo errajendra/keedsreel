@@ -10,30 +10,32 @@
             <thead>
                 <tr>
                     <th>SN</th>
-                    <th>User ID</th>
-                    <th>Mobile Number</th>
-                    <th>Total Posts</th>
+                    <th>User</th>
+                    <th>Story</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                {% for user in users %}
+                {% for story in stories %}
                 <tr>
                     <td>{{forloop.counter}} </td>
                     <td>
-                        <a href="{% url 'profile' user.firebase_uid %}" target='_blank'>{{user.get_full_name}}</a>
-                        <p><small class="text-muted text-sm">{{user.firebase_uid}} </small></p>
+                        <a href="{% url 'profile' story.user.firebase_uid %}" target='_blank'>{{story.user.get_full_name}} </a>
+                        <p><small class="text-muted text-sm">{{story.user.firebase_uid}} </small></p>
                     </td>
-                    <td>{{user.mobile_number}} </td>
-                    <td> {{user.post_user.all.count}} </td>
+                    <td>
+                        <a href="{{story.story.url}}" target="_blank">View</a>
+                    </td>
+                    <td></td>
                 </tr>
                 {% endfor %}
             </tbody>
             <tfoot>
                 <tr>
                     <th>SN</th>
-                    <th>User ID</th>
-                    <th>Mobile Number</th>
-                    <th>Total Posts</th>
+                    <th>User</th>
+                    <th>Story</th>
+                    <th>Action</th>
                 </tr>
             </tfoot>
         </table>
@@ -74,15 +76,6 @@
         "responsive": true, "lengthChange": false, "autoWidth": false,
         "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
       }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-      $('#example2').DataTable({
-        "paging": true,
-        "lengthChange": false,
-        "searching": false,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
-      });
     });
 </script>
 

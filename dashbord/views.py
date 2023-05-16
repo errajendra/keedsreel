@@ -1,10 +1,13 @@
-from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.db.models import Q, Max, Sum
 from django.contrib.auth.decorators import login_required
 from talvido_app.models import Talvidouser as User
-from talvido_app.models import Post, Story, Point
+from talvido_app.models import (
+    Post, Story, Point, Follow
+    )
 
 
 
@@ -23,6 +26,9 @@ def login_view(request):
             return render(request, 'credential/login.html')
         if user.check_password(password):
             login(request, user)
+            next = request.GET.get('next', None)
+            if next:
+                return redirect(next)
             return redirect('index')
         else:
             messages.warning(request, 'Please enter a valid password.')
@@ -37,7 +43,7 @@ def logout_view(request):
     
 
 """ Dashbord of User view"""
-@login_required(login_url='login')
+@login_required
 def index(request):
     """
         Dashboard- show total number of posts, stories, users.
@@ -63,11 +69,15 @@ def index(request):
     return render(request, 'index.html', context)
 
 
+""" Base url redirect to dashbord. """
 def home(request):
     return redirect(index)
 
 
-""" List of all Users """
+""" 
+User Views 
+"""
+"""List of all Users """
 @login_required
 def user_list(request):
     users = User.objects.select_related().order_by('-date_joined')
@@ -75,6 +85,56 @@ def user_list(request):
         "title": "All Users",
         'users': users
     }
-    print(dir(users.first()))
     return render(request, 'users/list.html', context)
+
+
+""" User Profile """
+def user_profile(request, fid):
+    user = User.objects.select_related().get(firebase_uid=fid)
+    follows = Follow.objects.filter(Q(user_to=user) | Q(user_from=user))
+    follower = follows.filter(user_to=user).values('user_from')
+    following = follows.filter(user_from=user)
+    friends = following.filter(user_to__in=follower)
+    posts = user.post_user.all()
+    stories = user.story_set.all()
+    context = {
+        "title": "User Profile",
+        "user": user,
+        "follower": follower.count(),
+        "following": following.count(),
+        "friends": friends.count(),
+        "posts": posts,
+        "stories": stories,
+    }
+    return render(request, 'users/profile.html', context)
+
+
+
+""" 
+Post View 
+"""
+""" List of all Posts """
+@login_required
+def post_list(request):
+    posts = Post.objects.select_related().order_by('-updated_at')
+    context = {
+        "title": "All Posts",
+        'posts': posts
+    }
+    return render(request, 'feed/post/list.html', context)
+
+
+
+"""
+Story View
+"""
+""" List of all Story """
+@login_required
+def story_list(request):
+    stories = Story.objects.select_related().order_by('-updated_at')
+    context = {
+        "title": "All Stories",
+        'stories': stories
+    }
+    return render(request, 'feed/story/list.html', context)
 
