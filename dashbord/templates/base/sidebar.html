@@ -71,8 +71,8 @@
             </li>
 
             {% comment %} Feed {% endcomment %}
-            <li class="nav-item">
-                <a href="#" class="nav-link">
+            <li class="nav-item open">
+                <a href="#" class="nav-link {% if url_name == 'post_list' or url_name == 'story_list' %} active open {% endif %}">
                 <i class="nav-icon fas fa-book"></i>
                 <p>
                     Feed
@@ -81,13 +81,13 @@
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="{% url 'post_list' %}" class="nav-link {% if url_name == 'post_list' %} active {% endif %}">
                         <i class="far fa-circle nav-icon"></i>
                         <p>Post</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="{% url 'story_list' %}" class="nav-link {% if url_name == 'story_list' %} active {% endif %}">
                         <i class="far fa-circle nav-icon"></i>
                         <p>Story</p>
                         </a>
