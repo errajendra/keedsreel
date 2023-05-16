@@ -372,6 +372,7 @@ class BankPayment(BaseModel):
         related_name="user_bank_payment",
     )
     screenshot = models.FileField(verbose_name="Payment Screenshot", upload_to="bank/")
+    approve = models.BooleanField(verbose_name="Approve Payment", default=False)
 
     def __str__(self):
         return str(self.id)
@@ -397,7 +398,8 @@ class UPIPayment(BaseModel):
         related_name="user_upi_payment",
     )
     screenshot = models.FileField(verbose_name="Payment Screenshot", upload_to="upi/")
-
+    approve = models.BooleanField(verbose_name="Approve Payment", default=False)
+    
     def __str__(self):
         return str(self.id)
 

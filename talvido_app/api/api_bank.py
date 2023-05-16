@@ -114,9 +114,9 @@ class UserSubscriptionAPIView(APIView):
             "status" : (
                 1 
                 if 
-                BankPayment.objects.filter(user=request.user).exists() 
+                BankPayment.objects.filter(user=request.user).order_by("-created_at").first().approve 
                 or 
-                UPIPayment.objects.filter(user=request.user).exists()
+                UPIPayment.objects.filter(user=request.user).order_by("-created_at").first().approve
                 else
                 0
             )

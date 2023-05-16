@@ -201,7 +201,7 @@ class BankDetailAdmin(admin.ModelAdmin):
 
 @admin.register(BankPayment)
 class BankPaymentAdmin(admin.ModelAdmin):
-    list_display = ["id", "user", "screenshot", "created_at"]
+    list_display = ["id", "user", "screenshot", "approve", "created_at"]
 
 
 """Register company payment info model in django admin"""
@@ -215,7 +215,7 @@ class CompanyPaymentInfoAdmin(admin.ModelAdmin):
 
 @admin.register(UPIPayment)
 class UPIPaymentAdmin(admin.ModelAdmin):
-    list_display = ["id", "user", "screenshot", "created_at"]
+    list_display = ["id", "user", "screenshot", "approve", "created_at"]
 
 
 """Register upi payment model in django admin"""
