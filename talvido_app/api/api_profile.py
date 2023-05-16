@@ -136,10 +136,7 @@ class FollowersAPIView(APIView):
         response = {
             "status_code": status.HTTP_200_OK,
             "message": "ok",
-            "data": {
-                "users": followers_serializer.data,
-                "followers": followers.count(),
-            },
+            "data": followers_serializer.data,
         }
         return Response(response, status=status.HTTP_200_OK)
 
@@ -158,10 +155,7 @@ class FollowingsAPIView(APIView):
         response = {
             "status_code": status.HTTP_200_OK,
             "message": "ok",
-            "data": {
-                "users": followings_serializer.data,
-                "followings": following.count(),
-            },
+            "data": followings_serializer.data,
         }
         return Response(response, status=status.HTTP_200_OK)
 

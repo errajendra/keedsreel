@@ -149,11 +149,11 @@ class FollowersModelSerializer(serializers.ModelSerializer):
 
 class FollowingModelSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField("get_profile")
-    posts = serializers.SerializerMethodField("get_user_post")
+    # posts = serializers.SerializerMethodField("get_user_post")
 
     class Meta:
         model = Follow
-        fields = ["user", "posts", "created_at"]
+        fields = ["user", "created_at"]
 
     def get_profile(self, data):
         return ProfileModelSerializer(
