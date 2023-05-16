@@ -114,6 +114,8 @@ urlpatterns = [
     ),
     path("user/profile/followers/",FollowersAPIView.as_view(),name="user-followers-api"),
     path("user/profile/followings/",FollowingsAPIView.as_view(),name="user-followings-api"),
+    path("user/profile/followers/<str:firebase_uid>/",FollowersAPIView.as_view(),name="user-followers-api"),
+    path("user/profile/followings/<str:firebase_uid>/",FollowingsAPIView.as_view(),name="user-followings-api"),
     path("user/profile/<str:firebase_uid>/",GetAnyUserProfileAPIView.as_view(),name="get-any-user-profile-api"),
     path("user/follow/",UserFollowAPIView.as_view(),name="user-follow-api"),
     path("user/referrals/",GetUserReferralAPIView.as_view(),name="user-referrals-api"),

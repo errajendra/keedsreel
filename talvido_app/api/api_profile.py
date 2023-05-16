@@ -130,9 +130,28 @@ class FollowersAPIView(APIView, PageNumberPaginationView):
     permission_classes = [IsAuthenticated]
 
     page_size = 10
-    def get(self, request):
-        followers = Follow.objects.select_related().filter(
-            user_to=request.user).order_by("created_at")
+    def get(self, request, firebase_uid=None):
+        if firebase_uid is None:
+            followers = Follow.objects.select_related().filter(
+                user_to=request.user
+            ).order_by("created_at")
+        else:
+            try:
+                user = Talvidouser.objects.get(firebase_uid=firebase_uid)
+            except Talvidouser.DoesNotExist:
+                response = {
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "bad request",
+                    "data" : {
+                        "firebase_uid" : [
+                            "firebase_uid is invalid"
+                        ]
+                    }  
+                }
+                return Response(response, status=status.HTTP_400_BAD_REQUEST)
+            followers = Follow.objects.select_related().filter(
+                user_to=user
+            ).order_by("created_at")
         results = self.paginate_queryset(followers, request, view=self)
         followers_serializer = FollowersModelSerializer(
             results, many=True, context={"request": request}
@@ -147,9 +166,29 @@ class FollowingsAPIView(APIView, PageNumberPaginationView):
     permission_classes = [IsAuthenticated]
 
     page_size = 10
-    def get(self, request):
-        followings = Follow.objects.select_related().filter(
-            user_from=request.user).order_by("created_at")
+    def get(self, request, firebase_uid=None):
+        if firebase_uid is None:
+            followings = Follow.objects.select_related().filter(
+                user_from=request.user
+            ).order_by("created_at")
+        else:
+            try:
+                user = Talvidouser.objects.get(firebase_uid=firebase_uid)
+            except Talvidouser.DoesNotExist:
+                response = {
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "bad request",
+                    "data" : {
+                        "firebase_uid" : [
+                            "firebase_uid is invalid"
+                        ]
+                    }  
+                }
+                return Response(response, status=status.HTTP_400_BAD_REQUEST)
+            followings = Follow.objects.select_related().filter(
+                user_from=user
+            ).order_by("created_at")
+                
         results = self.paginate_queryset(followings, request, view=self)
         followings_serializer = FollowingModelSerializer(
             results, many=True, context={"request": request}
