@@ -149,7 +149,6 @@ class FollowersModelSerializer(serializers.ModelSerializer):
 
 class FollowingModelSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField("get_profile")
-    # posts = serializers.SerializerMethodField("get_user_post")
 
     class Meta:
         model = Follow
@@ -159,12 +158,6 @@ class FollowingModelSerializer(serializers.ModelSerializer):
         return ProfileModelSerializer(
             Profile.objects.get(user=data.user_to), context=self.context
         ).data
-
-    def get_user_post(self, data):
-        from talvido_app.api.serializers.post_serializers import GetPostModelSerializer
-
-        posts = Post.objects.filter(user=data.user_to)
-        return GetPostModelSerializer(posts, many=True, context=self.context).data
 
 
 """"user follow serializer"""

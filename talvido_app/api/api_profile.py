@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from talvido_app.models import Profile, Follow, Talvidouser, Point
+from talvido_app.models import Profile, Follow, Talvidouser
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
 from . import (
@@ -13,6 +13,7 @@ from . import (
     UserFollowSerializer,
     GetReferralUserModelSerializer
 )
+from talvido_app.pagination import PageNumberPaginationView
 
 
 """This api will update and get the 
@@ -124,40 +125,36 @@ class RemoveProfilePictureAPIView(APIView):
 
 """This API's will get all the followers of a current user"""
 
-class FollowersAPIView(APIView):
+class FollowersAPIView(APIView, PageNumberPaginationView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
+    page_size = 10
     def get(self, request):
-        followers = Follow.objects.select_related().filter(user_to=request.user)
+        followers = Follow.objects.select_related().filter(
+            user_to=request.user).order_by("created_at")
+        results = self.paginate_queryset(followers, request, view=self)
         followers_serializer = FollowersModelSerializer(
-            followers, many=True, context={"request": request}
+            results, many=True, context={"request": request}
         )
-        response = {
-            "status_code": status.HTTP_200_OK,
-            "message": "ok",
-            "data": followers_serializer.data,
-        }
-        return Response(response, status=status.HTTP_200_OK)
+        return self.get_paginated_response(followers_serializer.data)
 
 
 """This API's will get all the following of a current user"""
 
-class FollowingsAPIView(APIView):
+class FollowingsAPIView(APIView, PageNumberPaginationView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
+    page_size = 10
     def get(self, request):
-        following = Follow.objects.select_related().filter(user_from=request.user)
+        followings = Follow.objects.select_related().filter(
+            user_from=request.user).order_by("created_at")
+        results = self.paginate_queryset(followings, request, view=self)
         followings_serializer = FollowingModelSerializer(
-            following, many=True, context={"request": request}
+            results, many=True, context={"request": request}
         )
-        response = {
-            "status_code": status.HTTP_200_OK,
-            "message": "ok",
-            "data": followings_serializer.data,
-        }
-        return Response(response, status=status.HTTP_200_OK)
+        return self.get_paginated_response(followings_serializer.data)
 
 
 """This API's will get the any user profile using its firebase uid"""
