@@ -140,10 +140,14 @@ class FollowersModelSerializer(serializers.ModelSerializer):
         fields = ["id", "user", "created_at"]
 
     def get_profile(self, data):
-        return ProfileModelSerializer(
-            Profile.objects.get(user=data.user_from), context=self.context
+        return UserModelSerializer(
+            data.user_from, context=self.context
         ).data
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["image"] = "https://" + self.context["request"].META["HTTP_HOST"] + instance.user_from.profile.image.url
+        return data
 
 """Following model serializer"""
 
@@ -155,10 +159,14 @@ class FollowingModelSerializer(serializers.ModelSerializer):
         fields = ["id", "user", "created_at"]
 
     def get_profile(self, data):
-        return ProfileModelSerializer(
-            Profile.objects.get(user=data.user_to), context=self.context
+        return UserModelSerializer(
+            data.user_to, context=self.context
         ).data
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["image"] = "https://" + self.context["request"].META["HTTP_HOST"] + instance.user_to.profile.image.url
+        return data
 
 """"user follow serializer"""
 
