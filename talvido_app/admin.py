@@ -159,7 +159,7 @@ class StoryHighlightModelAdmin(admin.ModelAdmin):
 
 @admin.register(Reel)
 class ReelAdmin(admin.ModelAdmin):
-    list_display = ["id", "user", "description", "created_at", "updated_at"]
+    list_display = ["id", "user", "description", "thumbnail", "created_at", "updated_at"]
 
 
 """Register reel like model in django admin"""

@@ -80,21 +80,18 @@ class UploadUserReelsAPIView(APIView):
 
 """This API will get all user reels"""
 
-class GetUsersAllReelsAPIView(APIView):
+class GetUsersAllReelsAPIView(APIView, PageNumberPaginationView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
+    page_size = 5
     def get(self, request):
-        reels = Reel.objects.select_related()
+        reels = Reel.objects.select_related().order_by("-created_at")
+        results = self.paginate_queryset(reels, request, view=self)
         all_reels_serializer = GetReelModelSerializer(
-            reels, many=True, context={"request": request}
+            results, many=True, context={"request": request}
         )
-        response = {
-            "status_code": status.HTTP_200_OK,
-            "message": "ok",
-            "data": all_reels_serializer.data,
-        }
-        return Response(response, status=status.HTTP_200_OK)
+        return self.get_paginated_response(all_reels_serializer.data)        
 
 
 """This API will get all the trendings reels"""
