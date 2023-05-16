@@ -152,7 +152,7 @@ class FollowingModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Follow
-        fields = ["user", "created_at"]
+        fields = ["id", "user", "created_at"]
 
     def get_profile(self, data):
         return ProfileModelSerializer(
