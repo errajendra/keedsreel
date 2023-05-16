@@ -146,8 +146,9 @@ class FollowersModelSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data["image"] = "https://" + self.context["request"].META["HTTP_HOST"] + instance.user_from.profile.image.url
+        data["user"]["image"] = "https://" + self.context["request"].META["HTTP_HOST"] + instance.user_from.profile.image.url
         return data
+
 
 """Following model serializer"""
 
@@ -165,8 +166,9 @@ class FollowingModelSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data["image"] = "https://" + self.context["request"].META["HTTP_HOST"] + instance.user_to.profile.image.url
+        data["user"]["image"] = "https://" + self.context["request"].META["HTTP_HOST"] + instance.user_to.profile.image.url
         return data
+
 
 """"user follow serializer"""
 
