@@ -76,14 +76,14 @@ class Talvidouser(AbstractUser):
 """profile model that will store extra information of user"""
 
 class Profile(BaseModel):
-    GENDER_CHOICES = (("MALE", "MALE"), ("FEMALE", "FEMALE"), ("OTHER", "OTHER"))
+    GENDER_CHOICES = (("", ""), ("MALE", "MALE"), ("FEMALE", "FEMALE"), ("OTHER", "OTHER"))
 
     user = models.OneToOneField(Talvidouser, on_delete=models.CASCADE)
     image = models.ImageField(
         upload_to="profile", default="default.png", verbose_name="Profile Image"
     )
     gender = models.CharField(
-        verbose_name="Gender", blank=False, choices=GENDER_CHOICES, max_length=100
+        verbose_name="Gender", blank=False, choices=GENDER_CHOICES, max_length=100, default="", null=True
     )
     location = models.CharField(verbose_name="Location", blank=True, null=True, max_length=100)
     description = models.TextField(verbose_name="Description", blank=True, null=True)
@@ -399,7 +399,7 @@ class UPIPayment(BaseModel):
     )
     screenshot = models.FileField(verbose_name="Payment Screenshot", upload_to="upi/")
     approve = models.BooleanField(verbose_name="Approve Payment", default=False)
-    
+
     def __str__(self):
         return str(self.id)
 
