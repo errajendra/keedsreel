@@ -28,7 +28,9 @@ class StoryModelSerializer(serializers.ModelSerializer):
     story_views = serializers.SerializerMethodField("get_story_views", read_only=True)
     finish = serializers.CharField(default=0, read_only=True)
     story_type = serializers.SerializerMethodField("get_story_type", read_only=True)
-    story_view_status = serializers.SerializerMethodField("get_story_view_status", read_only=True)
+    story_view_status = serializers.SerializerMethodField(
+        "get_story_view_status", read_only=True
+    )
 
     def get_story_duration(self, data):
         difference = data.ends_at.replace(tzinfo=None) - datetime.now()
@@ -71,15 +73,14 @@ class StoryModelSerializer(serializers.ModelSerializer):
         elif extension.lower() in video_formats:
             return "video"
         return []
-    
+
     def get_story_view_status(self, data):
         return (
-            1 
-            if StoryViews.objects.select_related().filter(
-                user=self.context["request"].user, story=data
-            ).exists() 
-            else 
-            0
+            1
+            if StoryViews.objects.select_related()
+            .filter(user=self.context["request"].user, story=data)
+            .exists()
+            else 0
         )
 
     class Meta:
@@ -94,7 +95,7 @@ class StoryModelSerializer(serializers.ModelSerializer):
             "story_views",
             "finish",
             "story_type",
-            "story_view_status"
+            "story_view_status",
         ]
 
 
@@ -202,7 +203,6 @@ class GetPostModelSerializer(serializers.ModelSerializer):
         )
         return user_serializer
 
-
     def get_post_duration(self, data):
         difference = datetime.now() - data.created_at.replace(tzinfo=None)
         m, s = divmod(difference.total_seconds(), 60)
@@ -229,19 +229,18 @@ class GetPostModelSerializer(serializers.ModelSerializer):
         post = Post.objects.get(id=data.id)
         post_liked_user = post.post_like.all()
         self.total_likes = post_liked_user.count()
-        return GetPostLikeModelSerializer(post_liked_user,many=True).data
+        return GetPostLikeModelSerializer(post_liked_user, many=True).data
 
     def get_total_likes(self, data):
         return self.total_likes
-    
+
     def is_post_like(self, data):
         return (
             1
-            if PostLike.objects.select_related().filter(
-                user=self.context['request'].user,post=data
-            ).exists()
-            else
-            0
+            if PostLike.objects.select_related()
+            .filter(user=self.context["request"].user, post=data)
+            .exists()
+            else 0
         )
 
     def get_is_follow(self, data):
@@ -254,7 +253,6 @@ class GetPostModelSerializer(serializers.ModelSerializer):
             .exists()
             else 0
         )
-
 
     class Meta:
         model = Post
@@ -273,6 +271,7 @@ class GetPostModelSerializer(serializers.ModelSerializer):
             "is_like",
             "is_follow",
         ]
+
 
 """upload post model serializer"""
 
@@ -355,7 +354,16 @@ class GetPostCommentModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PostComment
-        fields = ["id", "user", "post", "comment", "created_at", "duration", "comment_likes", "total_comment_likes"]
+        fields = [
+            "id",
+            "user",
+            "post",
+            "comment",
+            "created_at",
+            "duration",
+            "comment_likes",
+            "total_comment_likes",
+        ]
 
     def get_comment_duration(self, data):
         difference = datetime.now() - data.created_at.replace(tzinfo=None)
@@ -379,7 +387,7 @@ class GetPostCommentModelSerializer(serializers.ModelSerializer):
         return user_serializer
 
     def get_comment_likes(self, data):
-        comment  = PostComment.objects.get(id=data.id)
+        comment = PostComment.objects.get(id=data.id)
         comment_like = comment.post_comment.all()
         self.total_comment_likes = comment_like.count()
         return GetPostCommentLikeModelSerializer(comment_like, many=True).data
@@ -473,7 +481,6 @@ class AddPostCommentLikeSerializer(serializers.Serializer):
 """get post comment like model serializer"""
 
 class GetPostCommentLikeModelSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = PostCommentLike
         fields = ["id", "user"]
@@ -482,7 +489,6 @@ class GetPostCommentLikeModelSerializer(serializers.ModelSerializer):
 """get post like model serializer"""
 
 class GetPostLikeModelSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = PostComment
         fields = ["id", "user"]
@@ -491,7 +497,6 @@ class GetPostLikeModelSerializer(serializers.ModelSerializer):
 """get story highlights model serializer"""
 
 class GetStoryHighlightsModelSerializer(serializers.ModelSerializer):
-
     user = UserModelSerializer()
     stories = StoryModelSerializer(many=True)
 
