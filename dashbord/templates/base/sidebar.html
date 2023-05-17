@@ -30,7 +30,6 @@
                 <i class="nav-icon fas fa-tachometer-alt"></i>
                 <p>
                     Dashboard
-                    <i class="right fas fa-angle-left"></i>
                 </p>
                 </a>
             </li>
@@ -47,27 +46,12 @@
             {% comment %} User {% endcomment %}
             
             <li class="nav-item">
-                <a href="#" class="nav-link {% if url_name == 'user_list' %} active {% endif %}">
+                <a href="{% url 'user_list' %}" class="nav-link {% if url_name == 'user_list' %} active {% endif %}">
                     <i class="nav-icon fas fa-users"></i>
                     <p>
-                        User
-                        <i class="fas fa-angle-left right"></i>
+                        Users
                     </p>
                 </a>
-                <ul class="nav nav-treeview">
-                    <li class="nav-item">
-                        <a href="{% url 'user_list' %}" class="nav-link {% if url_name == 'user_list' %} active {% endif %}">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>List</p>
-                        </a>
-                    </li>
-                    {% comment %} <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>Story</p>
-                        </a>
-                    </li> {% endcomment %}
-                </ul>
             </li>
 
             {% comment %} Feed {% endcomment %}
