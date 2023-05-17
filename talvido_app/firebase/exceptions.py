@@ -56,6 +56,6 @@ class FirebaseUIDExists(APIException):
     default_detail = {
         "status_code": status.HTTP_400_BAD_REQUEST,
         "message": "bad request",
-        "data": {"firebase_uid": "Firebase uid is already exist"},
+        "error": {"firebase_uid": "Firebase uid is already exist"},
     }
     default_code = "Firebase uid is already exist"

@@ -80,7 +80,7 @@ urlpatterns = [
         RegsiterEmailAPIView.as_view(),
         name="register-email-api",
     ),
-     path(
+    path(
         "auth/login/email/",
         LoginEmailAPIView.as_view(),
         name="login-email-api",
@@ -101,7 +101,9 @@ urlpatterns = [
         name="reset-email-password-api",
     ),
     # profile api's endpoints
-    path("user/profile/", ProfileAPIView.as_view(), name="get-current-user-profile-api"),
+    path(
+        "user/profile/", ProfileAPIView.as_view(), name="get-current-user-profile-api"
+    ),
     path(
         "user/update/profile-picture/",
         UpdateProfilePictureAPIView.as_view(),
@@ -112,13 +114,33 @@ urlpatterns = [
         RemoveProfilePictureAPIView.as_view(),
         name="remove-user-profile-picture-api",
     ),
-    path("user/profile/followers/",FollowersAPIView.as_view(),name="user-followers-api"),
-    path("user/profile/followings/",FollowingsAPIView.as_view(),name="user-followings-api"),
-    path("user/profile/followers/<str:firebase_uid>/",FollowersAPIView.as_view(),name="user-followers-api"),
-    path("user/profile/followings/<str:firebase_uid>/",FollowingsAPIView.as_view(),name="user-followings-api"),
-    path("user/profile/<str:firebase_uid>/",GetAnyUserProfileAPIView.as_view(),name="get-any-user-profile-api"),
-    path("user/follow/",UserFollowAPIView.as_view(),name="user-follow-api"),
-    path("user/referrals/",GetUserReferralAPIView.as_view(),name="user-referrals-api"),
+    path(
+        "user/profile/followers/", FollowersAPIView.as_view(), name="user-followers-api"
+    ),
+    path(
+        "user/profile/followings/",
+        FollowingsAPIView.as_view(),
+        name="user-followings-api",
+    ),
+    path(
+        "user/profile/followers/<str:firebase_uid>/",
+        FollowersAPIView.as_view(),
+        name="user-followers-api",
+    ),
+    path(
+        "user/profile/followings/<str:firebase_uid>/",
+        FollowingsAPIView.as_view(),
+        name="user-followings-api",
+    ),
+    path(
+        "user/profile/<str:firebase_uid>/",
+        GetAnyUserProfileAPIView.as_view(),
+        name="get-any-user-profile-api",
+    ),
+    path("user/follow/", UserFollowAPIView.as_view(), name="user-follow-api"),
+    path(
+        "user/referrals/", GetUserReferralAPIView.as_view(), name="user-referrals-api"
+    ),
     # post API's enpoints
     path("stories/active/", ActiveStoryAPIView.as_view(), name="active-stories-api"),
     path("stories/archive/", ArchiveStoryAPIView.as_view(), name="archive-stories-api"),
@@ -128,165 +150,157 @@ urlpatterns = [
     path(
         "stories/active/followings/",
         GetUserFollowingStories.as_view(),
-        name="get-user-followings-stories-api"
+        name="get-user-followings-stories-api",
     ),
     path(
         "user/posts/active/",
         GetAuthUserActivePosts.as_view(),
-        name="get-auth-user-active-posts-api"
+        name="get-auth-user-active-posts-api",
     ),
     path(
         "user/posts/active/<int:id>/",
         GetAuthUserActivePosts.as_view(),
-        name="get-auth-user-particular-active-posts-api"
+        name="get-auth-user-particular-active-posts-api",
     ),
     path(
         "user/posts/upload/",
         UploadPostAPIView.as_view(),
-        name="upload-auth-user-posts-api"
+        name="upload-auth-user-posts-api",
     ),
     path(
-        "user/posts/delete/",
-        DeletePostAPIView.as_view(),
-        name="delete-user-posts-api"
+        "user/posts/delete/", DeletePostAPIView.as_view(), name="delete-user-posts-api"
     ),
     path(
         "stories/highlights/",
         GetStoryHighlightsAPIView.as_view(),
-        name="stories-highlights-api"
+        name="stories-highlights-api",
     ),
     # comment API'S endpoints
     path(
-        "post/comment/add/",
-        PostCommentAPIView.as_view(),
-        name="add-post-comment-api"
+        "post/comment/add/", PostCommentAPIView.as_view(), name="add-post-comment-api"
     ),
     path(
         "post/comment/delete/",
         DeletePostCommentAPIView.as_view(),
-        name="delete-post-comment-api"
+        name="delete-post-comment-api",
     ),
-    path(
-        "post/like/add/",
-        AddPostLikeAPIView.as_view(),
-        name="add-post-like-api"
-    ),
+    path("post/like/add/", AddPostLikeAPIView.as_view(), name="add-post-like-api"),
     path(
         "post/like/remove/",
         RemovePostLikeAPIView.as_view(),
-        name="remove-post-like-api"
+        name="remove-post-like-api",
     ),
     path(
         "user/posts/followings/",
         GetUserFollowingsPost.as_view(),
-        name="get-user-following-post-api"
+        name="get-user-following-post-api",
     ),
     path(
         "post/comment/add/like/",
         AddPostCommentLikeAPIView.as_view(),
-        name="add-post-comment-like-api"
+        name="add-post-comment-like-api",
     ),
     path(
         "post/comment/remove/like/",
         RemovePostCommentLikeAPIView.as_view(),
-        name="remove-post-comment-like-api"
+        name="remove-post-comment-like-api",
     ),
     # search API
-    path(
-        "search/account/",
-        SearchAccountAPIView.as_view(),
-        name="search-account-api"
-    ),
-    path(
-        "search/post/",
-        SearchPostAPIView.as_view(),
-        name="search-post-api"
-    ),
+    path("search/account/", SearchAccountAPIView.as_view(), name="search-account-api"),
+    path("search/post/", SearchPostAPIView.as_view(), name="search-post-api"),
     path(
         "search/recent/add/",
         RecentAccountSearchAPIView.as_view(),
-        name="add-recent-account-search-api"
+        name="add-recent-account-search-api",
     ),
     path(
         "search/recent/",
         RecentAccountSearchAPIView.as_view(),
-        name="recent-account-search-api"
+        name="recent-account-search-api",
     ),
-     path(
+    path(
         "search/recent/delete/",
         RecentAccountSearchAPIView.as_view(),
-        name="delete-recent-account-search-api"
+        name="delete-recent-account-search-api",
     ),
     # reels API
     path(
         "user/reels/active/",
         GetUserReelsAPIView.as_view(),
-        name="get-current-user-all-reels-api"
+        name="get-current-user-all-reels-api",
     ),
     path(
         "user/reels/active/<int:id>/",
         GetUserReelsAPIView.as_view(),
-        name="get-particular-reels-api"
+        name="get-particular-reels-api",
     ),
     path(
         "users/reels/",
         GetUsersAllReelsAPIView.as_view(),
-        name="get-users-all-reels-api"
+        name="get-users-all-reels-api",
     ),
     path(
         "trending/reels/",
         GetTrendingReelsAPIView.as_view(),
-        name="get-trending-reels-api"
+        name="get-trending-reels-api",
     ),
     path(
         "user/reels/upload/",
         UploadUserReelsAPIView.as_view(),
-        name="upload-current-user-reels-api"
+        name="upload-current-user-reels-api",
     ),
-    path(
-        "reels/views/add/",
-        AddReelViewAPIView.as_view(),
-        name="add-reel-view-api"
-    ),
-    path(
-        "reels/like/add/",
-        AddReelLikeAPIView.as_view(),
-        name="add-reel-like-api"
-    ),
+    path("reels/views/add/", AddReelViewAPIView.as_view(), name="add-reel-view-api"),
+    path("reels/like/add/", AddReelLikeAPIView.as_view(), name="add-reel-like-api"),
     path(
         "reels/like/remove/<int:id>/",
         RemoveReelLikeAPIView.as_view(),
-        name="remove-reel-like-api"
+        name="remove-reel-like-api",
     ),
     path(
         "reels/comment/add/",
         AddReelCommentAPIView.as_view(),
-        name="add-reel-comment-api"
+        name="add-reel-comment-api",
     ),
     path(
         "reels/comment/remove/",
         RemoveReelCommentAPIView.as_view(),
-        name="remove-reel-comment-api"
+        name="remove-reel-comment-api",
     ),
     path(
         "reels/comment/add/like/",
         AddReelCommentLikeAPIView.as_view(),
-        name="add-reel-comment-like-api"
+        name="add-reel-comment-like-api",
     ),
     path(
         "reels/comment/remove/like/",
         RemoveReelCommentLikeAPIView.as_view(),
-        name="remove-reel-comment-like-api"
+        name="remove-reel-comment-like-api",
     ),
     path(
         "user/reels/delete/<int:id>/",
         DeleteUserReelAPIView.as_view(),
-        name="delete-user-reel-api"
+        name="delete-user-reel-api",
     ),
     # payment api
     path("user/bank/", BankDetailsAPIView.as_view(), name="user-bank-details-api"),
-    path("user/bank/upload/payment/", BankPaymentAPIView.as_view(), name="user-bank-payment-api"),
-    path("user/upi/upload/payment/", UPIPaymentAPIView.as_view(), name="user-upi-payment-api"),
-    path("company/payment/info/", CompanyPaymentInfoAPIView.as_view(), name="company-payment-info-api"),
-    path("user/subscription/", UserSubscriptionAPIView.as_view(), name="user-subscription-api"),
+    path(
+        "user/bank/upload/payment/",
+        BankPaymentAPIView.as_view(),
+        name="user-bank-payment-api",
+    ),
+    path(
+        "user/upi/upload/payment/",
+        UPIPaymentAPIView.as_view(),
+        name="user-upi-payment-api",
+    ),
+    path(
+        "company/payment/info/",
+        CompanyPaymentInfoAPIView.as_view(),
+        name="company-payment-info-api",
+    ),
+    path(
+        "user/subscription/",
+        UserSubscriptionAPIView.as_view(),
+        name="user-subscription-api",
+    ),
 ]
