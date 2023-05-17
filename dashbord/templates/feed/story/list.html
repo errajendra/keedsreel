@@ -12,6 +12,7 @@
                     <th>SN</th>
                     <th>User</th>
                     <th>Story</th>
+                    <th>Date</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -26,6 +27,7 @@
                     <td>
                         <a href="{{story.story.url}}" target="_blank">View</a>
                     </td>
+                    <td>{{story.created_at|date}} </td>
                     <td></td>
                 </tr>
                 {% endfor %}
@@ -35,6 +37,7 @@
                     <th>SN</th>
                     <th>User</th>
                     <th>Story</th>
+                    <th>Date</th>
                     <th>Action</th>
                 </tr>
             </tfoot>

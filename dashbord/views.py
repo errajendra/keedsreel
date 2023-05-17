@@ -66,7 +66,7 @@ def index(request):
         "recent_points": recent_points,
         "highest_point_users": highest_point_users,
     }
-    return render(request, 'index.html', context)
+    return render(request, 'dashbord.html', context)
 
 
 """ Base url redirect to dashbord. """
