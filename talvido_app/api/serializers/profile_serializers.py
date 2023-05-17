@@ -209,6 +209,7 @@ class UserFollowSerializer(serializers.Serializer):
             }
         )
 
+
 """get referral user model serializer"""
 
 class GetReferralUserModelSerializer(serializers.ModelSerializer):
