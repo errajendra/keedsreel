@@ -219,14 +219,9 @@ class GetReferralUserModelSerializer(serializers.ModelSerializer):
         fields = ["id", "user"]
 
     def to_representation(self, instance):
-        from django.utils.dateformat import DateFormat
-        from django.utils.formats import get_format
 
         data = super().to_representation(instance)
-        create_at = instance.created_at
-        df = DateFormat(create_at)
-        df = df.format(get_format("DATE_FORMAT"))
-        data["joined_at"] = df
+        data["joined_at"] = self.get_joined_at(instance)
         data["points"] = 50
         return data
 
@@ -234,3 +229,12 @@ class GetReferralUserModelSerializer(serializers.ModelSerializer):
         return ProfileModelSerializer(
             Profile.objects.get(user=data.user), context=self.context
         ).data
+
+    def get_joined_at(self, data):
+        from django.utils.dateformat import DateFormat
+        from django.utils.formats import get_format
+
+        create_at = data.created_at
+        df = DateFormat(create_at)
+        df = df.format(get_format("DATE_FORMAT"))
+        return df
