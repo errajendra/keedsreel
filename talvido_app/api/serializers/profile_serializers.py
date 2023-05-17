@@ -1,5 +1,5 @@
 from rest_framework import serializers, status
-from talvido_app.models import Talvidouser, Profile, Follow, Post, ReferralUser, Point
+from talvido_app.models import Talvidouser, Profile, Follow, ReferralUser
 
 
 """user model serializer"""
@@ -135,13 +135,15 @@ class FollowersModelSerializer(serializers.ModelSerializer):
         fields = ["id", "user", "created_at"]
 
     def get_profile(self, data):
-        return UserModelSerializer(
-            data.user_from, context=self.context
-        ).data
+        return UserModelSerializer(data.user_from, context=self.context).data
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data["user"]["image"] = "https://" + self.context["request"].META["HTTP_HOST"] + instance.user_from.profile.image.url
+        data["user"]["image"] = (
+            "https://"
+            + self.context["request"].META["HTTP_HOST"]
+            + instance.user_from.profile.image.url
+        )
         return data
 
 
@@ -155,13 +157,15 @@ class FollowingModelSerializer(serializers.ModelSerializer):
         fields = ["id", "user", "created_at"]
 
     def get_profile(self, data):
-        return UserModelSerializer(
-            data.user_to, context=self.context
-        ).data
+        return UserModelSerializer(data.user_to, context=self.context).data
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data["user"]["image"] = "https://" + self.context["request"].META["HTTP_HOST"] + instance.user_to.profile.image.url
+        data["user"]["image"] = (
+            "https://"
+            + self.context["request"].META["HTTP_HOST"]
+            + instance.user_to.profile.image.url
+        )
         return data
 
 
@@ -205,6 +209,7 @@ class UserFollowSerializer(serializers.Serializer):
             }
         )
 
+"""get referral user model serializer"""
 
 class GetReferralUserModelSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField("get_profile")
@@ -216,10 +221,11 @@ class GetReferralUserModelSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         from django.utils.dateformat import DateFormat
         from django.utils.formats import get_format
-        data  = super().to_representation(instance)
+
+        data = super().to_representation(instance)
         create_at = instance.created_at
         df = DateFormat(create_at)
-        df = df.format(get_format('DATE_FORMAT'))
+        df = df.format(get_format("DATE_FORMAT"))
         data["joined_at"] = df
         data["points"] = 50
         return data
