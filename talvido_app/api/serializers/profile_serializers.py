@@ -109,15 +109,10 @@ class UpdateProfileModelSerializer(serializers.ModelSerializer):
         mobile_number = validated_data.get("mobile_number")
 
         user = Talvidouser.objects.get(firebase_uid=instance)
-
-        if username is not None and username:
-            user.username = username
-        if first_name is not None and first_name:
-            user.first_name = first_name
-        if last_name is not None and last_name:
-            user.last_name = last_name
-        if mobile_number is not None and mobile_number:
-            user.mobile_number = mobile_number
+        user.username = username
+        user.first_name = first_name
+        user.last_name = last_name
+        user.mobile_number = mobile_number
         user.save()
         return super().update(instance, validated_data)
 
