@@ -92,7 +92,7 @@ class LoginMobileOTPAPIView(APIView):
 
 class CheckMobileNumberExistAPIView(APIView):
     """
-    This API will check mobile number exist in our database, 
+    This API will check mobile number exist in our database,
     it return status 1 if it's exists other status 0
     """
 
@@ -191,7 +191,10 @@ class RegenerateAccessTokenAPIVIew(APIView):
         """validate the data"""
         if regenerate_access_token_serialzier.is_valid():
             """generate the new token on the base of refresh token"""
-            response, response_data = regenerate_access_token_serialzier.get_access_token(
+            (
+                response,
+                response_data,
+            ) = regenerate_access_token_serialzier.get_access_token(
                 grant_type=regenerate_access_token_serialzier.validated_data.get(
                     "grant_type"
                 ),
@@ -275,25 +278,27 @@ class ResetEmailPasswordAPIView(APIView):
 
     def post(self, request):
         """deserialize the data"""
-        reset_email_password_serializer = ResetEmailPasswordSerializer(data=request.data)
+        reset_email_password_serializer = ResetEmailPasswordSerializer(
+            data=request.data
+        )
 
         """validate the data"""
         if reset_email_password_serializer.is_valid():
             """
-            this will send a reset password link to email address 
+            this will send a reset password link to email address
             if email address and requestType is correct and return the response
             """
             reset_email_password_serializer.send_reset_password_email()
             response = {
-                "status_code" : status.HTTP_200_OK,
-                "message" : "reset password email send"
+                "status_code": status.HTTP_200_OK,
+                "message": "reset password email send",
             }
             return Response(response, status=status.HTTP_200_OK)
-        
+
         """if validation fails it will return this response"""
         response = {
-            "status_code" : status.HTTP_400_BAD_REQUEST,
-            "message" : "bad request",
-            "data" : reset_email_password_serializer.errors
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": reset_email_password_serializer.errors,
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)

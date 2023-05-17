@@ -199,12 +199,12 @@ class RegenerateAccessTokenSerializer(serializers.Serializer):
             "status_code": 200,
             "message": "ok",
             "data": {
-                "localId": res["user_id"],  
+                "localId": res["user_id"],
                 "displayName": "",
                 "idToken": res["access_token"],
                 "refreshToken": res["refresh_token"],
-                "expiresIn": res["expires_in"]
-            }
+                "expiresIn": res["expires_in"],
+            },
         }
         return response, response_data
 
@@ -212,8 +212,9 @@ class RegenerateAccessTokenSerializer(serializers.Serializer):
 """Email register model serializer"""
 
 class TalvidoEmailRegisterSerializer(serializers.Serializer):
-    
+
     """serializers fields"""
+
     first_name = serializers.CharField()
     last_name = serializers.CharField()
     email = serializers.EmailField()
@@ -253,21 +254,23 @@ class TalvidoEmailRegisterSerializer(serializers.Serializer):
         )
         user["first_name"] = talvido_user.first_name
         user["last_name"] = talvido_user.last_name
-        
-        referral_code=validated_data.get("referral", None)
+
+        referral_code = validated_data.get("referral", None)
         referral_user = Talvidouser.objects.filter(referral_code=referral_code)
         if referral_user.exists():
             ref_user = referral_user.first()
-            ReferralUser.objects.get_or_create(user=talvido_user, referral_user=ref_user)
+            ReferralUser.objects.get_or_create(
+                user=talvido_user, referral_user=ref_user
+            )
         return user
 
 
 """Email login serializer"""
 
-
 class TalvidoEmailLoginSerializer(serializers.Serializer):
-    
+
     """serializers fields"""
+
     email = serializers.EmailField()
     password = serializers.CharField()
 
@@ -301,20 +304,22 @@ class TalvidoEmailLoginSerializer(serializers.Serializer):
         return user.json()
 
 
+"""Reset password serializer"""
+
 class ResetEmailPasswordSerializer(serializers.Serializer):
     requestType = serializers.CharField()
     email = serializers.EmailField()
 
     def send_reset_password_email(self):
         reset_email = send_reset_password_email(
-            self.validated_data.get("email"),self.validated_data.get("requestType")
+            self.validated_data.get("email"), self.validated_data.get("requestType")
         )
         if reset_email.status_code == 400:
             raise serializers.ValidationError(
                 {
-                    "status_code" : status.HTTP_400_BAD_REQUEST,
-                    "message" : "bad request",
-                    "data" : reset_email.json()["error"]["errors"]
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "bad request",
+                    "data": reset_email.json()["error"]["errors"],
                 }
             )
         return reset_email
