@@ -23,7 +23,7 @@
                     <td>{{forloop.counter}} </td>
                     <td>
                         <a href="{% url 'profile' post.user.firebase_uid %}" target='_blank'>{{post.user.get_full_name}} </a>
-                        <p><small class="text-muted text-sm">{{post.user.firebase_uid}} </small></p>
+                        {% comment %} <p><small class="text-muted text-sm">{{post.user.firebase_uid}} </small></p> {% endcomment %}
                     </td>
                     <td>{{post.post_like.count}} </td>
                     <td>{{post.description}} </td>

@@ -88,7 +88,16 @@ def user_list(request):
     return render(request, 'users/list.html', context)
 
 
+@login_required
+def delete_user(request, fid):
+    user = get_object_or_404(User, firebase_uid=fid)
+    if user:
+        user.delete()
+    return redirect(user_list)
+    
+
 """ User Profile """
+@login_required
 def user_profile(request, fid):
     user = User.objects.select_related().get(firebase_uid=fid)
     follows = Follow.objects.filter(Q(user_to=user) | Q(user_from=user))
