@@ -26,6 +26,7 @@ from . import (
     GetAuthUserActivePosts,
     UploadPostAPIView,
     DeletePostAPIView,
+    GetUserAllPosts,
     PostCommentAPIView,
     DeletePostCommentAPIView,
     AddPostLikeAPIView,
@@ -161,6 +162,11 @@ urlpatterns = [
         "user/posts/active/<int:id>/",
         GetAuthUserActivePosts.as_view(),
         name="get-auth-user-particular-active-posts-api",
+    ),
+    path(
+        "user/posts/all/",
+        GetUserAllPosts.as_view(),
+        name="get-user-all-posts-api",
     ),
     path(
         "user/posts/upload/",

@@ -527,3 +527,19 @@ class GetStoryHighlightsAPIView(APIView):
             "data": story_hightlights_serializer.data,
         }
         return Response(response, status=status.HTTP_200_OK)
+
+
+"""This APi will show all the posts"""
+
+class GetUserAllPosts(APIView, PageNumberPaginationView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    page_size = 10 
+    def get(self, request):
+        posts = Post.objects.select_related().order_by("-created_at")
+        posts_paginated = self.paginate_queryset(posts, request, view=self)
+        post_serializer = GetPostModelSerializer(
+            posts_paginated, many=True, context={"request": request}
+        )
+        return self.get_paginated_response(post_serializer.data)
