@@ -188,7 +188,7 @@ class FollowersModelSerializer(serializers.ModelSerializer):
             1
             if
             Follow.objects.filter(
-                user_to=self.context["request"].user, user_from=data.user_to
+                user_to=data.user_from, user_from=self.context["request"].user
             ).exists()
             else
             0
