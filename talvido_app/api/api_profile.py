@@ -286,3 +286,40 @@ class GetUserReferralAPIView(APIView):
             } 
         }
         return Response(response, status=status.HTTP_200_OK)
+
+
+"""This API will remove user follower"""
+
+class RemoveUserFollowerAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, firebase_uid):
+        try:
+            follower_user = Talvidouser.objects.get(firebase_uid=firebase_uid)
+        except Talvidouser.DoesNotExist:
+            response = {
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": "bad request",
+                "data": {
+                    "firebase_uid": [
+                        "firebase_uid is invalid"
+                    ]
+                }
+            }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+        follower = Follow.objects.filter(user_to=request.user, user_from=follower_user)
+        if follower.exists():
+            follower.first().delete()
+            response = {
+                "status_code": status.HTTP_204_NO_CONTENT,
+                "message": "removed follower"
+            }
+            return Response(response, status=status.HTTP_204_NO_CONTENT)
+        
+        response = {
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "message": "it's not your follower"
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)

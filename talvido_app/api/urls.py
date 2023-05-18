@@ -16,6 +16,7 @@ from . import (
     UserFollowAPIView,
     FollowersAPIView,
     FollowingsAPIView,
+    RemoveUserFollowerAPIView,
     GetAnyUserProfileAPIView,
     ActiveStoryAPIView,
     ArchiveStoryAPIView,
@@ -127,6 +128,11 @@ urlpatterns = [
         "user/profile/followers/<str:firebase_uid>/",
         FollowersAPIView.as_view(),
         name="user-followers-api",
+    ),
+    path(
+        "user/remove/follower/<str:firebase_uid>/",
+        RemoveUserFollowerAPIView.as_view(),
+        name="user-remove-follower-api",
     ),
     path(
         "user/profile/followings/<str:firebase_uid>/",
