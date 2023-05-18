@@ -535,7 +535,7 @@ class GetUserAllPosts(APIView, PageNumberPaginationView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
-    page_size = 10 
+    page_size = 15 
     def get(self, request):
         posts = Post.objects.select_related().order_by("-created_at")
         posts_paginated = self.paginate_queryset(posts, request, view=self)
