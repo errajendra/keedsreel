@@ -1,5 +1,12 @@
 from rest_framework import serializers, status
-from talvido_app.models import Talvidouser, Profile, Follow, ReferralUser
+from talvido_app.models import (
+    Talvidouser, 
+    Profile, 
+    Follow, 
+    ReferralUser,
+    UPIPayment,
+    BankPayment,
+)
 
 
 """user model serializer"""
@@ -62,6 +69,35 @@ class ProfileModelSerializer(serializers.ModelSerializer):
         return GetReelModelSerializer(
             self.get_queryset(data).reel_user.all(), many=True, context=self.context
         ).data
+    
+    def is_subscription(self, data):
+        payment_status = 0
+        request = self.context["request"]
+        try:
+            if (
+                BankPayment.objects.filter(user=request.user)
+                .order_by("-created_at")
+                .first()
+                .approve
+            ):
+                payment_status = 1
+        except:
+            try:
+                if (
+                    UPIPayment.objects.filter(user=request.user)
+                    .order_by("-created_at")
+                    .first()
+                    .approve
+                ):
+                    payment_status = 1
+            except:
+                pass
+        return payment_status
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["is_subscribe"] = self.is_subscription(instance)
+        return data
 
     class Meta:
         model = Profile
