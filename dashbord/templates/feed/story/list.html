@@ -22,7 +22,7 @@
                     <td>{{forloop.counter}} </td>
                     <td>
                         <a href="{% url 'profile' story.user.firebase_uid %}" target='_blank'>{{story.user.get_full_name}} </a>
-                        <p><small class="text-muted text-sm">{{story.user.firebase_uid}} </small></p>
+                        {% comment %} <p><small class="text-muted text-sm">{{story.user.firebase_uid}} </small></p> {% endcomment %}
                     </td>
                     <td>
                         <a href="{{story.story.url}}" target="_blank">View</a>
