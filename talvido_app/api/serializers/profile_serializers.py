@@ -144,8 +144,19 @@ class FollowersModelSerializer(serializers.ModelSerializer):
             + self.context["request"].META["HTTP_HOST"]
             + instance.user_from.profile.image.url
         )
+        data["is_follow"] = self.is_follow_user(instance)
         return data
 
+    def is_follow_user(self, data):
+        return (
+            1
+            if
+            Follow.objects.filter(
+                user_to=data.user_to, user_from=self.context["request"].user
+            ).exists()
+            else
+            0
+        )
 
 """Following model serializer"""
 
@@ -166,7 +177,19 @@ class FollowingModelSerializer(serializers.ModelSerializer):
             + self.context["request"].META["HTTP_HOST"]
             + instance.user_to.profile.image.url
         )
+        data["is_follow"] = self.is_follow_user(instance)
         return data
+
+    def is_follow_user(self, data):
+        return (
+            1
+            if
+            Follow.objects.filter(
+                user_to=data.user_to, user_from=self.context["request"].user
+            ).exists()
+            else
+            0
+        )
 
 
 """"user follow serializer"""
