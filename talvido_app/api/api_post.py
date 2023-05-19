@@ -537,7 +537,10 @@ class GetUserAllPosts(APIView, PageNumberPaginationView):
 
     page_size = 15 
     def get(self, request):
-        posts = Post.objects.select_related().order_by("-created_at")
+        user = Talvidouser.objects.filter(is_active=True)
+        posts = Post.objects.select_related().filter(
+            user__in=user.values_list("firebase_uid", flat=True)
+        ).order_by("-created_at")
         posts_paginated = self.paginate_queryset(posts, request, view=self)
         post_serializer = GetPostModelSerializer(
             posts_paginated, many=True, context={"request": request}
