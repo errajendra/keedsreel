@@ -308,11 +308,7 @@ class TalvidoEmailLoginSerializer(serializers.Serializer):
             {
                 "status_code": status.HTTP_401_UNAUTHORIZED,
                 "message": "unauthorized",
-                "data": {
-                    "account" : [
-                        "Your account is temperley inactive"
-                    ]
-                }
+                "data": "Your account is temperley inactive"
             }
         )
 
