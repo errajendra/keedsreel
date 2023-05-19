@@ -10,25 +10,28 @@
             <thead>
                 <tr>
                     <th>SN</th>
-                    <th>User ID</th>
-                    <th>Mobile Number</th>
-                    <th>Total Posts</th>
+                    <th>User</th>
+                    <th>Thumbnail</th>
+                    <th>reel Likes</th>
+                    <th>Description</th>
+                    <th>Reel</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                {% for user in users %}
+                {% for reel in reels %}
                 <tr>
                     <td>{{forloop.counter}} </td>
                     <td>
-                        <a href="{% url 'profile' user.firebase_uid %}" target='_blank'>
-                            <img src="{{user.profile.image.url}}" width="30px;" class="img-circle"/>
-                            <span>{{user.get_full_name}}</span>
-                        </a>
-                        {% comment %} <p><small class="text-muted text-sm">{{user.firebase_uid}} </small></p> {% endcomment %}
+                        <a href="{% url 'profile' reel.user.firebase_uid %}" target='_blank'>{{reel.user.get_full_name}} </a>
+                        {% comment %} <p><small class="text-muted text-sm">{{reel.user.firebase_uid}} </small></p> {% endcomment %}
                     </td>
-                    <td>{{user.mobile_number}} </td>
-                    <td> {{user.post_user.all.count}} </td>
+                    <td> <img src="{{reel.thumbnail_url}}" height="50px;" width="50px;"/> </td>
+                    <td>{{reel.reel_like.count}} </td>
+                    <td>{{reel.description}} </td>
+                    <td>
+                        <a href="{{reel.reel.url}}" target="_blank">View reel</a>
+                    </td>
                     <td>
                         <!-- Button trigger modal -->
                         <i class="fas fa-trash" type="button" data-toggle="modal" data-target="#deleteModal"></i>
@@ -38,7 +41,7 @@
                             <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete {{user.get_full_name}}</h5>
+                                    <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete reel</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -48,7 +51,7 @@
                                 </div> {% endcomment %}
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <a href="{% url 'delete_user' user.firebase_uid %}" type="button" class="btn btn-danger">Delete Confirm</a>
+                                    <a href="{% url 'delete_reel' reel.id %}" type="button" class="btn btn-danger">Delete Confirm</a>
                                 </div>
                             </div>
                             </div>
@@ -60,9 +63,11 @@
             <tfoot>
                 <tr>
                     <th>SN</th>
-                    <th>User ID</th>
-                    <th>Mobile Number</th>
-                    <th>Total Posts</th>
+                    <th>User</th>
+                    <th>Thumbnail</th>
+                    <th>reel Likes</th>
+                    <th>Description</th>
+                    <th>Reel</th>
                     <th>Action</th>
                 </tr>
             </tfoot>
@@ -104,15 +109,6 @@
         "responsive": true, "lengthChange": false, "autoWidth": false,
         "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
       }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-      $('#example2').DataTable({
-        "paging": true,
-        "lengthChange": false,
-        "searching": false,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
-      });
     });
 </script>
 

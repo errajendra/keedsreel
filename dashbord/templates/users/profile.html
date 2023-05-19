@@ -88,6 +88,7 @@
                 <ul class="nav nav-pills">
                     <li class="nav-item"><a class="nav-link active" href="#posts" data-toggle="tab">Post</a></li>
                     <li class="nav-item"><a class="nav-link" href="#stories" data-toggle="tab">Story</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#reels-tab" data-toggle="tab">Reels</a></li>
                     {% comment %} <li class="nav-item"><a class="nav-link" href="#pointsh" data-toggle="tab">Point History</a></li> {% endcomment %}
                     {% comment %} <li class="nav-item"><a class="nav-link" href="#mlm-tab" data-toggle="tab">MLM</a></li> {% endcomment %}
                 </ul>
@@ -145,7 +146,11 @@
                     </div>
                     <!-- /.user-block -->
                     <div class="">
-                        <img class="img-fluid" src="{{ story.story.url }}"/>
+                        <video class="img-fluid" controls>
+                          <source src="{{ story.story.url }}" type="video/mp4">
+                          <source src="{{ story.story.url }}" type="video/ogg">
+                          Your browser does not support the video tag.
+                        </video>
                         <a href="{{ story.story.url }}" target="_blank" class=" text-sm">View media in new tab</a>
                     </div>
                     <p>
@@ -162,6 +167,46 @@
                   {% endfor %}
                 </div>
                 <!-- /.tab-pane -->
+
+                {% comment %} Reels {% endcomment %}
+                <div class="active tab-pane" id="reels-tab">
+                  {% for reel in reels %}
+                  <!-- Post -->
+                  <div class="post col-lg-8 container-md">
+                      <div class="user-block">
+                        <img class="img-circle img-bordered-sm" src="{{reel.user.profile.image.url}}" alt="user image">
+                        <span class="username">
+                            <a href="#"> {{reel.user.get_full_name}} </a>
+                            <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
+                        </span>
+                        <span class="description">Shared  - {{reel.created_at}} </span>
+                      </div>
+                      <!-- /.user-block -->
+                      <div class="">
+                          {% comment %} <video class="img-fluid" src="{{ reel.reel.url }}" controls/> {% endcomment %}
+                          <video class="img-fluid" controls>
+                            <source src="{{ reel.reel.url }}" type="video/mp4">
+                            <source src="{{ reel.reel.url }}" type="video/ogg">
+                            Your browser does not support the video tag.
+                          </video>
+                          <p class="muted"> {{reel.description}} </p>
+                      </div>
+                      <p>
+                        <p class="text-sm"><i class="far fa-comments mr-1"></i> Comments ({{reel.reelcomment_set.all.count}})</p>
+                        {% comment %} <span class="float-right">
+                            <a href="#" class="link-black text-sm">
+                            <i class="far fa-comments mr-1"></i> Comments ({{post.post_comment.count}})
+                            </a>
+                        </span> {% endcomment %}
+                      </p>
+
+                      {% comment %} <input class="form-control form-control-sm" type="text" placeholder="Type a comment"> {% endcomment %}
+                  </div>
+                  <!-- /.post -->
+                  {% endfor %}
+                </div>
+                <!-- /.tab-pane -->
+
 
                 {% comment %} Point History {% endcomment %}
                 <div class="tab-pane" id="pointsh">

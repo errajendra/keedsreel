@@ -318,6 +318,11 @@ class Reel(BaseModel):
 
     def __str__(self):
         return str(self.id)
+    
+    def thumbnail_url(self):
+        if self.thumbnail:
+            return self.thumbnail.url
+        return "#"
 
 
 """This model will store the comments under Reels """
