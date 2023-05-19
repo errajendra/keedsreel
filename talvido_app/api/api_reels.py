@@ -86,7 +86,10 @@ class GetUsersAllReelsAPIView(APIView, PageNumberPaginationView):
 
     page_size = 5
     def get(self, request):
-        reels = Reel.objects.select_related().order_by("-created_at")
+        users = Talvidouser.objects.filter(is_active=True)
+        reels = Reel.objects.select_related().filter(
+            user__in=users.values_list("firebase_uid", flat=True)
+        ).order_by("-created_at")
         results = self.paginate_queryset(reels, request, view=self)
         all_reels_serializer = GetReelModelSerializer(
             results, many=True, context={"request": request}
