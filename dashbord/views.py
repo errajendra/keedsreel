@@ -6,7 +6,7 @@ from django.db.models import Q, Max, Sum
 from django.contrib.auth.decorators import login_required
 from talvido_app.models import Talvidouser as User
 from talvido_app.models import (
-    Post, Story, Point, Follow
+    Post, Story, Point, Follow, Reel
     )
 
 
@@ -106,6 +106,7 @@ def user_profile(request, fid):
     friends = following.filter(user_to__in=follower)
     posts = user.post_user.all()
     stories = user.story_set.all()
+    reels = user.reel_user.all()
     context = {
         "title": "User Profile",
         "user": user,
@@ -114,6 +115,7 @@ def user_profile(request, fid):
         "friends": friends.count(),
         "posts": posts,
         "stories": stories,
+        "reels": reels,
     }
     return render(request, 'users/profile.html', context)
 
@@ -146,4 +148,27 @@ def story_list(request):
         'stories': stories
     }
     return render(request, 'feed/story/list.html', context)
+
+
+
+"""
+Reel View
+"""
+""" List of all reels """
+@login_required
+def reels_list(request):
+    reels = Reel.objects.select_related().order_by('-updated_at')
+    context = {
+        "title": "Reels",
+        'reels': reels
+    }
+    return render(request, 'feed/reel/list.html', context)
+
+
+@login_required
+def reel_delete(request, id):
+    reel = get_object_or_404(Reel, id=id)
+    if reel:
+        reel.delete()
+    return redirect(reels_list)
 
