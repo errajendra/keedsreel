@@ -8,5 +8,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("",include("dashbord.urls")),
     path("api/",include("talvido_app.api.urls")),
+    path("api/payment/",include("payment.razorpay.urls")),
     path('__debug__/', include('debug_toolbar.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
