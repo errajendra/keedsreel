@@ -25,7 +25,7 @@
                             <img src="{{user.profile.image.url}}" width="30px;" class="img-circle"/>
                             <span>{{user.get_full_name}}</span>
                         </a>
-                        {% comment %} <p><small class="text-muted text-sm">{{user.firebase_uid}} </small></p> {% endcomment %}
+                        <p class="d-none"><small class="text-muted text-sm">{{user.firebase_uid}} </small></p>
                     </td>
                     <td>{{user.mobile_number}} </td>
                     <td> {{user.post_user.all.count}} </td>

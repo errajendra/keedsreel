@@ -24,7 +24,7 @@
                     <td>{{forloop.counter}} </td>
                     <td>
                         <a href="{% url 'profile' reel.user.firebase_uid %}" target='_blank'>{{reel.user.get_full_name}} </a>
-                        {% comment %} <p><small class="text-muted text-sm">{{reel.user.firebase_uid}} </small></p> {% endcomment %}
+                        <p class="d-none"><small class="text-muted text-sm">{{reel.user.firebase_uid}} </small></p>
                     </td>
                     <td> <img src="{{reel.thumbnail_url}}" height="50px;" width="50px;"/> </td>
                     <td>{{reel.reel_like.count}} </td>

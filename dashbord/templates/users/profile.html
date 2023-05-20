@@ -65,10 +65,6 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-              <strong> Points </strong>
-              <p class="text-muted float-right"> {{user.user_point.points}} </p>
-              <hr>
-              
               <strong><i class="fas fa-map-marker-alt mr-1"></i> Location</strong>
               <p class="text-muted">{{user.profile.location}} </p>
               <hr>
@@ -87,7 +83,7 @@
             <div class="card-header p-2">
                 <ul class="nav nav-pills">
                     <li class="nav-item"><a class="nav-link active" href="#posts" data-toggle="tab">Post</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#stories" data-toggle="tab">Story</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#stories-panal" data-toggle="tab">Story</a></li>
                     <li class="nav-item"><a class="nav-link" href="#reels-tab" data-toggle="tab">Reels</a></li>
                     {% comment %} <li class="nav-item"><a class="nav-link" href="#pointsh" data-toggle="tab">Point History</a></li> {% endcomment %}
                     {% comment %} <li class="nav-item"><a class="nav-link" href="#mlm-tab" data-toggle="tab">MLM</a></li> {% endcomment %}
@@ -132,7 +128,7 @@
                 <!-- /.tab-pane -->
 
                 {% comment %} Stories {% endcomment %}
-                <div class="tab-pane" id="stories">
+                <div class="tab-pane" id="stories-panal">
                   <!-- The timeline -->
                   {% for story in stories %}
                   <div class="post col-lg-8 container-md">

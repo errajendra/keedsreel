@@ -135,6 +135,15 @@ def post_list(request):
     return render(request, 'feed/post/list.html', context)
 
 
+""" Delete a post by id."""
+@login_required
+def delete_post(request, id):
+    post = get_object_or_404(Post, id=id)
+    if post:
+        post.delete()
+    return redirect(post_list)
+    
+
 
 """
 Story View
@@ -149,6 +158,15 @@ def story_list(request):
     }
     return render(request, 'feed/story/list.html', context)
 
+
+""" Delete a story by id."""
+@login_required
+def delete_story(request, id):
+    ins = get_object_or_404(Story, id=id)
+    if ins:
+        ins.delete()
+    return redirect(story_list)
+    
 
 
 """
