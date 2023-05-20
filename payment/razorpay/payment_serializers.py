@@ -9,7 +9,6 @@ class CreateOrderSerializer(serializers.Serializer):
 
 
 class TransactionModelSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Transaction
         fields = ["order_id", "payment_id", "signature", "amount", "status"]
