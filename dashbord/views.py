@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponseNotFound
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import login, logout
 from django.contrib import messages
@@ -99,7 +99,10 @@ def delete_user(request, fid):
 """ User Profile """
 @login_required
 def user_profile(request, fid):
-    user = User.objects.select_related().get(firebase_uid=fid)
+    try:
+        user = User.objects.select_related().get(firebase_uid=fid)
+    except User.DoesNotExist:
+        return HttpResponseNotFound()
     follows = Follow.objects.filter(Q(user_to=user) | Q(user_from=user))
     follower = follows.filter(user_to=user).values('user_from')
     following = follows.filter(user_from=user)
