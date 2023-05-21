@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'talvido_app.apps.TalvidoAppConfig',
     'dashbord',
+    'payment.apps.PaymentConfig',
 ]
 
 MIDDLEWARE = [
@@ -130,6 +131,11 @@ INTERNAL_IPS = [
     "127.0.0.1",
     # ...
 ]
+
+# RAZORPAY CREDENTIALS
+
+RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET")
 
 """LOGGING = {
     'version': 1,

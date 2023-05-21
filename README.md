@@ -19,6 +19,8 @@ DATABASE_PASSWORD=1234
 DATABASE_HOST=localhost
 DATABASE_POST=5432
 FIREBASE_API_KEY=AIzaSyAAFVJZkY2c_5RXCUoqrcuLacXFvsjEshk
+RAZORPAY_KEY_ID=rzp_test_WSpHIcbcEUaGsR
+RAZORPAY_KEY_SECRET=OVNdEwmls1o4xjKDqA8LzHdf
 ```
 change your database credentials with mine.
 
