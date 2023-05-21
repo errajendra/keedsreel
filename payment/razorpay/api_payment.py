@@ -21,6 +21,7 @@ class CreateOrderAPIView(APIView):
                 currency=create_order_serializer.validated_data.get("currency"),
                 receipt=create_order_serializer.validated_data.get("receipt"),
             )
+            order_response["name"] = request.user.first_name + " " + request.user.last_name
             response = {
                 "status_code": status.HTTP_201_CREATED,
                 "message": "order created",

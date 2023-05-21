@@ -71,8 +71,10 @@ class ProfileModelSerializer(serializers.ModelSerializer):
 
     @property
     def is_subscription(self):
-        has_subscription, subscription = check_user_subscription(request=self.context["request"])
-        return 1 if has_subscription else 0
+        self.has_subscription, self.subscription = check_user_subscription(
+            request=self.context["request"]
+            )
+        return 1 if self.has_subscription else 0
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
