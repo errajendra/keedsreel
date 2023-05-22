@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from .payment_serializers import CreateOrderSerializer, TransactionModelSerializer
-from .main import razorpayClient
+from .main import RazorpayClient
 from talvido_app.firebase.authentication import FirebaseAuthentication
 from rest_framework.permissions import IsAuthenticated
 from payment.helpers import check_user_subscription
@@ -15,7 +15,7 @@ class CreateOrderAPIView(APIView):
     def post(self, request):
         create_order_serializer = CreateOrderSerializer(data=request.data)
         if create_order_serializer.is_valid():
-            razorpay = razorpayClient()
+            razorpay = RazorpayClient()
             order_response = razorpay.create_order(
                 amount=create_order_serializer.validated_data.get("amount"),
                 currency=create_order_serializer.validated_data.get("currency"),
