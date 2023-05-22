@@ -3,8 +3,8 @@ from ..models import Level
 
 
 class UserLevel:
-    def __init__(self, request):
-        self.user = Talvidouser.objects.get(firebase_uid=request.user)
+    def __init__(self, user):
+        self.user = Talvidouser.objects.get(firebase_uid=user)
         self.referral_users = self.user.referral_by_user.all().count()
 
     def get_level_referral_user(self, level):
