@@ -4,15 +4,26 @@ from rest_framework.views import APIView
 from talvido_app.firebase.authentication import FirebaseAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .helpers import UserLevel
+from talvido_app.models import Talvidouser
 
 
 class GetUserLevelAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        level = UserLevel(request=request)
-
+    def get(self, request, firebase_uid=None):
+        if firebase_uid is None:
+            level = UserLevel(user=request.user)
+        else:
+            try:
+                user = Talvidouser.objects.get(firebase_uid=firebase_uid)
+            except Talvidouser.DoesNotExist:
+                response = {
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "firebase_uid is invalid"
+                }
+                return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        level = UserLevel(user=user)
         response = {
             "status_code": status.HTTP_200_OK,
             "message": "ok",
