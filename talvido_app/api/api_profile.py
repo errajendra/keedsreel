@@ -281,7 +281,7 @@ class GetUserReferralAPIView(APIView):
             "data": {
                 "referral_users" : referral_user_serializer.data,
                 "image" : "https://" + request.META["HTTP_HOST"] + request.user.profile.image.url,
-                "total_score" : referral_users.count() * 50,
+                "total_score" : referral_users.count(),
                 "total_referred_users" : referral_users.count(),
             } 
         }
