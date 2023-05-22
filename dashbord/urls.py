@@ -7,6 +7,7 @@ from .views import (
     reels_list, reel_delete,
     
 )
+from .view_ajax import get_users_followers
 
 
 urlpatterns = [
@@ -30,4 +31,7 @@ urlpatterns = [
     path("reels/", reels_list, name="reel_list"),
     path("delete-reel/<int:id>/", reel_delete, name="delete_reel"),
     
+    
+    # Ajax Urls
+    path("ajax-get-user-follow/", get_users_followers, name="ajax_login"),
 ]

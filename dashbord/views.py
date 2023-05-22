@@ -26,9 +26,9 @@ def login_view(request):
             return render(request, 'credential/login.html')
         if user.check_password(password):
             login(request, user)
-            next = request.GET.get('next', None)
-            if next:
-                return redirect(next)
+            next_url = request.GET.get('next', None)
+            if next_url:
+                return redirect(next_url)
             return redirect('index')
         else:
             messages.warning(request, 'Please enter a valid password.')
@@ -104,18 +104,18 @@ def user_profile(request, fid):
     except User.DoesNotExist:
         return HttpResponseNotFound()
     follows = Follow.objects.filter(Q(user_to=user) | Q(user_from=user))
-    follower = follows.filter(user_to=user).values('user_from')
-    following = follows.filter(user_from=user)
-    friends = following.filter(user_to__in=follower)
+    follower = follows.filter(user_to=user).values('user_from').count()
+    following = follows.filter(user_from=user).count()
+    friends = follows.filter(user_from=user, user_to__in=follows.filter(user_to=user).values('user_from')).count()
     posts = user.post_user.all()
     stories = user.story_set.all()
     reels = user.reel_user.all()
     context = {
         "title": "User Profile",
         "user": user,
-        "follower": follower.count(),
-        "following": following.count(),
-        "friends": friends.count(),
+        "follower": follower,
+        "following": following,
+        "friends": friends,
         "posts": posts,
         "stories": stories,
         "reels": reels,
