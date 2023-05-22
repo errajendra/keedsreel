@@ -17,8 +17,12 @@ class GetUserLevelAPIView(APIView):
             "status_code": status.HTTP_200_OK,
             "message": "ok",
             "data":{
-                "level" : level.get_user_level() if level.get_user_level() else 1,
-                "max_users": level.get_level_max_users()
+                "level" : level.get_user_level if level.get_user_level else 1,
+                "level_max_users": level.get_level_max_users,
+                "total_referral_user": level.get_total_referral_users,
+                "full_name": request.user.first_name + " " + request.user.last_name,
+                "description": request.user.profile.description,
+                "followers": request.user.user_to.all().count(),
             }
         }
         return Response(response, status=status.HTTP_200_OK)
