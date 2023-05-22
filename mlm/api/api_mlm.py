@@ -17,7 +17,8 @@ class GetUserLevelAPIView(APIView):
             "status_code": status.HTTP_200_OK,
             "message": "ok",
             "data":{
-                "level" : level.get_user_level() if level.get_user_level() else 1
+                "level" : level.get_user_level() if level.get_user_level() else 1,
+                "max_users": level.get_level_max_users()
             }
         }
         return Response(response, status=status.HTTP_200_OK)
