@@ -13,7 +13,7 @@ class GetUserLevelAPIView(APIView):
 
     def get(self, request, firebase_uid=None):
         if firebase_uid is None:
-            level = UserLevel(user=request.user)
+            user = request.user 
         else:
             try:
                 user = Talvidouser.objects.get(firebase_uid=firebase_uid)
@@ -23,6 +23,7 @@ class GetUserLevelAPIView(APIView):
                     "message": "firebase_uid is invalid"
                 }
                 return Response(response, status=status.HTTP_400_BAD_REQUEST)
+            
         level = UserLevel(user=user)
         response = {
             "status_code": status.HTTP_200_OK,
