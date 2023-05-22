@@ -1,0 +1,13 @@
+<div class="card-body">
+    <ul style="list-style: none;">
+        {% for user in users %}
+        <li>
+            <a href="{% url 'profile' user.firebase_uid %}" target='_blank'>
+                <img src="{{user.profile.image.url}}" width="30px;" class="img-circle"/>
+                <span class="mx-2">{{user.get_full_name}}</span>
+            </a>
+            <p class="d-none"><small class="text-muted text-sm">{{user.firebase_uid}} </small></p>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
