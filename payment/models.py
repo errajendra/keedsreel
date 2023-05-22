@@ -7,6 +7,7 @@ class Transaction(BaseModel):
         ("", ""),
         ("SUCCESS", "SUCCESS"),
         ("FAILED", "FAILED"),
+        ("CANCELLED", "CANCELLED"),
     )
 
     user = models.ForeignKey(
