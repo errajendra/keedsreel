@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'talvido_app.apps.TalvidoAppConfig',
     'dashbord',
     'payment.apps.PaymentConfig',
+    'mlm.apps.MlmConfig',
 ]
 
 MIDDLEWARE = [
