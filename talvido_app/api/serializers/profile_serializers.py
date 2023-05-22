@@ -77,16 +77,16 @@ class ProfileModelSerializer(serializers.ModelSerializer):
             )
         return 1 if self.has_subscription else 0
 
-    @property
-    def get_user_level(self):
-        level = UserLevel(self.context["request"])
-        return level.get_user_level() if level.get_user_level() else 1
+    # @property
+    # def get_user_level(self):
+    #     level = UserLevel(self.context["request"])
+    #     return level.get_user_level() if level.get_user_level() else 1
 
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data["is_subscribe"] = self.is_subscription
-        data["level"] = self.get_user_level
+        # data["level"] = self.get_user_level
         return data
 
     class Meta:
