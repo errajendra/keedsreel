@@ -23,12 +23,18 @@ class UserLevel:
             except:
                 return max_level
 
+    @property
     def get_user_level(self):
         return self.check_level(max_level=7)
 
+    @property
     def get_level_max_users(self):
         self.get_level = self.check_level(max_level=7)
         try:
             return self.get_level_referral_user(self.get_level+1).referral_users
         except:
             return self.get_level_referral_user(self.get_level).referral_users 
+
+    @property
+    def get_total_referral_users(self):
+        return self.referral_users
