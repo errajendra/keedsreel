@@ -32,9 +32,9 @@ class GetUserLevelAPIView(APIView):
                 "level" : level.get_user_level if level.get_user_level else 1,
                 "level_max_users": level.get_level_max_users,
                 "total_referral_user": level.get_total_referral_users,
-                "full_name": request.user.first_name + " " + request.user.last_name,
-                "description": request.user.profile.description,
-                "followers": request.user.user_to.all().count(),
+                "full_name": user.first_name + " " + user.last_name,
+                "description": user.profile.description,
+                "followers": user.user_to.all().count(),
             }
         }
         return Response(response, status=status.HTTP_200_OK)
