@@ -18,7 +18,7 @@ class UserLevel:
                     self.referral_users
                     >= self.get_level_referral_user(level=i).referral_users
                     and self.referral_users
-                    <= self.get_level_referral_user(level=i + 1).referral_users
+                    < self.get_level_referral_user(level=i + 1).referral_users
                 ):
                     return i
             except:
