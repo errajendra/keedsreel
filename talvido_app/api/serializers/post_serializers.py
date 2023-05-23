@@ -229,7 +229,7 @@ class GetPostModelSerializer(serializers.ModelSerializer):
         post = Post.objects.get(id=data.id)
         post_liked_user = post.post_like.all()
         self.total_likes = post_liked_user.count()
-        return GetPostLikeModelSerializer(post_liked_user, many=True).data
+        return GetPostLikeModelSerializer(post_liked_user, many=True, context=self.context).data
 
     def get_total_likes(self, data):
         return self.total_likes
