@@ -1,7 +1,7 @@
 {% extends 'base/base.html' %}
 {% load static %}
 {% block content %}
-
+    {% csrf_token %}
     <div class="card-header">
         <h3>{{title}} </h3>
     </div>
@@ -13,6 +13,7 @@
                     <th>User ID</th>
                     <th>Mobile Number</th>
                     <th>Total Posts</th>
+                    <th>Account Status</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -29,6 +30,17 @@
                     </td>
                     <td>{{user.mobile_number}} </td>
                     <td> {{user.post_user.all.count}} </td>
+                    <td>
+                        {% if user.is_active %}
+                        <span class="badge badge-success user-status" data-user-id="{{user.firebase_uid}}" data-task="deactivate">
+                            Active <i class="fas fa-pen" type="button"></i>
+                        </span>
+                        {% else %}
+                        <span class="badge badge-danger user-status" data-user-id="{{user.firebase_uid}}" data-task="activate">
+                            Inactive <i class="fas fa-pen" type="button"></i>
+                        </span>
+                        {% endif %}
+                    </td>
                     <td>
                         <!-- Button trigger modal -->
                         <i class="fas fa-trash" type="button" data-toggle="modal" data-target="#deleteModal"></i>
@@ -63,6 +75,7 @@
                     <th>User ID</th>
                     <th>Mobile Number</th>
                     <th>Total Posts</th>
+                    <th>Account Status</th>
                     <th>Action</th>
                 </tr>
             </tfoot>
@@ -115,5 +128,7 @@
       });
     });
 </script>
+{% comment %} Custum JS for this page {% endcomment %}
+<script src="{% static 'custom/user-list.js' %}"></script>
 
 {% endblock scripts %}

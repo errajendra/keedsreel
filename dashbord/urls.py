@@ -7,7 +7,12 @@ from .views import (
     reels_list, reel_delete,
     
 )
-from .view_ajax import get_users_followers
+from .view_ajax import (
+    get_users_followers, 
+    get_post_comments_or_likes,
+    get_reel_comments_or_likes,
+    user_account_activation,
+)
 
 
 urlpatterns = [
@@ -33,5 +38,9 @@ urlpatterns = [
     
     
     # Ajax Urls
-    path("ajax-get-user-follow/", get_users_followers, name="ajax_login"),
+    path("ajax-get-user-follow/", get_users_followers, name="get-user-follow-following-users"),
+    path("ajax-get-post-likes-comments/", get_post_comments_or_likes, name="get-post-likes-comments"),
+    path("ajax-get-reel-likes-comments/", get_reel_comments_or_likes, name="get-reel-likes-comments"),
+    # User Account
+    path("ajax-activate-deactivate-user/", user_account_activation, name="activate-deactivate-user"),
 ]
