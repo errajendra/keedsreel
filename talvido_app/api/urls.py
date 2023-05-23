@@ -18,6 +18,8 @@ from . import (
     FollowingsAPIView,
     RemoveUserFollowerAPIView,
     GetAnyUserProfileAPIView,
+    UserPostLikeActivityAPIView,
+    UserPostCommentActivityAPIView,
     ActiveStoryAPIView,
     ArchiveStoryAPIView,
     CreateStoryAPIView,
@@ -147,6 +149,12 @@ urlpatterns = [
     path("user/follow/", UserFollowAPIView.as_view(), name="user-follow-api"),
     path(
         "user/referrals/", GetUserReferralAPIView.as_view(), name="user-referrals-api"
+    ),
+    path(
+        "user/post/activity/likes/", UserPostLikeActivityAPIView.as_view(), name="user-post-like-activity-api"
+    ),
+    path(
+        "user/post/activity/comments/", UserPostCommentActivityAPIView.as_view(), name="user-post-comment-activity-api"
     ),
     # post API's enpoints
     path("stories/active/", ActiveStoryAPIView.as_view(), name="active-stories-api"),
