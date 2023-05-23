@@ -23,13 +23,14 @@ class UserLevel:
     def check_level(self, max_level):
         for i in range(1, max_level + 1):
             try:
-                if (
-                    self.referral_users
-                    >= self.get_level_referral_user(level=i).referral_users
-                    + self.sum_previous_level_referral_users(level=i)
-                    and self.referral_users
-                    < self.get_level_referral_user(level=i + 1).referral_users
-                    + self.sum_previous_level_referral_users(level=i+1)
+                if self.referral_users >= self.get_level_referral_user(
+                    level=i
+                ).referral_users + self.sum_previous_level_referral_users(
+                    level=i
+                ) and self.referral_users < self.get_level_referral_user(
+                    level=i + 1
+                ).referral_users + self.sum_previous_level_referral_users(
+                    level=i + 1
                 ):
                     return i
             except:
@@ -55,4 +56,6 @@ class UserLevel:
     @property
     def get_current_level_referral_users(self):
         self.current_level = self.get_user_level
-        return self.referral_users  - self.sum_previous_level_referral_users(level=self.current_level+1)
+        return self.referral_users - self.sum_previous_level_referral_users(
+            level=self.current_level + 1
+        )
