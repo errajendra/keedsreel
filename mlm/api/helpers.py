@@ -51,3 +51,8 @@ class UserLevel:
     @property
     def get_total_referral_users(self):
         return self.referral_users
+
+    @property
+    def get_current_level_referral_users(self):
+        self.current_level = self.get_user_level
+        return self.referral_users  - self.sum_previous_level_referral_users(level=self.current_level+1)

@@ -32,6 +32,7 @@ class GetUserLevelAPIView(APIView):
                 "level": level.get_user_level,
                 "level_max_users": level.get_level_max_users,
                 "total_referral_user": level.get_total_referral_users,
+                "current_level_referral_user": level.get_current_level_referral_users,
                 "full_name": user.first_name + " " + user.last_name,
                 "description": user.profile.description,
                 "followers": user.user_to.all().count(),
