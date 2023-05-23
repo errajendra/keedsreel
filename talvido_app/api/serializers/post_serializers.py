@@ -395,6 +395,15 @@ class GetPostCommentModelSerializer(serializers.ModelSerializer):
     def get_total_comment_likes(self, data):
         return self.total_comment_likes
 
+    def to_representation(self, instance):
+        data  = super().to_representation(instance)
+        data["post"] = (
+            "https://"
+            + self.context["request"].META["HTTP_HOST"] 
+            + instance.post.post.url
+        )
+        data["post_id"] = instance.post.id
+        return data
 
 """add post like serializer"""
 
@@ -491,7 +500,17 @@ class GetPostCommentLikeModelSerializer(serializers.ModelSerializer):
 class GetPostLikeModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostComment
-        fields = ["id", "user"]
+        fields = ["id", "user", "post"]
+
+    def to_representation(self, instance):
+        data  = super().to_representation(instance)
+        data["post"] = (
+            "https://"
+            + self.context["request"].META["HTTP_HOST"] 
+            + instance.post.post.url
+        )
+        data["post_id"] = instance.post.id
+        return data
 
 
 """get story highlights model serializer"""

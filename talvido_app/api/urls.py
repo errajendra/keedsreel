@@ -19,6 +19,7 @@ from . import (
     RemoveUserFollowerAPIView,
     GetAnyUserProfileAPIView,
     UserPostLikeActivityAPIView,
+    UserPostCommentActivityAPIView,
     ActiveStoryAPIView,
     ArchiveStoryAPIView,
     CreateStoryAPIView,
@@ -151,6 +152,9 @@ urlpatterns = [
     ),
     path(
         "user/post/activity/likes/", UserPostLikeActivityAPIView.as_view(), name="user-post-like-activity-api"
+    ),
+    path(
+        "user/post/activity/comments/", UserPostCommentActivityAPIView.as_view(), name="user-post-comment-activity-api"
     ),
     # post API's enpoints
     path("stories/active/", ActiveStoryAPIView.as_view(), name="active-stories-api"),

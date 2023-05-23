@@ -12,7 +12,8 @@ from . import (
     FollowingModelSerializer,
     UserFollowSerializer,
     GetReferralUserModelSerializer,
-    GetPostModelSerializer,
+    GetPostCommentModelSerializer,
+    GetPostLikeModelSerializer,
 )
 from talvido_app.pagination import PageNumberPaginationView
 
@@ -131,11 +132,14 @@ class FollowersAPIView(APIView, PageNumberPaginationView):
     permission_classes = [IsAuthenticated]
 
     page_size = 10
+
     def get(self, request, firebase_uid=None):
         if firebase_uid is None:
-            followers = Follow.objects.select_related().filter(
-                user_to=request.user
-            ).order_by("created_at")
+            followers = (
+                Follow.objects.select_related()
+                .filter(user_to=request.user)
+                .order_by("created_at")
+            )
         else:
             try:
                 user = Talvidouser.objects.get(firebase_uid=firebase_uid)
@@ -143,16 +147,14 @@ class FollowersAPIView(APIView, PageNumberPaginationView):
                 response = {
                     "status_code": status.HTTP_400_BAD_REQUEST,
                     "message": "bad request",
-                    "data" : {
-                        "firebase_uid" : [
-                            "firebase_uid is invalid"
-                        ]
-                    }  
+                    "data": {"firebase_uid": ["firebase_uid is invalid"]},
                 }
                 return Response(response, status=status.HTTP_400_BAD_REQUEST)
-            followers = Follow.objects.select_related().filter(
-                user_to=user
-            ).order_by("created_at")
+            followers = (
+                Follow.objects.select_related()
+                .filter(user_to=user)
+                .order_by("created_at")
+            )
         results = self.paginate_queryset(followers, request, view=self)
         followers_serializer = FollowersModelSerializer(
             results, many=True, context={"request": request}
@@ -167,11 +169,14 @@ class FollowingsAPIView(APIView, PageNumberPaginationView):
     permission_classes = [IsAuthenticated]
 
     page_size = 10
+
     def get(self, request, firebase_uid=None):
         if firebase_uid is None:
-            followings = Follow.objects.select_related().filter(
-                user_from=request.user
-            ).order_by("created_at")
+            followings = (
+                Follow.objects.select_related()
+                .filter(user_from=request.user)
+                .order_by("created_at")
+            )
         else:
             try:
                 user = Talvidouser.objects.get(firebase_uid=firebase_uid)
@@ -179,17 +184,15 @@ class FollowingsAPIView(APIView, PageNumberPaginationView):
                 response = {
                     "status_code": status.HTTP_400_BAD_REQUEST,
                     "message": "bad request",
-                    "data" : {
-                        "firebase_uid" : [
-                            "firebase_uid is invalid"
-                        ]
-                    }  
+                    "data": {"firebase_uid": ["firebase_uid is invalid"]},
                 }
                 return Response(response, status=status.HTTP_400_BAD_REQUEST)
-            followings = Follow.objects.select_related().filter(
-                user_from=user
-            ).order_by("created_at")
-                
+            followings = (
+                Follow.objects.select_related()
+                .filter(user_from=user)
+                .order_by("created_at")
+            )
+
         results = self.paginate_queryset(followings, request, view=self)
         followings_serializer = FollowingModelSerializer(
             results, many=True, context={"request": request}
@@ -267,24 +270,27 @@ class UserFollowAPIView(APIView):
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-
 class GetUserReferralAPIView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = Talvidouser.objects.get(firebase_uid=request.user)
-        referral_users  = user.referral_by_user.all()
-        referral_user_serializer = GetReferralUserModelSerializer(referral_users, many=True, context={"request": request})
+        referral_users = user.referral_by_user.all()
+        referral_user_serializer = GetReferralUserModelSerializer(
+            referral_users, many=True, context={"request": request}
+        )
         response = {
-            "status_code" : status.HTTP_200_OK,
+            "status_code": status.HTTP_200_OK,
             "message": "ok",
             "data": {
-                "referral_users" : referral_user_serializer.data,
-                "image" : "https://" + request.META["HTTP_HOST"] + request.user.profile.image.url,
-                "total_score" : referral_users.count(),
-                "total_referred_users" : referral_users.count(),
-            } 
+                "referral_users": referral_user_serializer.data,
+                "image": "https://"
+                + request.META["HTTP_HOST"]
+                + request.user.profile.image.url,
+                "total_score": referral_users.count(),
+                "total_referred_users": referral_users.count(),
+            },
         }
         return Response(response, status=status.HTTP_200_OK)
 
@@ -302,11 +308,7 @@ class RemoveUserFollowerAPIView(APIView):
             response = {
                 "status_code": status.HTTP_400_BAD_REQUEST,
                 "message": "bad request",
-                "data": {
-                    "firebase_uid": [
-                        "firebase_uid is invalid"
-                    ]
-                }
+                "data": {"firebase_uid": ["firebase_uid is invalid"]},
             }
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
@@ -315,26 +317,52 @@ class RemoveUserFollowerAPIView(APIView):
             follower.first().delete()
             response = {
                 "status_code": status.HTTP_204_NO_CONTENT,
-                "message": "removed follower"
+                "message": "removed follower",
             }
             return Response(response, status=status.HTTP_204_NO_CONTENT)
-        
+
         response = {
             "status_code": status.HTTP_400_BAD_REQUEST,
-            "message": "it's not your follower"
+            "message": "it's not your follower",
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
+
+"""This API will get recent user post likes"""
 
 class UserPostLikeActivityAPIView(APIView, PageNumberPaginationView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
     page_size = 12
+
     def get(self, request):
         user = Talvidouser.objects.get(firebase_uid=request.user)
-        user_post_likes = user.post_like_user.all().order_by("-created_at").values_list("post", flat=True)
-        liked_posts = Post.objects.select_related().filter(id__in=user_post_likes).order_by("-created_at")
-        liked_posts_paginate = self.paginate_queryset(liked_posts, request, view=self)
-        liked_posts_serializer = GetPostModelSerializer(liked_posts_paginate, many=True, context={"request": request})
+        user_post_likes = user.post_like_user.all().order_by("-created_at")
+        liked_posts_paginate = self.paginate_queryset(
+            user_post_likes, request, view=self
+        )
+        liked_posts_serializer = GetPostLikeModelSerializer(
+            liked_posts_paginate, many=True, context={"request": request}
+        )
         return self.get_paginated_response(liked_posts_serializer.data)
+
+
+"""This API will get recent user post comments"""
+
+class UserPostCommentActivityAPIView(APIView, PageNumberPaginationView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    page_size = 10
+
+    def get(self, request):
+        user = Talvidouser.objects.get(firebase_uid=request.user)
+        user_post_comments = user.post_comment_user.all().order_by("-created_at")
+        comment_posts_paginate = self.paginate_queryset(
+            user_post_comments, request, view=self
+        )
+        comment_posts_serializer = GetPostCommentModelSerializer(
+            comment_posts_paginate, many=True, context={"request": request}
+        )
+        return self.get_paginated_response(comment_posts_serializer.data)
