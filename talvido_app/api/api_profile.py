@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from talvido_app.models import Profile, Follow, Talvidouser
+from talvido_app.models import Profile, Follow, Talvidouser, Post
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
 from . import (
@@ -11,7 +11,8 @@ from . import (
     FollowersModelSerializer,
     FollowingModelSerializer,
     UserFollowSerializer,
-    GetReferralUserModelSerializer
+    GetReferralUserModelSerializer,
+    GetPostModelSerializer,
 )
 from talvido_app.pagination import PageNumberPaginationView
 
@@ -323,3 +324,17 @@ class RemoveUserFollowerAPIView(APIView):
             "message": "it's not your follower"
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserPostLikeActivityAPIView(APIView, PageNumberPaginationView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    page_size = 12
+    def get(self, request):
+        user = Talvidouser.objects.get(firebase_uid=request.user)
+        user_post_likes = user.post_like_user.all().order_by("-created_at").values_list("post", flat=True)
+        liked_posts = Post.objects.select_related().filter(id__in=user_post_likes).order_by("-created_at")
+        liked_posts_paginate = self.paginate_queryset(liked_posts, request, view=self)
+        liked_posts_serializer = GetPostModelSerializer(liked_posts_paginate, many=True, context={"request": request})
+        return self.get_paginated_response(liked_posts_serializer.data)
