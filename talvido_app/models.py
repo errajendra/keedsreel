@@ -204,7 +204,6 @@ class Post(BaseModel):
         return str(self.id)
     
     def get_post_type(self):
-        print(self.post.name)
         image_formats = [".jpg", ".jpeg", ".png"]
         video_formats = [
             ".mp4",
