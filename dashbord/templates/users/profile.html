@@ -131,8 +131,14 @@
                             <p class=""> {{post.description}} </p>
                         </div>
                         <p>
-                          <a href="#" class="link-black text-sm"><i class="far fa-comments mr-1"></i> Comments ({{post.post_comment.count}})</a>
-                          <a href="#" class="link-black text-sm mx-2"><i class="far fa-thumbs-up mr-1"></i> Likes ({{post.post_like.count}})</a>
+                          <a href="#" class="link-black text-sm get-post-data" data-post-id="{{post.id}}" data-choice-type="comments" data-toggle="modal" data-target="#likeCommentModel">
+                            <i class="far fa-comments mr-1"></i>
+                            Comments ({{post.post_comment.count}})
+                          </a>
+                          <a href="#" class="link-black text-sm mx-2 get-post-data" data-post-id="{{post.id}}" data-choice-type="likes" data-toggle="modal" data-target="#likeCommentModel" >
+                            <i class="far fa-thumbs-up mr-1"></i>
+                            Likes ({{post.post_like.count}})
+                          </a>
                           {% comment %} <span class="float-right">
                               <a href="#" class="link-black text-sm">
                               <i class="far fa-comments mr-1"></i> Comments ({{post.post_comment.count}})
@@ -209,8 +215,14 @@
                           <p class="muted"> {{reel.description}} </p>
                       </div>
                       <p>
-                        <a href="#" class="link-black text-sm"><i class="far fa-comments mr-1"></i> Comments ({{reel.reelcomment_set.all.count}})</a>
-                        <a href="#" class="link-black text-sm mx-2"><i class="far fa-thumbs-up mr-1"></i> Likes ({{reel.reel_like.count}})</a>
+                        <a href="#" class="link-black text-sm get-reel-data" data-reel-id="{{reel.id}}" data-choice-type="comments" data-toggle="modal" data-target="#likeCommentModel">
+                          <i class="far fa-comments mr-1"></i>
+                          Comments ({{reel.reelcomment_set.all.count}})
+                        </a>
+                        <a href="#" class="link-black text-sm mx-2 get-reel-data" data-reel-id="{{reel.id}}" data-choice-type="likes" data-toggle="modal" data-target="#likeCommentModel">
+                          <i class="far fa-thumbs-up mr-1"></i> 
+                          Likes ({{reel.reel_like.count}})
+                        </a>
                         {% comment %} <span class="float-right">
                             <a href="#" class="link-black text-sm">
                             <i class="far fa-comments mr-1"></i> Comments ({{post.post_comment.count}})
@@ -245,6 +257,28 @@
                 
               </div>
               <!-- /.tab-content -->
+
+              <!-- Model to show Likes / Comments of Reels and Posts -->
+              <div class="modal fade" id="likeCommentModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title"></h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      ...
+                    </div>
+                    {% comment %} <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div> {% endcomment %}
+                  </div>
+                </div>
+              </div>
+              <!-- /.modal -->
+
             </div><!-- /.card-body -->
           </div>
           <!-- /.card -->
@@ -260,5 +294,5 @@
 
 {% block scripts %}
 {% comment %} User Followers listing {% endcomment %}
-<script src="{% static 'custom/user-follower-friends.js' %}"></script>
+<script src="{% static 'custom/user-profile.js' %}"></script>
 {% endblock scripts %}
