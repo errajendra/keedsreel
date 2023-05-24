@@ -441,7 +441,7 @@ class GetUserFollowingsPost(APIView, PageNumberPaginationView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
-    page_size = 5
+    page_size = 2
     def get(self, request):
         user = Talvidouser.objects.get(firebase_uid=request.user)
         followings = user.user_from.all()

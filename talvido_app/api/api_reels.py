@@ -84,7 +84,7 @@ class GetUsersAllReelsAPIView(APIView, PageNumberPaginationView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
-    page_size = 5
+    page_size = 2
     def get(self, request):
         users = Talvidouser.objects.filter(is_active=True)
         reels = Reel.objects.select_related().filter(
