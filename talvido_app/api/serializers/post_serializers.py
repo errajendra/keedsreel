@@ -82,6 +82,18 @@ class StoryModelSerializer(serializers.ModelSerializer):
             else 0
         )
 
+    def get_video_length(self, data):
+        if self.get_story_type(data=data) == "video":
+            from moviepy.editor import VideoFileClip
+            clip = VideoFileClip(data.story.path)
+            return int(clip.duration)
+        return 0    
+
+    def to_representation(self, instance):
+        data =  super().to_representation(instance)
+        data["vido_duration"] = self.get_video_length(data=instance)
+        return data
+
     class Meta:
         model = Story
         fields = [
