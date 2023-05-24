@@ -3,7 +3,7 @@
         {% for user in users %}
         <li class="my-1">
             <a href="{% url 'profile' user.firebase_uid %}" target='_blank'>
-                <img src="{{user.profile.image.url}}" width="30px" width="30px" class="img-circle"/>
+                <img src="{{user.profile.image.url}}" class="img-circle" style="height: 30px; width: 30px;"/>
                 <span class="mx-2">{{user.get_full_name}}</span>
             </a>
             <p class="d-none"><small class="text-muted text-sm">{{user.firebase_uid}} </small></p>

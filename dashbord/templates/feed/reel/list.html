@@ -12,7 +12,8 @@
                     <th>SN</th>
                     <th>User</th>
                     <th>Thumbnail</th>
-                    <th>reel Likes</th>
+                    <th>Likes</th>
+                    <th>Views</th>
                     <th>Description</th>
                     <th>Reel</th>
                     <th>Action</th>
@@ -28,6 +29,7 @@
                     </td>
                     <td> <img src="{{reel.thumbnail_url}}" height="50px;" width="50px;"/> </td>
                     <td>{{reel.reel_like.count}} </td>
+                    <td>{{reel.reel_view_reel.views}} </td>
                     <td>{{reel.description}} </td>
                     <td>
                         <a href="{{reel.reel.url}}" target="_blank">View reel</a>
@@ -60,17 +62,6 @@
                 </tr>
                 {% endfor %}
             </tbody>
-            <tfoot>
-                <tr>
-                    <th>SN</th>
-                    <th>User</th>
-                    <th>Thumbnail</th>
-                    <th>reel Likes</th>
-                    <th>Description</th>
-                    <th>Reel</th>
-                    <th>Action</th>
-                </tr>
-            </tfoot>
         </table>
     </div>
 {% endblock content %}

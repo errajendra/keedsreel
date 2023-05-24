@@ -12,6 +12,7 @@
                     <th>SN</th>
                     <th>User</th>
                     <th>Story</th>
+                    <th>Views</th>
                     <th>Date</th>
                     <th>Action</th>
                 </tr>
@@ -27,6 +28,7 @@
                     <td>
                         <a href="{{story.story.url}}" target="_blank">View</a>
                     </td>
+                    <td>{{story.story_content.all.count}} </td>
                     <td>{{story.created_at|date}} </td>
                     <td>
                         <!-- Button trigger modal -->
@@ -56,15 +58,6 @@
                 </tr>
                 {% endfor %}
             </tbody>
-            <tfoot>
-                <tr>
-                    <th>SN</th>
-                    <th>User</th>
-                    <th>Story</th>
-                    <th>Date</th>
-                    <th>Action</th>
-                </tr>
-            </tfoot>
         </table>
     </div>
 {% endblock content %}
