@@ -7,7 +7,7 @@ from talvido_app.models import (
     Talvidouser,
 )
 from talvido_app.api.serializers.profile_serializers import UserModelSerializer
-from datetime import datetime
+from talvido_app.utils import get_duration
 
 
 class GetReelModelSerializer(serializers.ModelSerializer):
@@ -54,15 +54,7 @@ class GetReelModelSerializer(serializers.ModelSerializer):
         return self.total_comments
 
     def get_reel_duration(self, data):
-        difference = datetime.now() - data.created_at.replace(tzinfo=None)
-        m, s = divmod(difference.total_seconds(), 60)
-        hours = int(m // 60)
-        if hours > 1 and hours <= 24:
-            return f"{hours}h ago"
-        elif hours > 24:
-            return f"{hours//24}d ago"
-        else:
-            return f"{int(m%60)}m ago"
+        return get_duration(data=data)
 
     def is_reel_like(self, data):
         return (
