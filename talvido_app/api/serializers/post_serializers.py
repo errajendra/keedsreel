@@ -90,7 +90,7 @@ class StoryModelSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data =  super().to_representation(instance)
-        data["vido_duration"] = self.get_video_length(data=instance)
+        data["video_duration"] = self.get_video_length(data=instance)
         return data
 
     class Meta:
