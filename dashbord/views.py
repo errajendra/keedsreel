@@ -179,6 +179,7 @@ Reel View
 @login_required
 def reels_list(request):
     reels = Reel.objects.select_related().order_by('-updated_at')
+    print(dir(reels[0]))
     context = {
         "title": "Reels",
         'reels': reels

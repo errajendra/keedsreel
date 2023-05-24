@@ -12,7 +12,9 @@
                     <th>SN</th>
                     <th>User ID</th>
                     <th>Mobile Number</th>
+                    <th>Gender</th>
                     <th>Total Posts</th>
+                    <th>Total Reels</th>
                     <th>Account Status</th>
                     <th>Action</th>
                 </tr>
@@ -23,13 +25,15 @@
                     <td>{{forloop.counter}} </td>
                     <td>
                         <a href="{% url 'profile' user.firebase_uid %}" target='_blank'>
-                            <img src="{{user.profile.image.url}}" width="30px;" class="img-circle"/>
+                            <img src="{{user.profile.image.url}}" class="img-circle" style="height: 30px; width: 30px;"/>
                             <span>{{user.get_full_name}}</span>
                         </a>
                         <p class="d-none"><small class="text-muted text-sm">{{user.firebase_uid}} </small></p>
                     </td>
-                    <td>{{user.mobile_number}} </td>
+                    <td>{{user.mobile}} </td>
+                    <td>{{user.profile.gender}} </td>
                     <td> {{user.post_user.all.count}} </td>
+                    <td> {{user.reel_user.all.count}} </td>
                     <td>
                         {% if user.is_active %}
                         <span class="badge badge-success user-status" data-user-id="{{user.firebase_uid}}" data-task="deactivate">
@@ -69,16 +73,6 @@
                 </tr>
                 {% endfor %}
             </tbody>
-            <tfoot>
-                <tr>
-                    <th>SN</th>
-                    <th>User ID</th>
-                    <th>Mobile Number</th>
-                    <th>Total Posts</th>
-                    <th>Account Status</th>
-                    <th>Action</th>
-                </tr>
-            </tfoot>
         </table>
     </div>
 {% endblock content %}
