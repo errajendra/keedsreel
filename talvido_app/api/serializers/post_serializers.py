@@ -18,7 +18,6 @@ from talvido_app.api.serializers.profile_serializers import (
 from datetime import datetime
 import os
 from talvido_app.utils import get_duration
-from talvido_app.utils import get_duration
 
 
 """ story model serializer"""

@@ -121,6 +121,7 @@ class Story(BaseModel):
 
     def save(self, *args, **kwargs):
         self.ends_at = datetime.now() + timedelta(hours=24)
+        self.ends_at = self.ends_at.replace(tzinfo=None)
         super().save(*args, **kwargs)
 
 
