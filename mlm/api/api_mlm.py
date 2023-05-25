@@ -35,7 +35,7 @@ class GetUserLevelAPIView(APIView):
                 "current_level_referral_user": level.get_current_level_referral_users,
                 "full_name": user.first_name + " " + user.last_name,
                 "description": user.profile.description,
-                "followers": user.user_to.all().count(),
+                "followers": level.get_total_referral_users,
             }
         }
         return Response(response, status=status.HTTP_200_OK)
