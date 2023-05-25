@@ -44,3 +44,6 @@ class UserSubscription(BaseModel):
 
     def __str__(self):
         return str(self.user)
+    
+    class Meta:
+        ordering = ('-created_at',)

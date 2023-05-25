@@ -84,6 +84,18 @@
                     </li>
                 </ul>
             </li>
+            
+            {% comment %} Transactions {% endcomment %}
+            
+            <li class="nav-item">
+                <a href="{% url 'view-transactions' %}" class="nav-link {% if url_name == 'view-transactions' %} active {% endif %}">
+                    <i class="nav-icon fas fa-list"></i>
+                    <p>
+                        Transactions
+                    </p>
+                </a>
+            </li>
+
             </ul>
         </nav>
         {% endwith %}
