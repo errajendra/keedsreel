@@ -39,6 +39,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'talvido_app.middleware.TimeSpendsMiddleware',
+    'talvido_app.middleware.WalletHistoryMiddleware',
 ]
 
 ROOT_URLCONF = 'talvido.urls'
