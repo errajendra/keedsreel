@@ -46,8 +46,6 @@ class GetWalletAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        level = UserLevel(user=request.user)
-        get_user_level = level.level.get_user_level
         response = {
             "status_code": status.HTTP_200_OK,
             "message": "ok",
