@@ -4,9 +4,9 @@ from talvido_app.models import (
     Profile, 
     Follow, 
     ReferralUser,
+    TimeSpend
 )
 from payment.helpers import check_user_subscription
-from mlm.api.helpers import UserLevel
 
 
 """user model serializer"""
@@ -77,16 +77,9 @@ class ProfileModelSerializer(serializers.ModelSerializer):
             )
         return 1 if self.has_subscription else 0
 
-    # @property
-    # def get_user_level(self):
-    #     level = UserLevel(self.context["request"])
-    #     return level.get_user_level() if level.get_user_level() else 1
-
-
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data["is_subscribe"] = self.is_subscription
-        # data["level"] = self.get_user_level
         return data
 
     class Meta:
@@ -288,3 +281,11 @@ class GetReferralUserModelSerializer(serializers.ModelSerializer):
         df = DateFormat(create_at)
         df = df.format(get_format("DATE_FORMAT"))
         return df
+
+
+
+class TimeSpendsModelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TimeSpend
+        fields = ["id", "user", "date", "seconds"]

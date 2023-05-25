@@ -1,0 +1,43 @@
+<section>
+    <div class="container">
+      <div class="row d-flex justify-content-center">
+        <div class="">
+          <div class="card text-dark">
+            
+            {% for comment in comments %}
+            <div class="card-body p-4">
+              <div class="d-flex flex-start">
+                <img class="rounded-circle shadow-1-strong me-3"
+                  src="{{comment.user.profile.image.url}}" alt="avatar" width="60"
+                  height="60" />
+                <div>
+                  <h6 class="fw-bold mb-1">{{comment.user.get_full_name}} </h6>
+                  <div class="d-flex align-items-center mb-3">
+                    <p class="mb-0">
+                      {{comment.created_at}}
+                    </p>
+                    {% comment %} <a href="#!" class="link-muted"><i class="fas fa-pencil-alt ms-2"></i></a>
+                    <a href="#!" class="text-success"><i class="fas fa-redo-alt ms-2"></i></a>
+                    <a href="#!" class="link-danger"><i class="fas fa-heart ms-2"></i></a> {% endcomment %}
+                  </div>
+                  <p class="mb-0">
+                    {{comment.comment}}
+                  </p>
+                  <p>
+                    <span class="link-black text-sm mx-2 get-post-data" >
+                      <i class="far fa-thumbs-up mr-1"></i>
+                      ({{comment.post_comment.count}})
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <hr class="my-0" style="height: 1px;" />
+            {% endfor %}
+            
+          </div>
+        </div>
+      </div>
+    </div>
+</section>

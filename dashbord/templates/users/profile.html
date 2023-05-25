@@ -1,4 +1,5 @@
 {% extends 'base/base.html' %}
+{% load static %}
 {% block content %}
 
 <!-- Content Header (Page header) -->
@@ -23,14 +24,19 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-4">
-
+          {% csrf_token %}
           <!-- Profile Image -->
           <div class="card card-primary card-outline">
             <div class="card-body box-profile">
               <div class="text-center">
                 <img class="profile-user-img img-fluid img-circle"
-                     src="{{user.profile.image.url}}"
-                     alt="DP">
+                  src="{{user.profile.image.url}}"
+                  alt="DP"
+                  style="
+                    height: 100px;
+                    width: 100px;
+                  "
+                >
               </div>
 
               <h3 class="profile-username text-center">{{user.get_full_name}} </h3>
@@ -39,19 +45,54 @@
 
               <ul class="list-group list-group-unbordered mb-3">
                 <li class="list-group-item">
-                  <b>Points</b> <span class="float-right text-bold">{{user.user_point.points}} <i class="fas fa-coins mr-1"></i></span>
+                  <b>Points</b> 
+                  <span class="float-right text-bold">{{user.user_point.points}} <i class="fas fa-coins mr-1"></i></span>
                 </li>
                 <li class="list-group-item">
-                  <b>Followers</b> <a class="float-right text-bold">{{follower}} </a>
+                  <b>Followers</b> 
+                  {% if follower == 0 %}
+                  <span class="float-right btn text-bold">{{follower}} </span>
+                  {% else %}
+                  <a class="float-right btn text-blue text-bold show-user-data" data-user-id="{{user.firebase_uid}}" data-type="followers" data-toggle="modal" data-target="#userModal" >{{follower}} </a>
+                  {% endif %}
                 </li>
                 <li class="list-group-item">
-                  <b>Following</b> <a class="float-right text-bold">{{following}} </a>
+                  <b>Following</b> 
+                  {% if following == 0 %}
+                  <span class="float-right btn text-bold">{{following}} </span>
+                  {% else %}
+                  <a class="float-right btn text-blue text-bold show-user-data" data-user-id="{{user.firebase_uid}}" data-type="following" data-toggle="modal" data-target="#userModal">{{following}} </a>
+                  {% endif %}
                 </li>
                 <li class="list-group-item">
-                  <b>Friends</b> <a class="float-right text-bold">{{friends}} </a>
+                  <b>Friends</b> 
+                  {% if friends == 0 %}
+                  <span class="float-right btn text-bold">{{friends}} </span>
+                  {% else %}
+                  <a class="float-right btn text-blue text-bold show-user-data" data-user-id="{{user.firebase_uid}}" data-type="friends" data-toggle="modal" data-target="#userModal">{{friends}} </a>
+                  {% endif %}
                 </li>
               </ul>
 
+              <!-- Model to show Followers / Following / Friends -->
+              <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel"></h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      ...
+                    </div>
+                    {% comment %} <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div> {% endcomment %}
+                  </div>
+                </div>
+              </div>
               {% comment %} <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a> {% endcomment %}
             </div>
             <!-- /.card-body -->
@@ -106,12 +147,26 @@
                         </div>
                         <!-- /.user-block -->
                         <div class="">
+                          {% if post.get_post_type == 'image' %}
                             <img class="img-fluid" src="{{ post.post.url }}"/>
-                            <a href="{{ post.post.url }}" target="_blank" class=" text-sm">View media in new tab</a>
-                            <p class=""> {{post.description}} </p>
+                          {% elif post.get_post_type == 'video' %}
+                            <video class="img-fluid" controls>
+                              <source src="{{ post.post.url }}" type="video/mp4">
+                              <source src="{{ post.post.url }}" type="video/ogg">
+                              Your browser does not support the video tag.
+                            </video>
+                          {% endif %}
+                          <p class=""> {{post.description}} </p>
                         </div>
                         <p>
-                          <a href="#" class="link-black text-sm"><i class="far fa-comments mr-1"></i> Comments ({{post.post_comment.count}})</a>
+                          <a href="#" class="link-black text-sm get-post-data" data-post-id="{{post.id}}" data-choice-type="comments" data-toggle="modal" data-target="#likeCommentModel">
+                            <i class="far fa-comments mr-1"></i>
+                            Comments ({{post.post_comment.count}})
+                          </a>
+                          <a href="#" class="link-black text-sm mx-2 get-post-data" data-post-id="{{post.id}}" data-choice-type="likes" data-toggle="modal" data-target="#likeCommentModel" >
+                            <i class="far fa-thumbs-up mr-1"></i>
+                            Likes ({{post.post_like.count}})
+                          </a>
                           {% comment %} <span class="float-right">
                               <a href="#" class="link-black text-sm">
                               <i class="far fa-comments mr-1"></i> Comments ({{post.post_comment.count}})
@@ -142,30 +197,23 @@
                     </div>
                     <!-- /.user-block -->
                     <div class="">
-                        <video class="img-fluid" controls>
-                          <source src="{{ story.story.url }}" type="video/mp4">
-                          <source src="{{ story.story.url }}" type="video/ogg">
-                          Your browser does not support the video tag.
-                        </video>
-                        <a href="{{ story.story.url }}" target="_blank" class=" text-sm">View media in new tab</a>
+                      {% if story.get_story_type == 'image' %}
+                      <img class="img-fluid" src="{{ story.story.url }}"/>
+                      {% elif story.get_story_type == 'video' %}
+                      <video class="img-fluid" controls>
+                        <source src="{{ story.story.url }}" type="video/mp4">
+                        <source src="{{ story.story.url }}" type="video/ogg">
+                        Your browser does not support the video tag.
+                      </video>
+                      {% endif %}
                     </div>
-                    <p>
-                      {% comment %} <a href="#" class="link-black text-sm"><i class="far fa-comments mr-1"></i> Comments ({{post.post_comment.count}})</a> {% endcomment %}
-                      {% comment %} <span class="float-right">
-                          <a href="#" class="link-black text-sm">
-                          <i class="far fa-comments mr-1"></i> Comments ({{post.post_comment.count}})
-                          </a>
-                      </span> {% endcomment %}
-                    </p>
-
-                    {% comment %} <input class="form-control form-control-sm" type="text" placeholder="Type a comment"> {% endcomment %}
                   </div>
                   {% endfor %}
                 </div>
                 <!-- /.tab-pane -->
 
                 {% comment %} Reels {% endcomment %}
-                <div class="active tab-pane" id="reels-tab">
+                <div class="tab-pane" id="reels-tab">
                   {% for reel in reels %}
                   <!-- Post -->
                   <div class="post col-lg-8 container-md">
@@ -179,7 +227,6 @@
                       </div>
                       <!-- /.user-block -->
                       <div class="">
-                          {% comment %} <video class="img-fluid" src="{{ reel.reel.url }}" controls/> {% endcomment %}
                           <video class="img-fluid" controls>
                             <source src="{{ reel.reel.url }}" type="video/mp4">
                             <source src="{{ reel.reel.url }}" type="video/ogg">
@@ -188,7 +235,14 @@
                           <p class="muted"> {{reel.description}} </p>
                       </div>
                       <p>
-                        <p class="text-sm"><i class="far fa-comments mr-1"></i> Comments ({{reel.reelcomment_set.all.count}})</p>
+                        <a href="#" class="link-black text-sm get-reel-data" data-reel-id="{{reel.id}}" data-choice-type="comments" data-toggle="modal" data-target="#likeCommentModel">
+                          <i class="far fa-comments mr-1"></i>
+                          Comments ({{reel.reelcomment_set.all.count}})
+                        </a>
+                        <a href="#" class="link-black text-sm mx-2 get-reel-data" data-reel-id="{{reel.id}}" data-choice-type="likes" data-toggle="modal" data-target="#likeCommentModel">
+                          <i class="far fa-thumbs-up mr-1"></i> 
+                          Likes ({{reel.reel_like.count}})
+                        </a>
                         {% comment %} <span class="float-right">
                             <a href="#" class="link-black text-sm">
                             <i class="far fa-comments mr-1"></i> Comments ({{post.post_comment.count}})
@@ -223,6 +277,28 @@
                 
               </div>
               <!-- /.tab-content -->
+
+              <!-- Model to show Likes / Comments of Reels and Posts -->
+              <div class="modal fade" id="likeCommentModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title"></h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      ...
+                    </div>
+                    {% comment %} <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div> {% endcomment %}
+                  </div>
+                </div>
+              </div>
+              <!-- /.modal -->
+
             </div><!-- /.card-body -->
           </div>
           <!-- /.card -->
@@ -235,3 +311,8 @@
 <!-- /.content -->
 
 {% endblock content %}
+
+{% block scripts %}
+{% comment %} User Followers listing {% endcomment %}
+<script src="{% static 'custom/user-profile.js' %}"></script>
+{% endblock scripts %}

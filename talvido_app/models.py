@@ -6,6 +6,7 @@ from django.core.validators import RegexValidator
 from .utils import phone_regex
 from .manager import TalvidouserManager
 from datetime import datetime, timedelta
+import os
 
 
 """base model"""
@@ -70,6 +71,10 @@ class Talvidouser(AbstractUser):
             self.referral_code = code
         super().save(*args, **kwargs)
 
+    def mobile(self):
+        if self.mobile_number:
+            return self.mobile_number
+        return " "
 
 """profile model that will store extra information of user"""
 
@@ -121,7 +126,27 @@ class Story(BaseModel):
 
     def save(self, *args, **kwargs):
         self.ends_at = datetime.now() + timedelta(hours=24)
+        self.ends_at = self.ends_at.replace(tzinfo=None)
         super().save(*args, **kwargs)
+
+    def get_story_type(self):
+        image_formats = [".jpg", ".jpeg", ".png"]
+        video_formats = [
+            ".mp4",
+            ".mov",
+            ".wmv",
+            ".webm",
+            ".avi",
+            ".fli",
+            ".mkv",
+            ".mts",
+        ]
+        name, extension = os.path.splitext(self.story.name)
+        if extension.lower() in image_formats:
+            return "image"
+        elif extension.lower() in video_formats:
+            return "video"
+        return []
 
 
 """This model will store the followers and following users"""
@@ -177,6 +202,25 @@ class Post(BaseModel):
 
     def __str__(self):
         return str(self.id)
+    
+    def get_post_type(self):
+        image_formats = [".jpg", ".jpeg", ".png"]
+        video_formats = [
+            ".mp4",
+            ".mov",
+            ".wmv",
+            ".webm",
+            ".avi",
+            ".fli",
+            ".mkv",
+            ".mts",
+        ]
+        name, extension = os.path.splitext(self.post.name)
+        if extension.lower() in image_formats:
+            return "image"
+        elif extension.lower() in video_formats:
+            return "video"
+        return []
 
 
 """This model will store the comments under posts"""
@@ -574,3 +618,19 @@ class Point(BaseModel):
 
     def __str__(self) -> str:
         return f"{self.user} - {self.points}"
+
+
+"""This model will store user time spends activity"""
+
+class TimeSpend(BaseModel):
+    user = models.ForeignKey(
+        Talvidouser, 
+        verbose_name="User", 
+        related_name="user_time_spends", 
+        on_delete=models.CASCADE
+    )
+    date = models.DateField(auto_now_add=True)
+    seconds = models.FloatField(default=0)
+
+    def __str__(self):
+        return str(self.user)

@@ -101,7 +101,12 @@
                                         {% for i in highest_point_users %}
                                         <tr>
                                             <td>{{forloop.counter}}</td>
-                                            <td> <a href="{% url 'profile' i.user.firebase_uid %}" target='_blank'> {{i.user.get_full_name}} </a> </td>
+                                            <td> 
+                                                <a href="{% url 'profile' i.user.firebase_uid %}" target='_blank'>
+                                                    <img src="{{i.user.profile.image.url}}" class="img-circle" style="height: 30px; width: 30px;"/>
+                                                    {{i.user.get_full_name}} 
+                                                </a>
+                                            </td>
                                             <td><span class="badge">{{i.points}} </span></td>
                                         </tr>
                                         {% endfor %}
@@ -148,7 +153,12 @@
                                     {% for i in recent_points %}
                                     <tr>
                                         <td> {{forloop.counter}} </td>
-                                        <td> <a href="{% url 'profile' i.user.firebase_uid %}" target='_blank' class="text-white"> {{i.user.get_full_name}} </a> </td>
+                                        <td> 
+                                            <a href="{% url 'profile' i.user.firebase_uid %}" target='_blank' class="text-white"> 
+                                                <img src="{{i.user.profile.image.url}}" class="img-circle" style="height: 30px; width: 30px;"/>
+                                                {{i.user.get_full_name}} 
+                                            </a> 
+                                        </td>
                                         <td><span class="badge">{{i.points}}</span></td>
                                     </tr>
                                     {% endfor %}

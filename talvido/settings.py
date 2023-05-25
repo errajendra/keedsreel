@@ -38,6 +38,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'talvido_app.middleware.TimeSpendsMiddleware',
 ]
 
 ROOT_URLCONF = 'talvido.urls'
