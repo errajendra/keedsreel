@@ -39,3 +39,20 @@ class GetUserLevelAPIView(APIView):
             }
         }
         return Response(response, status=status.HTTP_200_OK)
+
+
+class GetWalletAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        level = UserLevel(user=request.user)
+        get_user_level = level.level.get_user_level
+        response = {
+            "status_code": status.HTTP_200_OK,
+            "message": "ok",
+            "data": {
+                "total_balance": 100
+            }
+        }
+        return Response(response, status=status.HTTP_200_OK)
