@@ -25,6 +25,7 @@ from .models import (
     ReferralUser,
     PointSetting,
     Point,
+    TimeSpend,
 )
 from django.contrib.auth.admin import UserAdmin
 
@@ -244,3 +245,10 @@ class PointSettingAdmin(admin.ModelAdmin):
 @admin.register(Point)
 class PointAdmin(admin.ModelAdmin):
     list_display = ["id", 'user', "points", "created_at"]
+
+
+"""Register time spends model in django admin"""
+
+@admin.register(TimeSpend)
+class TimeSpendAdmin(admin.ModelAdmin):
+    list_display = ["id", 'user', "date", "seconds", "created_at"]

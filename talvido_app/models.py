@@ -618,3 +618,19 @@ class Point(BaseModel):
 
     def __str__(self) -> str:
         return f"{self.user} - {self.points}"
+
+
+"""This model will store user time spends activity"""
+
+class TimeSpend(BaseModel):
+    user = models.ForeignKey(
+        Talvidouser, 
+        verbose_name="User", 
+        related_name="user_time_spends", 
+        on_delete=models.CASCADE
+    )
+    date = models.DateField(auto_now_add=True)
+    seconds = models.FloatField(default=0)
+
+    def __str__(self):
+        return str(self.user)
