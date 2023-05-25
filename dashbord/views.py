@@ -8,7 +8,8 @@ from talvido_app.models import Talvidouser as User
 from talvido_app.models import (
     Post, Story, Point, Follow, Reel
     )
-
+from mlm.api.helpers import UserLevel
+from mlm.models import Level
 
 
 """ Admin Login view with email and password """
@@ -110,6 +111,21 @@ def user_profile(request, fid):
     posts = user.post_user.all()
     stories = user.story_set.all()
     reels = user.reel_user.all()
+    # MLM
+    level = UserLevel(user=user)
+    try:
+        next_level = Level.objects.get(level=level.get_user_level+1)
+    except:
+        next_level = Level.objects.get(level=level.get_user_level)
+    level_data = {
+        "at_level": level.get_user_level,
+        "at_level_referral": level.get_current_level_referral_users,
+        "total_referral_user": level.get_total_referral_users,
+        "next_level": next_level.level,
+        "next_level_referral": next_level.referral_users,
+        "process_to_next_percent": level.get_total_referral_users*100/next_level.referral_users,
+    }
+    
     context = {
         "title": "User Profile",
         "user": user,
@@ -119,6 +135,7 @@ def user_profile(request, fid):
         "posts": posts,
         "stories": stories,
         "reels": reels,
+        "level": level_data,
     }
     return render(request, 'users/profile.html', context)
 

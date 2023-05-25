@@ -12,6 +12,7 @@
                     <th>SN</th>
                     <th>User ID</th>
                     <th>Mobile Number</th>
+                    <th>Subscription End</th>
                     <th>Gender</th>
                     <th>Total Posts</th>
                     <th>Total Reels</th>
@@ -31,6 +32,11 @@
                         <p class="d-none"><small class="text-muted text-sm">{{user.firebase_uid}} </small></p>
                     </td>
                     <td>{{user.mobile}} </td>
+                    <td>
+                        {% if user.subscription_user.first %}
+                            {{user.subscription_user.first.subscription_end_date|date}} 
+                        {% endif %}
+                    </td>
                     <td>{{user.profile.gender}} </td>
                     <td> {{user.post_user.all.count}} </td>
                     <td> {{user.reel_user.all.count}} </td>
@@ -47,7 +53,7 @@
                     </td>
                     <td>
                         <!-- Button trigger modal -->
-                        <i class="fas fa-trash" type="button" data-toggle="modal" data-target="#deleteModal"></i>
+                        <i class="fas fa-trash text-danger" type="button" data-toggle="modal" data-target="#deleteModal"></i>
                         
                         <!-- Modal -->
                         <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

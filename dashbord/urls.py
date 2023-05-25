@@ -13,6 +13,9 @@ from .view_ajax import (
     get_reel_comments_or_likes,
     user_account_activation,
 )
+from .view_payments import (
+    view_transaction,
+)
 
 
 urlpatterns = [
@@ -43,4 +46,9 @@ urlpatterns = [
     path("ajax-get-reel-likes-comments/", get_reel_comments_or_likes, name="get-reel-likes-comments"),
     # User Account
     path("ajax-activate-deactivate-user/", user_account_activation, name="activate-deactivate-user"),
+    
+    
+    # Payments Urls. 
+    path("view-transactions/", view_transaction, name="view-transactions"),
+    
 ]
