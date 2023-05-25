@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from talvido_app.models import Profile, Follow, Talvidouser, Post
+from talvido_app.models import Profile, Follow, Talvidouser
 from rest_framework.permissions import IsAuthenticated
 from talvido_app.firebase.authentication import FirebaseAuthentication
 from . import (
@@ -14,6 +14,7 @@ from . import (
     GetReferralUserModelSerializer,
     GetPostCommentModelSerializer,
     GetPostLikeModelSerializer,
+    TimeSpendsModelSerializer,
 )
 from talvido_app.pagination import PageNumberPaginationView
 
@@ -366,3 +367,19 @@ class UserPostCommentActivityAPIView(APIView, PageNumberPaginationView):
             comment_posts_paginate, many=True, context={"request": request}
         )
         return self.get_paginated_response(comment_posts_serializer.data)
+
+
+class UserTimeSpendsWeekAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = Talvidouser.objects.get(firebase_uid=request.user)
+        time_spends_week = user.user_time_spends.all().order_by("-created_at")[:7]
+        time_spends_week_serializer = TimeSpendsModelSerializer(time_spends_week, many=True)
+        response = {
+            "status_code": status.HTTP_200_OK,
+            "message": "ok",
+            "data": time_spends_week_serializer.data
+        }
+        return Response(response, status=status.HTTP_200_OK)

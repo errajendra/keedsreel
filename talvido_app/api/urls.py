@@ -10,6 +10,7 @@ from . import (
     CheckMobileNumberExistAPIView,
     ResetEmailPasswordAPIView,
     ProfileAPIView,
+    UserTimeSpendsWeekAPIView,
     GetUserReferralAPIView,
     UpdateProfilePictureAPIView,
     RemoveProfilePictureAPIView,
@@ -155,6 +156,9 @@ urlpatterns = [
     ),
     path(
         "user/post/activity/comments/", UserPostCommentActivityAPIView.as_view(), name="user-post-comment-activity-api"
+    ),
+    path(
+        "user/time-spends/week/", UserTimeSpendsWeekAPIView.as_view(), name="user-time-spends-week-api"
     ),
     # post API's enpoints
     path("stories/active/", ActiveStoryAPIView.as_view(), name="active-stories-api"),
