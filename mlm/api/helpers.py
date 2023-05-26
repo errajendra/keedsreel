@@ -15,7 +15,7 @@ class UserLevel:
                 return Level.objects.get(level=7)
         return None
 
-    def get_user_all_referrals_user(self, user, many=None):
+    def get_indirect_joined_user(self, user, many=None):
         if many is None:
             try:
                 user = Talvidouser.objects.get(firebase_uid=user)
@@ -59,13 +59,13 @@ class UserLevel:
                                 ref_users=ref_users, end=ref_users
                             )[0][0]
                         ],
-                        "indirect_joined_users": self.get_user_all_referrals_user(
+                        "indirect_joined_users": self.get_indirect_joined_user(
                             user=self.get_direct_joined_user(
                                 ref_users=ref_users, end=ref_users
                             )
                         ),
                         "current_referral_team": len(
-                            self.get_user_all_referrals_user(
+                            self.get_indirect_joined_user(
                                 user=self.get_direct_joined_user(
                                     ref_users=ref_users, end=ref_users
                                 )
@@ -101,11 +101,11 @@ class UserLevel:
                             level=self.ref_user
                         ).daily_income,
                         "direct_joined_user": self.dir_jnd_usr,
-                        "indirect_joined_users": self.get_user_all_referrals_user(
+                        "indirect_joined_users": self.get_indirect_joined_user(
                             user=self.dir_jnd_usr, many=True
                         ),
                         "current_referral_team": len(
-                            self.get_user_all_referrals_user(
+                            self.get_indirect_joined_user(
                                 user=self.dir_jnd_usr, many=True
                             )
                         ),
