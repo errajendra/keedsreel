@@ -1,61 +1,115 @@
 from talvido_app.models import Talvidouser
 from ..models import Level
-from django.db.models import Sum
 
 
 class UserLevel:
     def __init__(self, user):
         self.user = Talvidouser.objects.get(firebase_uid=user)
-        self.referral_users = self.user.referral_by_user.all().count()
+        self.referral_users = self.user.referral_by_user.all()
 
-    def get_level_referral_user(self, level):
-        return Level.objects.get(level=level)
-
-    def sum_previous_level_referral_users(self, level):
-        return (
-            Level.objects.filter(level__in=range(level)).aggregate(
-                Sum("referral_users")
-            )["referral_users__sum"]
-            if level > 1
-            else 0
-        )
-
-    def check_level(self, max_level):
-        for i in range(1, max_level + 1):
+    def get_level_referral_team(self, level=None):
+        if level:
             try:
-                if self.referral_users >= self.get_level_referral_user(
-                    level=i
-                ).referral_users + self.sum_previous_level_referral_users(
-                    level=i
-                ) and self.referral_users < self.get_level_referral_user(
-                    level=i + 1
-                ).referral_users + self.sum_previous_level_referral_users(
-                    level=i + 1
-                ):
-                    return i
+                return Level.objects.get(level=level)
             except:
-                return max_level
+                return Level.objects.get(level=7)
+        return None
+
+    def get_user_all_referrals_user(self, user, many=None):
+        if many is None:
+            try:
+                user = Talvidouser.objects.get(firebase_uid=user)
+                return user.referral_by_user.all().values_list("user", flat=True)
+            except Talvidouser.DoesNotExist:
+                return None
+        else:
+            users = Talvidouser.objects.filter(firebase_uid__in=user)
+            self.indirect_joined_users = []
+            for idr_jnd_usrs in range(len(users)):
+                get_referral_user_info = users.get(
+                    firebase_uid=users[idr_jnd_usrs]
+                ).referral_by_user.all()
+                for get_idr_jnd_usrs in range(len(get_referral_user_info)):
+                    self.indirect_joined_users.append(
+                        get_referral_user_info[get_idr_jnd_usrs].user.firebase_uid
+                    )
+            return self.indirect_joined_users
+
+    def get_direct_joined_user(self, ref_users, end=None):
+        return self.referral_users.order_by("created_at").values_list("user")[
+            ref_users - 1 : end
+        ]
 
     @property
-    def get_user_level(self):
-        print(self.check_level(max_level=7))
-        return self.check_level(max_level=7)
+    def create_level_info(self):
+        self.levels_info = []
+        for ref_users in range(1, self.referral_users.count() + 1)[:11]:
+            if ref_users <= 4:
+                self.levels_info.append(
+                    {
+                        "level": self.get_level_referral_team(level=ref_users).level,
+                        "max_referral_team": self.get_level_referral_team(
+                            level=ref_users
+                        ).referral_team,
+                        "daily_income": self.get_level_referral_team(
+                            level=ref_users
+                        ).daily_income,
+                        "direct_joined_user": [
+                            self.get_direct_joined_user(
+                                ref_users=ref_users, end=ref_users
+                            )[0][0]
+                        ],
+                        "indirect_joined_users": self.get_user_all_referrals_user(
+                            user=self.get_direct_joined_user(
+                                ref_users=ref_users, end=ref_users
+                            )
+                        ),
+                        "current_referral_team": len(
+                            self.get_user_all_referrals_user(
+                                user=self.get_direct_joined_user(
+                                    ref_users=ref_users, end=ref_users
+                                )
+                            )
+                        ),
+                    }
+                )
+            elif ref_users == 6 or ref_users == 8 or ref_users == 10:
+                self.ref_user = (
+                    ref_users - 2
+                    if ref_users >= 8 and ref_users <= 10
+                    else ref_users - 1
+                )
+                self.dir_jnd_usr = self.get_direct_joined_user(
+                    ref_users=self.ref_user + 1
+                    if ref_users >= 8 and ref_users <= 10
+                    else self.ref_user,
+                    end=ref_users,
+                )
+                self.dir_jnd_usr = [
+                    self.dir_jnd_usr[dir_jned_usr][0]
+                    for dir_jned_usr in range(len(self.dir_jnd_usr))
+                ]
+                self.levels_info.append(
+                    {
+                        "level": self.get_level_referral_team(
+                            level=self.ref_user
+                        ).level,
+                        "max_referral_team": self.get_level_referral_team(
+                            level=self.ref_user
+                        ).referral_team,
+                        "daily_income": self.get_level_referral_team(
+                            level=self.ref_user
+                        ).daily_income,
+                        "direct_joined_user": self.dir_jnd_usr,
+                        "indirect_joined_users": self.get_user_all_referrals_user(
+                            user=self.dir_jnd_usr, many=True
+                        ),
+                        "current_referral_team": len(
+                            self.get_user_all_referrals_user(
+                                user=self.dir_jnd_usr, many=True
+                            )
+                        ),
+                    }
+                )
 
-    @property
-    def get_level_max_users(self):
-        self.get_level = self.check_level(max_level=7)
-        try:
-            return self.get_level_referral_user(self.get_level + 1).referral_users
-        except:
-            return self.get_level_referral_user(self.get_level).referral_users
-
-    @property
-    def get_total_referral_users(self):
-        return self.referral_users
-
-    @property
-    def get_current_level_referral_users(self):
-        self.current_level = self.get_user_level
-        return self.referral_users - self.sum_previous_level_referral_users(
-            level=self.current_level + 1
-        )
+        return self.levels_info
