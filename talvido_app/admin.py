@@ -28,6 +28,14 @@ from .models import (
     TimeSpend,
 )
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import Group
+
+
+admin.site.site_header = "Talvido Administration"
+admin.site.index_title = "Talvido"
+admin.site.site_title = "Talvido Administration"
+
+admin.site.unregister(Group)
 
 
 """Register the talvido user in django admin"""
@@ -40,14 +48,11 @@ class TalvidouserAdmin(UserAdmin):
     list_display = (
         "firebase_uid",
         "email",
-        "is_staff",
+        "first_name",
+        "last_name",
         "is_active",
     )
-    list_filter = (
-        "email",
-        "is_staff",
-        "is_active",
-    )
+    list_filter = ("is_active",)
     fieldsets = (
         (
             "User Information",
@@ -79,7 +84,7 @@ class TalvidouserAdmin(UserAdmin):
             },
         ),
     )
-    search_fields = ("username",)
+    search_fields = ("firebase_uid", "email", "first_name", "last_name")
     ordering = (
         "first_name",
         "last_name",
@@ -146,7 +151,17 @@ class PostCommentLikeModelAdmin(admin.ModelAdmin):
 
 @admin.register(Notification)
 class NotificationModelAdmin(admin.ModelAdmin):
-    list_display = ["id", "user_to", "user_from", "notification_type", "post_like", "post_comment", "post_comment_like", "created_at", "updated_at"]
+    list_display = [
+        "id",
+        "user_to",
+        "user_from",
+        "notification_type",
+        "post_like",
+        "post_comment",
+        "post_comment_like",
+        "created_at",
+        "updated_at",
+    ]
 
 
 """Register story highlights model in django admin"""
@@ -160,7 +175,14 @@ class StoryHighlightModelAdmin(admin.ModelAdmin):
 
 @admin.register(Reel)
 class ReelAdmin(admin.ModelAdmin):
-    list_display = ["id", "user", "description", "thumbnail", "created_at", "updated_at"]
+    list_display = [
+        "id",
+        "user",
+        "description",
+        "thumbnail",
+        "created_at",
+        "updated_at",
+    ]
 
 
 """Register reel like model in django admin"""
@@ -244,11 +266,11 @@ class PointSettingAdmin(admin.ModelAdmin):
 
 @admin.register(Point)
 class PointAdmin(admin.ModelAdmin):
-    list_display = ["id", 'user', "points", "created_at"]
+    list_display = ["id", "user", "points", "created_at"]
 
 
 """Register time spends model in django admin"""
 
 @admin.register(TimeSpend)
 class TimeSpendAdmin(admin.ModelAdmin):
-    list_display = ["id", 'user', "date", "seconds", "created_at"]
+    list_display = ["id", "user", "date", "seconds", "created_at"]
