@@ -95,7 +95,21 @@ class TalvidouserAdmin(UserAdmin):
 
 @admin.register(Profile)
 class ProfileModelAdmin(admin.ModelAdmin):
-    list_display = ["user", "image", "gender"]
+    list_display = ["user", "full_name", "image", "gender", "location", "description"]
+    list_filter = ("gender",)
+    search_fields = ("user",)
+    
+    def full_name(self, instance):
+        return instance.user.first_name + " " + instance.user.last_name
+
+    def get_search_results(self, request, queryset, search_term):
+        search_term_list = search_term.split(' ')
+
+        if not any(search_term_list):
+            return queryset, False
+        
+        queryset = Profile.objects.filter(user=search_term_list[0])
+        return queryset, False
 
 
 """Register story model in  django admin"""
