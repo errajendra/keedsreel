@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from talvido_app.models import Notification, Talvidouser
+from talvido_app.utils import get_duration
 
 
 class NotificationModelSerializer(serializers.ModelSerializer):
@@ -16,6 +17,7 @@ class NotificationModelSerializer(serializers.ModelSerializer):
             data["post"] = self.get_post_comment_data(instance)
         elif instance.notification_type == "FOLLOW":
             data["is_follow"] = self.get_follow_data(instance)
+        data["duration"] = get_duration(instance)
         return data
 
     def get_user_info(self, data):
