@@ -11,6 +11,7 @@ from . import (
     ResetEmailPasswordAPIView,
     ProfileAPIView,
     UserTimeSpendsWeekAPIView,
+    UserTimeSpendsTodayAPIView,
     GetUserReferralAPIView,
     UpdateProfilePictureAPIView,
     RemoveProfilePictureAPIView,
@@ -161,6 +162,9 @@ urlpatterns = [
     ),
     path(
         "user/time-spends/week/", UserTimeSpendsWeekAPIView.as_view(), name="user-time-spends-week-api"
+    ),
+     path(
+        "user/time-spends/today/", UserTimeSpendsTodayAPIView.as_view(), name="user-time-spends-today-api"
     ),
     # post API's enpoints
     path("stories/active/", ActiveStoryAPIView.as_view(), name="active-stories-api"),
