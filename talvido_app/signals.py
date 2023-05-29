@@ -5,6 +5,10 @@ from .models import (
     Profile,
     Reel,
     ReelView,
+    PostLike,
+    Notification,
+    PostComment,
+    Follow,
 )
 
 
@@ -20,3 +24,37 @@ def create_profile(sender, instance, created, **kwargs):
 def create_reelview(sender, instance, created, **kwargs):
     if created:
         ReelView.objects.create(reel=instance)
+
+
+"""this signal will create post like """
+@receiver(post_save, sender=PostLike)
+def create_postlike_notification(sender, instance, created, **kwargs):
+    if created:
+        Notification.objects.create(
+            user_to = instance.post.user,
+            user_from = instance.user,
+            notification_type = "POST_LIKE",
+            post_like = instance,
+        )
+
+"""this signal will create post comment """
+@receiver(post_save, sender=PostComment)
+def create_postcomment_notification(sender, instance, created, **kwargs):
+    if created:
+        Notification.objects.create(
+            user_to = instance.post.user,
+            user_from = instance.user,
+            notification_type = "POST_COMMENT",
+            post_comment = instance,
+        )
+
+"""this signal will create post comment """
+@receiver(post_save, sender=Follow)
+def create_follow_notification(sender, instance, created, **kwargs):
+    if created:
+        Notification.objects.create(
+            user_to = instance.user_to,
+            user_from = instance.user_from,
+            notification_type = "FOLLOW",
+            follow = instance,
+        )

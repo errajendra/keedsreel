@@ -59,6 +59,7 @@ from . import (
     UPIPaymentAPIView,
     UserSubscriptionAPIView,
     RecentAccountSearchAPIView,
+    NotificationAPIView,
 )
 
 
@@ -326,5 +327,10 @@ urlpatterns = [
         "user/subscription/",
         UserSubscriptionAPIView.as_view(),
         name="user-subscription-api",
+    ),
+    path(
+        "user/notification/",
+        NotificationAPIView.as_view(),
+        name="user-notiication-unseen-api",
     ),
 ]

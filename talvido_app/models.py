@@ -166,7 +166,7 @@ class Follow(BaseModel):
     )
 
     def __str__(self):
-        return str(self.user_to)
+        return str(self.id)
 
 
 """This model will store the stories views"""
@@ -285,7 +285,7 @@ class Notification(BaseModel):
     NOTIFICATION_TYPE = (
         ("POST_LIKE", "POST_LIKE"),
         ("POST_COMMENT", "POST_COMMENT"),
-        ("POST_COMMENT_LIKE", "POST_COMMENT_LIKE"),
+        ("FOLLOW", "FOLLOW"),
     )
 
     user_to = models.ForeignKey(
@@ -317,13 +317,14 @@ class Notification(BaseModel):
         null=True,
         blank=True,
     )
-    post_comment_like = models.ForeignKey(
-        PostCommentLike,
-        verbose_name="Post Comment Like",
+    follow = models.ForeignKey(
+        Follow,
+        verbose_name="Follow",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
+    seen = models.BooleanField(default=False, verbose_name="Seen")
 
     def __str__(self):
         return str(self.id)
