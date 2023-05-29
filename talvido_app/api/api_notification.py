@@ -20,6 +20,24 @@ class NotificationAPIView(APIView):
         response = {
             "status_code": status.HTTP_200_OK,
             "message": "ok",
-            "data": user_notification_serializer.data
+            "data": {
+                "notifications": user_notification_serializer.data,
+                "unseen_notification": user_notifications.filter(seen=False).count()
+            }
         }
         return Response(response, status=status.HTTP_200_OK)
+
+
+class SeenNotificationAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = Talvidouser.objects.get(firebase_uid=request.user)
+        user_unseen_notification = user.notification_user_to.all().filter(seen=False)
+        user_unseen_notification.update(seen = True)
+        response = {
+            "status": status.HTTP_201_CREATED,
+            "message": "created"
+        }
+        return Response(response, status=status.HTTP_201_CREATED)

@@ -5,7 +5,7 @@ from talvido_app.models import Notification, Talvidouser
 class NotificationModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
-        fields = ["id", "notification_type"]
+        fields = ["id", "notification_type", "seen"]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
