@@ -146,7 +146,7 @@ class PostCommentLikeModelAdmin(admin.ModelAdmin):
 
 @admin.register(Notification)
 class NotificationModelAdmin(admin.ModelAdmin):
-    list_display = ["id", "user_to", "user_from", "notification_type", "post_like", "post_comment", "post_comment_like", "created_at", "updated_at"]
+    list_display = ["id", "user_to", "user_from", "notification_type", "post_like", "post_comment", "follow", "seen", "created_at", "updated_at"]
 
 
 """Register story highlights model in django admin"""
