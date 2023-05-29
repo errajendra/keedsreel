@@ -2,9 +2,11 @@ from talvido_app.api.serializers.auth_serializers import *
 from talvido_app.api.serializers.profile_serializers import *
 from talvido_app.api.serializers.post_serializers import *
 from talvido_app.api.serializers.bank_serializer import *
+from talvido_app.api.serializers.notification_serializers import *
 from .api_auth import *
 from .api_profile import * 
 from .api_post import *
 from .api_search import *
 from .api_reels import *
 from .api_bank import *
+from .api_notification import *
