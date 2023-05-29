@@ -23,7 +23,7 @@ class NotificationModelSerializer(serializers.ModelSerializer):
     def get_user_info(self, data):
         return {
             "firebase_uid": data.user_from.firebase_uid,
-            "full_name": data.user_from.first_name + " " + data.user_from.first_name,
+            "full_name": data.user_from.first_name + " " + data.user_from.last_name,
             "username": data.user_from.username,
             "image": "https://"
             + self.context["request"].META["HTTP_HOST"]

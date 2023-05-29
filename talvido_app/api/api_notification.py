@@ -13,7 +13,7 @@ class NotificationAPIView(APIView):
     
     def get(self, request):
         user = Talvidouser.objects.get(firebase_uid=request.user)
-        user_notifications = user.notification_user_to.all()
+        user_notifications = user.notification_user_to.all().order_by("-created_at")
         user_notification_serializer = NotificationModelSerializer(
             user_notifications, many=True, context={"request": request}
         )
