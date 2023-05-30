@@ -28,6 +28,14 @@ from .models import (
     TimeSpend,
 )
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import Group
+
+
+admin.site.site_header = "Talvido Administration"
+admin.site.index_title = "Talvido"
+admin.site.site_title = "Talvido Administration"
+
+admin.site.unregister(Group)
 
 
 """Register the talvido user in django admin"""
@@ -40,14 +48,11 @@ class TalvidouserAdmin(UserAdmin):
     list_display = (
         "firebase_uid",
         "email",
-        "is_staff",
+        "first_name",
+        "last_name",
         "is_active",
     )
-    list_filter = (
-        "email",
-        "is_staff",
-        "is_active",
-    )
+    list_filter = ("is_active",)
     fieldsets = (
         (
             "User Information",
@@ -79,7 +84,7 @@ class TalvidouserAdmin(UserAdmin):
             },
         ),
     )
-    search_fields = ("username",)
+    search_fields = ("firebase_uid", "email", "first_name", "last_name")
     ordering = (
         "first_name",
         "last_name",
@@ -90,7 +95,21 @@ class TalvidouserAdmin(UserAdmin):
 
 @admin.register(Profile)
 class ProfileModelAdmin(admin.ModelAdmin):
-    list_display = ["user", "image", "gender"]
+    list_display = ["user", "full_name", "image", "gender", "location", "description"]
+    list_filter = ("gender",)
+    search_fields = ("user",)
+    
+    def full_name(self, instance):
+        return instance.user.first_name + " " + instance.user.last_name
+
+    def get_search_results(self, request, queryset, search_term):
+        search_term_list = search_term.split(' ')
+
+        if not any(search_term_list):
+            return queryset, False
+        
+        queryset = Profile.objects.filter(user=search_term_list[0])
+        return queryset, False
 
 
 """Register story model in  django admin"""
@@ -160,7 +179,14 @@ class StoryHighlightModelAdmin(admin.ModelAdmin):
 
 @admin.register(Reel)
 class ReelAdmin(admin.ModelAdmin):
-    list_display = ["id", "user", "description", "thumbnail", "created_at", "updated_at"]
+    list_display = [
+        "id",
+        "user",
+        "description",
+        "thumbnail",
+        "created_at",
+        "updated_at",
+    ]
 
 
 """Register reel like model in django admin"""
@@ -244,11 +270,11 @@ class PointSettingAdmin(admin.ModelAdmin):
 
 @admin.register(Point)
 class PointAdmin(admin.ModelAdmin):
-    list_display = ["id", 'user', "points", "created_at"]
+    list_display = ["id", "user", "points", "created_at"]
 
 
 """Register time spends model in django admin"""
 
 @admin.register(TimeSpend)
 class TimeSpendAdmin(admin.ModelAdmin):
-    list_display = ["id", 'user', "date", "seconds", "created_at"]
+    list_display = ["id", "user", "date", "seconds", "created_at"]
