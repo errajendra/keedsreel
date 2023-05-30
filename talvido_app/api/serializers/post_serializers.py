@@ -18,6 +18,7 @@ from talvido_app.api.serializers.profile_serializers import (
 from datetime import datetime
 import os
 from talvido_app.utils import get_duration
+from talvido_app.imagekit.main import ImagekitClient
 
 
 """ story model serializer"""
@@ -281,6 +282,12 @@ class UploadPostModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ["post", "description"]
+
+    def create(self, validated_data):
+        imagekit = ImagekitClient(self.context["request"].FILES.get("post"))
+        file_meta_data =  imagekit.upload_file
+        validated_data["post"] = file_meta_data["url"]
+        return super().create(validated_data)
 
 
 """delete post serializer"""

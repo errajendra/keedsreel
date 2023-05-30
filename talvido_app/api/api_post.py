@@ -268,15 +268,15 @@ class UploadPostAPIView(APIView):
     parser_classes = [MultiPartParser, JSONParser, FileUploadParser, FormParser]
 
     def post(self, request):
-        upload_post_serializer = UploadPostModelSerializer(data=request.data)
+        upload_post_serializer = UploadPostModelSerializer(data=request.data, context={"request": request})
         if upload_post_serializer.is_valid():
-            imagekit = ImagekitClient(request.FILES.get("post"))
-            file_meta_data =  imagekit.upload_file
-            # post = upload_post_serializer.save(user=request.user)
+            post = upload_post_serializer.save(user=request.user)
             response = {
                 "status_code": status.HTTP_201_CREATED,
                 "message": "ok",
-                "data": file_meta_data,
+                "data": {
+                    "image": post.post.name
+                },
             }
             return Response(response, status=status.HTTP_201_CREATED)
 
