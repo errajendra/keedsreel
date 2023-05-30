@@ -67,6 +67,14 @@ class GetReelModelSerializer(serializers.ModelSerializer):
             0
         )
 
+    def to_representation(self, instance):
+        data =  super().to_representation(instance)
+        if "https://ik.imagekit.io" in instance.reel.name:
+            data["reel"] = instance.reel.name
+        else:
+            data["reel"] = "https://" + self.context["request"].META["HTTP_HOST"] + instance.reel.url
+        return data
+    
     class Meta:
         model = Reel
         fields = [

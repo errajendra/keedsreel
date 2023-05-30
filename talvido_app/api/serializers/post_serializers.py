@@ -257,6 +257,14 @@ class GetPostModelSerializer(serializers.ModelSerializer):
             else 0
         )
 
+    def to_representation(self, instance):
+        data =  super().to_representation(instance)
+        if "https://ik.imagekit.io" in instance.post.name:
+            data["post"] = instance.post.name
+        else:
+            data["post"] = "https://" + self.context["request"].META["HTTP_HOST"] + instance.post.url
+        return data
+
     class Meta:
         model = Post
         fields = [
