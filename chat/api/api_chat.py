@@ -17,7 +17,7 @@ class GetUserChatAPIView(APIView):
 
     def get(self, request):
         user = Talvidouser.objects.get(firebase_uid=request.user)
-        user_chats = user.sender_chat.all().distinct("reciever").order_by("-created_at")
+        user_chats = user.sender_chat.all().distinct("reciever")
         get_chats_serializer = GetChatModelSerializer(
             user_chats, many=True, context={"request": request}
         )
