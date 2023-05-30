@@ -21,6 +21,9 @@ DATABASE_POST=5432
 FIREBASE_API_KEY=AIzaSyAAFVJZkY2c_5RXCUoqrcuLacXFvsjEshk
 RAZORPAY_KEY_ID=rzp_test_WSpHIcbcEUaGsR
 RAZORPAY_KEY_SECRET=OVNdEwmls1o4xjKDqA8LzHdf
+IMAGEKIT_PUBLIC_KEY=public_8l0oKGRT0x0pzX2xI1xo/X9mGzA=
+IMAGEKIT_PRIVATE_KEY=private_sf1ZZcKVxGonl9f85J452dZJY2k=
+IMAGEKIT_URL_ENDPOINT=https://ik.imagekit.io/af16umqa5
 ```
 change your database credentials with mine.
 
