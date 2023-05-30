@@ -147,6 +147,12 @@ RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET")
 
 ENCRYPTION_KEY = os.environ.get("ENCRYPTION_KEY")
 
+# IMAGEKIT CREDENTIALS
+
+IMAGEKIT_PUBLIC_KEY = os.environ.get("IMAGEKIT_PUBLIC_KEY")
+IMAGEKIT_PRIVATE_KEY = os.environ.get("IMAGEKIT_PRIVATE_KEY")
+IMAGEKIT_URL_ENDPOINT = os.environ.get("IMAGEKIT_URL_ENDPOINT")
+
 """LOGGING = {
     'version': 1,
     # The version number of our log

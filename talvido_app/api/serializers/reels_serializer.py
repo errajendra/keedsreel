@@ -8,6 +8,7 @@ from talvido_app.models import (
 )
 from talvido_app.api.serializers.profile_serializers import UserModelSerializer
 from talvido_app.utils import get_duration
+from talvido_app.imagekit.main import ImagekitClient
 
 
 class GetReelModelSerializer(serializers.ModelSerializer):
@@ -88,6 +89,12 @@ class UploadUserReelsModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reel
         fields = ["reel", "description"]
+
+    def create(self, validated_data):
+        imagekit = ImagekitClient(self.context["request"].FILES.get("reel"))
+        file_meta_data =  imagekit.upload_file
+        validated_data["reel"] = file_meta_data["url"]
+        return super().create(validated_data)
 
 
 class AddReelViewsSerializer(serializers.Serializer):

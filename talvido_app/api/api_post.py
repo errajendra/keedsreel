@@ -29,6 +29,7 @@ from rest_framework.parsers import (
 from datetime import datetime
 from talvido_app.pagination import PageNumberPaginationView
 import logging
+from talvido_app.imagekit.main import ImagekitClient
 
 
 # Get an instance of a logger
@@ -267,14 +268,14 @@ class UploadPostAPIView(APIView):
     parser_classes = [MultiPartParser, JSONParser, FileUploadParser, FormParser]
 
     def post(self, request):
-        upload_post_serializer = UploadPostModelSerializer(data=request.data)
+        upload_post_serializer = UploadPostModelSerializer(data=request.data, context={"request": request})
         if upload_post_serializer.is_valid():
             post = upload_post_serializer.save(user=request.user)
             response = {
                 "status_code": status.HTTP_201_CREATED,
                 "message": "ok",
                 "data": {
-                    "image": "https://" + request.META["HTTP_HOST"] + post.post.url
+                    "image": post.post.name
                 },
             }
             return Response(response, status=status.HTTP_201_CREATED)

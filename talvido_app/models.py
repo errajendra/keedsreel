@@ -198,7 +198,7 @@ class Post(BaseModel):
     description = models.TextField(
         verbose_name="Post Description", max_length=1000, blank=True, null=True
     )
-    post = models.FileField(verbose_name="Post", upload_to="post/users/")
+    post = models.FileField(verbose_name="Post")
 
     def __str__(self):
         return str(self.id)

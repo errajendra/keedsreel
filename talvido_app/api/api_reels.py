@@ -61,12 +61,15 @@ class UploadUserReelsAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        upload_reels_serializer = UploadUserReelsModelSerializer(data=request.data)
+        upload_reels_serializer = UploadUserReelsModelSerializer(data=request.data, context={"request": request})
         if upload_reels_serializer.is_valid():
-            upload_reels_serializer.save(user=request.user)
+            reel = upload_reels_serializer.save(user=request.user)
             response = {
                 "status_code": status.HTTP_201_CREATED,
                 "message": "reel uploaded",
+                "data": {
+                    "reel": reel.reel.name
+                }
             }
             return Response(response, status=status.HTTP_201_CREATED)
 
