@@ -21,6 +21,9 @@ class GetChatModelSerializer(serializers.ModelSerializer):
         data["last_message"] = decrypt_message(
             encoded_message=self.get_last_message(instance).encode("utf_8")
         )
+        df, tf = self.get_message_datetime(instance)
+        data["date"] = df
+        data["time"] = tf
         return data
 
     def get_last_message(self, data):
@@ -31,6 +34,16 @@ class GetChatModelSerializer(serializers.ModelSerializer):
 
         return last_message.order_by("-created_at")[0].message if last_message else None
 
+    def get_message_datetime(self, data):
+        from django.utils.dateformat import DateFormat, TimeFormat
+        from django.utils.formats import get_format
+
+        create_at = data.created_at
+        df = DateFormat(create_at)
+        tf = TimeFormat(create_at)
+        df = df.format(get_format("DATE_FORMAT"))
+        tf = tf.format(get_format("TIME_FORMAT"))
+        return df, tf
 
 class GetParticularUserChatModelSerializer(serializers.ModelSerializer):
     sender = UserModelSerializer(read_only=True)
