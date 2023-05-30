@@ -356,7 +356,7 @@ class Reel(BaseModel):
         related_name="reel_user",
     )
     description = models.TextField(blank=True, null=True)
-    reel = models.FileField(verbose_name="Reel")
+    reel = models.FileField(verbose_name="Reel", max_length=500)
     thumbnail = models.FileField(
         verbose_name="Reel Thumbnail", upload_to="reel/thumbnail/"
     )
