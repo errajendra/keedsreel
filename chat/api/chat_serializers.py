@@ -47,8 +47,22 @@ class GetParticularUserChatModelSerializer(serializers.ModelSerializer):
             + self.context["request"].META["HTTP_HOST"]
             + instance.sender.profile.image.url
         )
+        df, tf = self.get_message_datetime(instance)
+        data["date"] = df
+        data["time"] = tf
         return data
 
     def decode_msg(self, data):
         decode_msg = decrypt_message(encoded_message=data.message.encode("utf_8"))
         return decode_msg
+
+    def get_message_datetime(self, data):
+        from django.utils.dateformat import DateFormat, TimeFormat
+        from django.utils.formats import get_format
+
+        create_at = data.created_at
+        df = DateFormat(create_at)
+        tf = TimeFormat(create_at)
+        df = df.format(get_format("DATE_FORMAT"))
+        tf = tf.format(get_format("TIME_FORMAT"))
+        return df, tf
