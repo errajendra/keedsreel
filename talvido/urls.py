@@ -10,5 +10,6 @@ urlpatterns = [
     path("api/",include("talvido_app.api.urls")),
     path("api/",include("mlm.api.urls")),
     path("api/payment/",include("payment.razorpay.urls")),
+    path("api/",include("chat.api.urls")),
     path('__debug__/', include('debug_toolbar.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
