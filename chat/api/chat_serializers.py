@@ -22,7 +22,7 @@ class GetChatModelSerializer(serializers.ModelSerializer):
 
 
 class GetParticularUserChatModelSerializer(serializers.ModelSerializer):
-    sender = UserModelSerializer()
+    sender = UserModelSerializer(read_only=True)
 
     class Meta:
         model = Chat

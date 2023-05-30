@@ -43,10 +43,14 @@ class GetParticularUserChatAPIView(APIView):
                 "data": {"firebase_uid": ["firebase_uid is invalid"]},
             }
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
-        users_chats = Chat.objects.select_related().filter(
-            sender__in=[request.user, reciever_user],
-            reciever__in=[reciever_user, request.user],
-        ).order_by("-created_at")
+        users_chats = (
+            Chat.objects.select_related()
+            .filter(
+                sender__in=[request.user, reciever_user],
+                reciever__in=[reciever_user, request.user],
+            )
+            .order_by("-created_at")
+        )
         get_chats_serializer = GetParticularUserChatModelSerializer(
             users_chats, many=True, context={"request": request}
         )
@@ -56,3 +60,34 @@ class GetParticularUserChatAPIView(APIView):
             "data": get_chats_serializer.data,
         }
         return Response(response, status=status.HTTP_200_OK)
+
+    def post(self, request, firebase_uid):
+        try:
+            reciever_user = Talvidouser.objects.get(firebase_uid=firebase_uid)
+        except Talvidouser.DoesNotExist:
+            response = {
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": "bad request",
+                "data": {"firebase_uid": ["firebase_uid is invalid"]},
+            }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+        add_chat_serializer = GetParticularUserChatModelSerializer(data=request.data)
+        if add_chat_serializer.is_valid():
+            add_chat_serializer.save(
+                sender=request.user,
+                reciever=reciever_user,
+                message=add_chat_serializer.validated_data.get("message"),
+            )
+            response = {
+                "status_code": status.HTTP_201_CREATED,
+                "message": "created",
+            }
+            return Response(response, status=status.HTTP_201_CREATED)
+
+        response = {
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": add_chat_serializer.errors,
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
