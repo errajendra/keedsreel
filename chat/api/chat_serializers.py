@@ -18,7 +18,18 @@ class GetChatModelSerializer(serializers.ModelSerializer):
             + self.context["request"].META["HTTP_HOST"]
             + instance.reciever.profile.image.url
         )
+        data["last_message"] = decrypt_message(
+            encoded_message=self.get_last_message(instance).encode("utf_8")
+        )
         return data
+
+    def get_last_message(self, data):
+        last_message = Chat.objects.select_related().filter(
+            sender__in=[data.sender, data.reciever],
+            reciever__in=[data.reciever, data.sender],
+        )
+
+        return last_message.order_by("-created_at")[0].message if last_message else None
 
 
 class GetParticularUserChatModelSerializer(serializers.ModelSerializer):
@@ -39,5 +50,5 @@ class GetParticularUserChatModelSerializer(serializers.ModelSerializer):
         return data
 
     def decode_msg(self, data):
-        decode_msg =  decrypt_message(encoded_message=data.message.encode('utf_8'))
+        decode_msg = decrypt_message(encoded_message=data.message.encode("utf_8"))
         return decode_msg
