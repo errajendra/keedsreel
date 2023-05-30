@@ -17,7 +17,7 @@ class GetUserChatAPIView(APIView):
 
     def get(self, request):
         user = Talvidouser.objects.get(firebase_uid=request.user)
-        user_chats = user.sender_chat.all().distinct("reciever")
+        user_chats = user.sender_chat.all().distinct("reciever").order_by("-created_at")
         get_chats_serializer = GetChatModelSerializer(
             user_chats, many=True, context={"request": request}
         )
@@ -77,7 +77,6 @@ class GetParticularUserChatAPIView(APIView):
             add_chat_serializer.save(
                 sender=request.user,
                 reciever=reciever_user,
-                message=add_chat_serializer.validated_data.get("message"),
             )
             response = {
                 "status_code": status.HTTP_201_CREATED,
