@@ -26,7 +26,7 @@ class GetUserLevelAPIView(APIView):
                 }
                 return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-        level = UserLevel(user=user)
+        level = UserLevel(user=user, request=request)
         response = {
             "status_code": status.HTTP_200_OK,
             "message": "ok",

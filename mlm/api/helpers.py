@@ -3,7 +3,8 @@ from ..models import Level
 
 
 class UserLevel:
-    def __init__(self, user):
+    def __init__(self, user, request):
+        self.request = request
         self.user = Talvidouser.objects.get(firebase_uid=user)
         self.referral_users = self.user.referral_by_user.all()
 
@@ -36,9 +37,23 @@ class UserLevel:
             return self.indirect_joined_users
 
     def get_direct_joined_user(self, ref_users, end=None):
-        return self.referral_users.order_by("created_at").values_list("user")[
+        self.user_data = self.referral_users.order_by("created_at").values_list("user", flat=True)[
             ref_users - 1 : end
         ]
+        return self.user_data
+
+    def get_user_info(self, data):
+        self.user_info = []
+        for i in range(len(data)):
+            talvido_user = Talvidouser.objects.get(firebase_uid=data[i])
+            self.user_info.append(
+                {
+                    "firebase_uid": talvido_user.firebase_uid,
+                    "full_name": talvido_user.first_name + " " + talvido_user.last_name,
+                    "image": "https://" + self.request.META["HTTP_HOST"] + talvido_user.profile.image.url
+                }
+            )
+        return self.user_info
 
     @property
     def create_level_info(self):
@@ -55,13 +70,17 @@ class UserLevel:
                             level=ref_users
                         ).daily_income,
                         "direct_joined_user": [
-                            self.get_direct_joined_user(
+                            self.get_user_info(
+                                data = self.get_direct_joined_user(
                                 ref_users=ref_users, end=ref_users
-                            )[0][0]
+                                )
+                            )
                         ],
-                        "indirect_joined_users": self.get_indirect_joined_user(
-                            user=self.get_direct_joined_user(
-                                ref_users=ref_users, end=ref_users
+                        "indirect_joined_users": self.get_user_info(
+                            data = self.get_indirect_joined_user(
+                                user=self.get_direct_joined_user(
+                                    ref_users=ref_users, end=ref_users
+                                )
                             )
                         ),
                         "current_referral_team": len(
@@ -86,7 +105,7 @@ class UserLevel:
                     end=ref_users,
                 )
                 self.dir_jnd_usr = [
-                    self.dir_jnd_usr[dir_jned_usr][0]
+                    self.dir_jnd_usr[dir_jned_usr]
                     for dir_jned_usr in range(len(self.dir_jnd_usr))
                 ]
                 self.levels_info.append(
@@ -100,9 +119,13 @@ class UserLevel:
                         "daily_income": self.get_level_referral_team(
                             level=self.ref_user
                         ).daily_income,
-                        "direct_joined_user": self.dir_jnd_usr,
-                        "indirect_joined_users": self.get_indirect_joined_user(
-                            user=self.dir_jnd_usr, many=True
+                        "direct_joined_user": self.get_user_info(
+                            data = self.dir_jnd_usr
+                        ),
+                        "indirect_joined_users": self.get_user_info(
+                            data = self.get_indirect_joined_user(
+                                user=self.dir_jnd_usr, many=True
+                            )
                         ),
                         "current_referral_team": len(
                             self.get_indirect_joined_user(
