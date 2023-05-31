@@ -302,15 +302,25 @@ class TalvidoEmailLoginSerializer(serializers.Serializer):
                 }
             )
         firebase_uid = user.json()["localId"]
-        if Talvidouser.objects.filter(firebase_uid=firebase_uid).first().is_active:
+        check_user = Talvidouser.objects.filter(firebase_uid=firebase_uid)
+        if check_user.exists() and check_user.first().is_active:
             return user.json()
-        raise serializers.ValidationError(
-            {
-                "status_code": status.HTTP_401_UNAUTHORIZED,
-                "message": "unauthorized",
-                "data": "Your account is temporary inactive"
-            }
-        )
+        elif not check_user.exists():
+            raise serializers.ValidationError(
+                {
+                    "status_code": status.HTTP_401_UNAUTHORIZED,
+                    "message": "unauthorized",
+                    "data": "The email your are trying to login with is not longer avaliable in database"
+                }
+            )
+        else:
+            raise serializers.ValidationError(
+                {
+                    "status_code": status.HTTP_401_UNAUTHORIZED,
+                    "message": "unauthorized",
+                    "data": "Your account is temporary inactive"
+                }
+            )
 
 
 """Reset password serializer"""
