@@ -69,13 +69,13 @@ class UserLevel:
                         "daily_income": self.get_level_referral_team(
                             level=ref_users
                         ).daily_income,
-                        "direct_joined_user": [
+                        "direct_joined_user": 
                             self.get_user_info(
                                 data = self.get_direct_joined_user(
                                 ref_users=ref_users, end=ref_users
                                 )
                             )
-                        ],
+                        ,
                         "indirect_joined_users": self.get_user_info(
                             data = self.get_indirect_joined_user(
                                 user=self.get_direct_joined_user(
@@ -136,3 +136,9 @@ class UserLevel:
                 )
 
         return self.levels_info
+
+
+class UserWallet(object):
+    def __init__(self, user, request):
+        self.user_level = UserLevel(user, request)
+        self.user_levels_info = self.user_level.create_level_info
