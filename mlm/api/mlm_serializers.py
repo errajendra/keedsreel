@@ -6,7 +6,7 @@ class WalletModelSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = WalletHistory
-        fields = ["user", "amount", "date"]
+        fields = ["id", "user", "amount", "date"]
 
     def to_representation(self, instance):
         data =  super().to_representation(instance)
