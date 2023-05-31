@@ -12,6 +12,7 @@ import requests
 import re
 from firebase_admin import auth
 from rest_framework import status
+from firebase_admin.exceptions import AlreadyExistsError
 
 
 """Mobile registration serializer"""
@@ -243,7 +244,21 @@ class TalvidoEmailRegisterSerializer(serializers.Serializer):
     def create(self, validated_data):
         email = validated_data.get("email")
         password = validated_data.get("password")
-        auth.create_user(email=email, password=password)
+        try:
+            auth.create_user(email=email, password=password)
+        except AlreadyExistsError:
+            raise serializers.ValidationError(
+                {
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "bad request",
+                    "data": [
+                        "The email address you are trying to login with is already exists in firebase database but not in our database",
+                        "please use the email address and same password if you remember when you signup",
+                        "otherwise reset password and set new password",
+                        "and then come to signup again with the same credentals"
+                    ]
+                }
+            )
         user = generate_firebase_token(email=email, password=password).json()
         talvido_user = Talvidouser.objects.create(
             first_name=validated_data.get("first_name"),
