@@ -34,18 +34,20 @@ class NotificationModelSerializer(serializers.ModelSerializer):
         post_data = data.post_like.post
         return {
             "id": post_data.id,
-            "image": "https://"
+            "image": ( post_data.post.name if "https://ik.imagekit.io/" in post_data.post.name else "https://"
             + self.context["request"].META["HTTP_HOST"]
             + post_data.post.url,
+            )
         }
 
     def get_post_comment_data(self, data):
         post_data = data.post_comment
         return {
             "id": post_data.post.id,
-            "image": "https://"
+            "image": ( post_data.post.post.name if "https://ik.imagekit.io/" in post_data.post.post.name else "https://"
             + self.context["request"].META["HTTP_HOST"]
             + post_data.post.post.url,
+            ),
             "comment": post_data.comment,
         }
 
