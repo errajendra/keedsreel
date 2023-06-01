@@ -4,7 +4,9 @@ from talvido_app.models import (
     Profile, 
     Follow, 
     ReferralUser,
-    TimeSpend
+    TimeSpend,
+    BankPayment,
+    UPIPayment,
 )
 from payment.helpers import check_user_subscription
 
@@ -70,12 +72,37 @@ class ProfileModelSerializer(serializers.ModelSerializer):
             self.get_queryset(data).reel_user.all(), many=True, context=self.context
         ).data
 
+    # @property
+    # def is_subscription(self):
+    #     self.has_subscription, self.subscription = check_user_subscription(
+    #         request=self.context["request"]
+    #         )
+    #     return 1 if self.has_subscription else 0
+
     @property
     def is_subscription(self):
-        self.has_subscription, self.subscription = check_user_subscription(
-            request=self.context["request"]
-            )
-        return 1 if self.has_subscription else 0
+        payment_status = 0
+        request = self.context["request"]
+        try:
+            if (
+                BankPayment.objects.filter(user=request.user)
+                .order_by("-created_at")
+                .first()
+                .approve
+            ):
+                payment_status = 1
+        except:
+            try:
+                if (
+                    UPIPayment.objects.filter(user=request.user)
+                    .order_by("-created_at")
+                    .first()
+                    .approve
+                ):
+                    payment_status = 1
+            except:
+                pass
+        return payment_status
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
