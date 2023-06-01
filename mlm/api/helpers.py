@@ -137,6 +137,17 @@ class UserLevel:
 
         return self.levels_info
 
+    @property
+    def get_followers(self):
+        self.total_followers = 0
+        for levels in range(len(self.levels_info)):
+            self.total_followers += len(self.levels_info[levels]["direct_joined_user"])
+            self.total_followers += len(self.levels_info[levels]["indirect_joined_users"])
+        return self.total_followers
+
+    @property
+    def get_current_level(self):
+        return len(self.levels_info)
 
 class UserWallet(object):
     def __init__(self, user, request):
