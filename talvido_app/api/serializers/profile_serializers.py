@@ -104,9 +104,15 @@ class ProfileModelSerializer(serializers.ModelSerializer):
                 pass
         return payment_status
 
+    @property
+    def is_pay(self):
+        request = self.context["request"]
+        return 1 if BankPayment.objects.select_related().filter(user=request.user) or UPIPayment.objects.select_related().filter(user=request.user).exists() else 0
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data["is_subscribe"] = self.is_subscription
+        data["is_payment"] = self.is_pay
         return data
 
     class Meta:
