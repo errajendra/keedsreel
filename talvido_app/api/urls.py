@@ -9,6 +9,7 @@ from . import (
     RegenerateAccessTokenAPIVIew,
     CheckMobileNumberExistAPIView,
     ResetEmailPasswordAPIView,
+    ChangeEmailPasswordAPIView,
     ProfileAPIView,
     UserTimeSpendsWeekAPIView,
     UserTimeSpendsTodayAPIView,
@@ -107,6 +108,11 @@ urlpatterns = [
         "auth/email/reset/password/",
         ResetEmailPasswordAPIView.as_view(),
         name="reset-email-password-api",
+    ),
+    path(
+        "auth/email/change/password/",
+        ChangeEmailPasswordAPIView.as_view(),
+        name="change-email-password-api",
     ),
     # profile api's endpoints
     path(

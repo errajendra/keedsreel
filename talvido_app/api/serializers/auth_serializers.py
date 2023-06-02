@@ -357,3 +357,22 @@ class ResetEmailPasswordSerializer(serializers.Serializer):
                 }
             )
         return reset_email
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    password = serializers.CharField()
+
+    """This method validating the password"""
+
+    def validate_password(self, value):
+        if len(value) <= 6:
+            raise serializers.ValidationError(
+                "Password should atleast contain more than 6 characters"
+            )
+        return value
+
+    def update_password(self):
+        firebase_uid = self.context["request"].user
+        password = self.data.get("password")
+        update_pwd = auth.update_user(uid=str(firebase_uid), password=password)
+        return update_pwd
