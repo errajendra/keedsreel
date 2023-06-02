@@ -9,4 +9,7 @@ class TransactionAdmin(admin.ModelAdmin):
 
 @admin.register(UserSubscription)
 class UserSubscriptionAdmin(admin.ModelAdmin):
-    list_display = ["id", "user", "created_at", "subscription_end_date"]
+    list_display = ["id", "name", "created_at", "subscription_end_date"]
+
+    def name(self, instance):
+        return instance.user.first_name + " " + instance.user.last_name

@@ -463,6 +463,14 @@ class BankPayment(BaseModel):
     def __str__(self):
         return str(self.id)
 
+    def save(self, *args, **kwargs):
+        if self.pk and self.approve:
+            from payment.models import UserSubscription
+            UserSubscription.objects.create(
+                user = self.user
+            )
+        super(BankPayment, self).save(*args, **kwargs)
+
 
 """This model will store company payment info"""
 
@@ -498,6 +506,14 @@ class UPIPayment(BaseModel):
 
     def __str__(self):
         return str(self.id)
+
+    def save(self, *args, **kwargs):
+        if self.pk and self.approve:
+            from payment.models import UserSubscription
+            UserSubscription.objects.create(
+                user = self.user
+            )
+        super(UPIPayment, self).save(*args, **kwargs)
 
 
 """This model will store recent account search"""

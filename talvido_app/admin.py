@@ -228,7 +228,10 @@ class BankDetailAdmin(admin.ModelAdmin):
 
 @admin.register(BankPayment)
 class BankPaymentAdmin(admin.ModelAdmin):
-    list_display = ["id", "user", "screenshot", "approve", "created_at"]
+    list_display = ["id", "name", "screenshot", "approve", "created_at"]
+
+    def name(self, instance):
+        return instance.user.first_name + " " + instance.user.last_name
 
 
 """Register company payment info model in django admin"""
@@ -242,7 +245,10 @@ class CompanyPaymentInfoAdmin(admin.ModelAdmin):
 
 @admin.register(UPIPayment)
 class UPIPaymentAdmin(admin.ModelAdmin):
-    list_display = ["id", "user", "screenshot", "approve", "created_at"]
+    list_display = ["id", "name", "screenshot", "approve", "created_at"]
+
+    def name(self, instance):
+        return instance.user.first_name + " " + instance.user.last_name
 
 
 """Register upi payment model in django admin"""
