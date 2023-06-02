@@ -37,6 +37,13 @@ admin.site.site_title = "Talvido Administration"
 
 admin.site.unregister(Group)
 
+class BaseModelAdmin(admin.ModelAdmin):
+    """Base model admin that will hold common data for all 
+        other model admins."""
+
+    def name(self, instance):
+        return instance.user.first_name + " " + instance.user.last_name
+
 
 """Register the talvido user in django admin"""
 
@@ -237,8 +244,8 @@ class BankDetailAdmin(admin.ModelAdmin):
 """Register bank payment model in django admin"""
 
 @admin.register(BankPayment)
-class BankPaymentAdmin(admin.ModelAdmin):
-    list_display = ["id", "user", "screenshot", "approve", "created_at"]
+class BankPaymentAdmin(BaseModelAdmin):
+    list_display = ["id", "name", "screenshot", "approve", "created_at"]
 
 
 """Register company payment info model in django admin"""
@@ -251,8 +258,8 @@ class CompanyPaymentInfoAdmin(admin.ModelAdmin):
 """Register upi payment model in django admin"""
 
 @admin.register(UPIPayment)
-class UPIPaymentAdmin(admin.ModelAdmin):
-    list_display = ["id", "user", "screenshot", "approve", "created_at"]
+class UPIPaymentAdmin(BaseModelAdmin):
+    list_display = ["id", "name", "screenshot", "approve", "created_at"]
 
 
 """Register upi payment model in django admin"""
