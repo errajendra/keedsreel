@@ -36,10 +36,9 @@ class UserSubscription(BaseModel):
     )
 
     def subscription_end_date(self):
-        from datetime import date
+        from datetime import timedelta
         startDate = self.created_at
-        endDate = date(startDate.year + 1, startDate.month, startDate.day)
-        endDate = startDate.replace(startDate.year + 1)
+        endDate = startDate + timedelta(days=120)
         return endDate
 
     def __str__(self):
