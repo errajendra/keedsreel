@@ -38,17 +38,20 @@ admin.site.unregister(Group)
 
 
 class BaseModelAdmin(admin.ModelAdmin):
-    """Base model admin that will hold common data for all 
-        other model admins."""
+    """Base model admin that will hold common data for all
+    other model admins.
+    """
+
+    """This method will display first and last 
+    name of user"""
 
     def name(self, instance):
         return instance.user.first_name + " " + instance.user.last_name
 
-
-"""Register the talvido user in django admin"""
-
 @admin.register(Talvidouser)
 class TalvidouserAdmin(UserAdmin):
+    """Customize the custom user model"""
+
     add_form = TalvidouserCreationForm
     form = TalvidouserChangeForm
     model = Talvidouser
@@ -105,13 +108,13 @@ class ProfileModelAdmin(BaseModelAdmin):
     list_display = ["user", "name", "image", "gender", "location", "description"]
     list_filter = ("gender",)
     search_fields = ("user",)
-    
+
     def get_search_results(self, request, queryset, search_term):
-        search_term_list = search_term.split(' ')
+        search_term_list = search_term.split(" ")
 
         if not any(search_term_list):
             return queryset, False
-        
+
         queryset = Profile.objects.filter(user=search_term_list[0])
         return queryset, False
 
@@ -127,7 +130,7 @@ class StoryModelAdmin(BaseModelAdmin):
 
 @admin.register(StoryViews)
 class StoryViewsModelAdmin(BaseModelAdmin):
-    list_display = ["id", "user", "name","story", "created_at"]
+    list_display = ["id", "user", "name", "story", "created_at"]
 
 
 """Register follow model in  django admin"""
@@ -141,7 +144,15 @@ class FollowModelAdmin(admin.ModelAdmin):
 
 @admin.register(Post)
 class PostModelAdmin(BaseModelAdmin):
-    list_display = ["id", "user", "name", "description", "post", "created_at", "updated_at"]
+    list_display = [
+        "id",
+        "user",
+        "name",
+        "description",
+        "post",
+        "created_at",
+        "updated_at",
+    ]
 
 
 """Register post comment model in  django admin"""
@@ -169,7 +180,18 @@ class PostCommentLikeModelAdmin(BaseModelAdmin):
 
 @admin.register(Notification)
 class NotificationModelAdmin(admin.ModelAdmin):
-    list_display = ["id", "user_to", "user_from", "notification_type", "post_like", "post_comment", "follow", "seen", "created_at", "updated_at"]
+    list_display = [
+        "id",
+        "user_to",
+        "user_from",
+        "notification_type",
+        "post_like",
+        "post_comment",
+        "follow",
+        "seen",
+        "created_at",
+        "updated_at",
+    ]
 
 
 """Register story highlights model in django admin"""
