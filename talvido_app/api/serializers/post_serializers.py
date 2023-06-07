@@ -34,6 +34,12 @@ class StoryModelSerializer(serializers.ModelSerializer):
         "get_story_view_status", read_only=True
     )
 
+    def create(self, validated_data):
+        imagekit = ImagekitClient(self.context["request"].FILES.get("story"))
+        file_meta_data =  imagekit.upload_file
+        validated_data["story"] = file_meta_data["url"]
+        return super().create(validated_data)
+
     def get_story_duration(self, data):
         return get_duration(data=data)
 
@@ -85,13 +91,14 @@ class StoryModelSerializer(serializers.ModelSerializer):
     def get_video_length(self, data):
         if self.get_story_type(data=data) == "video":
             from moviepy.editor import VideoFileClip
-            clip = VideoFileClip(data.story.path)
+            clip = VideoFileClip(data.story.name)
             return int(clip.duration)
         return 0    
 
     def to_representation(self, instance):
         data =  super().to_representation(instance)
         data["video_duration"] = self.get_video_length(data=instance)
+        data["story"] = instance.story.name
         return data
 
     class Meta:
