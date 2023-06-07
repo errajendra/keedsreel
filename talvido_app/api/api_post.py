@@ -88,7 +88,7 @@ class CreateStoryAPIView(APIView):
 
     def post(self, request):
         """deserialize the data"""
-        create_story_serializer = StoryModelSerializer(data=request.data)
+        create_story_serializer = StoryModelSerializer(data=request.data, context={"request": request})
         """checking the validation on data"""
         if create_story_serializer.is_valid():
             create_story_serializer.save(user=request.user)
