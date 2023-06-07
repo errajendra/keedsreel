@@ -166,7 +166,7 @@ class Follow(BaseModel):
     )
 
     def __str__(self):
-        return str(self.user_to)
+        return str(self.id)
 
 
 """This model will store the stories views"""
@@ -198,7 +198,7 @@ class Post(BaseModel):
     description = models.TextField(
         verbose_name="Post Description", max_length=1000, blank=True, null=True
     )
-    post = models.FileField(verbose_name="Post", upload_to="post/users/")
+    post = models.FileField(verbose_name="Post")
 
     def __str__(self):
         return str(self.id)
@@ -285,7 +285,7 @@ class Notification(BaseModel):
     NOTIFICATION_TYPE = (
         ("POST_LIKE", "POST_LIKE"),
         ("POST_COMMENT", "POST_COMMENT"),
-        ("POST_COMMENT_LIKE", "POST_COMMENT_LIKE"),
+        ("FOLLOW", "FOLLOW"),
     )
 
     user_to = models.ForeignKey(
@@ -317,13 +317,14 @@ class Notification(BaseModel):
         null=True,
         blank=True,
     )
-    post_comment_like = models.ForeignKey(
-        PostCommentLike,
-        verbose_name="Post Comment Like",
+    follow = models.ForeignKey(
+        Follow,
+        verbose_name="Follow",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
+    seen = models.BooleanField(default=False, verbose_name="Seen")
 
     def __str__(self):
         return str(self.id)
@@ -355,7 +356,7 @@ class Reel(BaseModel):
         related_name="reel_user",
     )
     description = models.TextField(blank=True, null=True)
-    reel = models.FileField(verbose_name="Reel", upload_to="reel/")
+    reel = models.FileField(verbose_name="Reel", max_length=500)
     thumbnail = models.FileField(
         verbose_name="Reel Thumbnail", upload_to="reel/thumbnail/"
     )
@@ -462,6 +463,14 @@ class BankPayment(BaseModel):
     def __str__(self):
         return str(self.id)
 
+    def save(self, *args, **kwargs):
+        if self.pk and self.approve:
+            from payment.models import UserSubscription
+            UserSubscription.objects.create(
+                user = self.user
+            )
+        super(BankPayment, self).save(*args, **kwargs)
+
 
 """This model will store company payment info"""
 
@@ -497,6 +506,14 @@ class UPIPayment(BaseModel):
 
     def __str__(self):
         return str(self.id)
+
+    def save(self, *args, **kwargs):
+        if self.pk and self.approve:
+            from payment.models import UserSubscription
+            UserSubscription.objects.create(
+                user = self.user
+            )
+        super(UPIPayment, self).save(*args, **kwargs)
 
 
 """This model will store recent account search"""

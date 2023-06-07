@@ -15,6 +15,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -27,6 +29,7 @@ INSTALLED_APPS = [
     'dashbord',
     'payment.apps.PaymentConfig',
     'mlm.apps.MlmConfig',
+    'chat.apps.ChatConfig',
 ]
 
 MIDDLEWARE = [
@@ -39,6 +42,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'talvido_app.middleware.TimeSpendsMiddleware',
+    'talvido_app.middleware.WalletHistoryMiddleware',
 ]
 
 ROOT_URLCONF = 'talvido.urls'
@@ -59,7 +63,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'talvido.wsgi.application'
+# WSGI_APPLICATION = 'talvido.wsgi.application'
+ASGI_APPLICATION = 'talvido.asgi.application'
 
 DRF_API_LOGGER_DATABASE = True 
 
@@ -138,6 +143,16 @@ INTERNAL_IPS = [
 
 RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID")
 RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET")
+
+# ENCRYPTION_KEY
+
+ENCRYPTION_KEY = os.environ.get("ENCRYPTION_KEY")
+
+# IMAGEKIT CREDENTIALS
+
+IMAGEKIT_PUBLIC_KEY = os.environ.get("IMAGEKIT_PUBLIC_KEY")
+IMAGEKIT_PRIVATE_KEY = os.environ.get("IMAGEKIT_PRIVATE_KEY")
+IMAGEKIT_URL_ENDPOINT = os.environ.get("IMAGEKIT_URL_ENDPOINT")
 
 """LOGGING = {
     'version': 1,

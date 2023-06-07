@@ -12,6 +12,7 @@ import requests
 import re
 from firebase_admin import auth
 from rest_framework import status
+from firebase_admin.exceptions import AlreadyExistsError
 
 
 """Mobile registration serializer"""
@@ -243,7 +244,21 @@ class TalvidoEmailRegisterSerializer(serializers.Serializer):
     def create(self, validated_data):
         email = validated_data.get("email")
         password = validated_data.get("password")
-        auth.create_user(email=email, password=password)
+        try:
+            auth.create_user(email=email, password=password)
+        except AlreadyExistsError:
+            raise serializers.ValidationError(
+                {
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "bad request",
+                    "data": [
+                        "The email address you are trying to login with is already exists in firebase database but not in our database",
+                        "please use the email address and same password if you remember when you signup",
+                        "otherwise reset password and set new password",
+                        "and then come to signup again with the same credentals"
+                    ]
+                }
+            )
         user = generate_firebase_token(email=email, password=password).json()
         talvido_user = Talvidouser.objects.create(
             first_name=validated_data.get("first_name"),
@@ -302,15 +317,25 @@ class TalvidoEmailLoginSerializer(serializers.Serializer):
                 }
             )
         firebase_uid = user.json()["localId"]
-        if Talvidouser.objects.filter(firebase_uid=firebase_uid).first().is_active:
+        check_user = Talvidouser.objects.filter(firebase_uid=firebase_uid)
+        if check_user.exists() and check_user.first().is_active:
             return user.json()
-        raise serializers.ValidationError(
-            {
-                "status_code": status.HTTP_401_UNAUTHORIZED,
-                "message": "unauthorized",
-                "data": "Your account is temporary inactive"
-            }
-        )
+        elif not check_user.exists():
+            raise serializers.ValidationError(
+                {
+                    "status_code": status.HTTP_401_UNAUTHORIZED,
+                    "message": "unauthorized",
+                    "data": "The email your are trying to login with is not longer avaliable in database"
+                }
+            )
+        else:
+            raise serializers.ValidationError(
+                {
+                    "status_code": status.HTTP_401_UNAUTHORIZED,
+                    "message": "unauthorized",
+                    "data": "Your account is temporary inactive"
+                }
+            )
 
 
 """Reset password serializer"""
@@ -332,3 +357,22 @@ class ResetEmailPasswordSerializer(serializers.Serializer):
                 }
             )
         return reset_email
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    password = serializers.CharField()
+
+    """This method validating the password"""
+
+    def validate_password(self, value):
+        if len(value) <= 6:
+            raise serializers.ValidationError(
+                "Password should atleast contain more than 6 characters"
+            )
+        return value
+
+    def update_password(self):
+        firebase_uid = self.context["request"].user
+        password = self.data.get("password")
+        update_pwd = auth.update_user(uid=str(firebase_uid), password=password)
+        return update_pwd

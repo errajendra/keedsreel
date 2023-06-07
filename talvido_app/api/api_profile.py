@@ -17,6 +17,7 @@ from . import (
     TimeSpendsModelSerializer,
 )
 from talvido_app.pagination import PageNumberPaginationView
+from datetime import datetime
 
 
 """This api will update and get the 
@@ -375,11 +376,27 @@ class UserTimeSpendsWeekAPIView(APIView):
 
     def get(self, request):
         user = Talvidouser.objects.get(firebase_uid=request.user)
-        time_spends_week = user.user_time_spends.all().order_by("-created_at")[:7]
+        time_spends_week = user.user_time_spends.all().order_by("-created_at")
         time_spends_week_serializer = TimeSpendsModelSerializer(time_spends_week, many=True)
         response = {
             "status_code": status.HTTP_200_OK,
             "message": "ok",
             "data": time_spends_week_serializer.data
+        }
+        return Response(response, status=status.HTTP_200_OK)
+
+
+class UserTimeSpendsTodayAPIView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = Talvidouser.objects.get(firebase_uid=request.user)
+        time_spends_today = user.user_time_spends.all().get(date=datetime.now())
+        time_spends_today_serializer = TimeSpendsModelSerializer(time_spends_today)
+        response = {
+            "status_code": status.HTTP_200_OK,
+            "message": "ok",
+            "data": time_spends_today_serializer.data
         }
         return Response(response, status=status.HTTP_200_OK)

@@ -5,6 +5,8 @@ from talvido_app.firebase.authentication import FirebaseAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .helpers import UserLevel
 from talvido_app.models import Talvidouser
+from .mlm_serializers import WalletModelSerializer
+from django.db.models import Sum
 
 
 class GetUserLevelAPIView(APIView):
@@ -13,30 +15,29 @@ class GetUserLevelAPIView(APIView):
 
     def get(self, request, firebase_uid=None):
         if firebase_uid is None:
-            user = request.user 
+            user = request.user
         else:
             try:
                 user = Talvidouser.objects.get(firebase_uid=firebase_uid)
             except Talvidouser.DoesNotExist:
                 response = {
                     "status_code": status.HTTP_400_BAD_REQUEST,
-                    "message": "firebase_uid is invalid"
+                    "message": "firebase_uid is invalid",
                 }
                 return Response(response, status=status.HTTP_400_BAD_REQUEST)
-            
-        level = UserLevel(user=user)
+
+        level = UserLevel(user=user, request=request)
         response = {
             "status_code": status.HTTP_200_OK,
             "message": "ok",
-            "data":{
-                "level": level.get_user_level,
-                "level_max_users": level.get_level_max_users,
-                "total_referral_user": level.get_total_referral_users,
-                "current_level_referral_user": level.get_current_level_referral_users,
+            "data": {
+                "levels": level.create_level_info,
+                "followers": level.get_followers,
+                "current_level": level.get_current_level,
+                "score": level.get_followers * 1,
                 "full_name": user.first_name + " " + user.last_name,
                 "description": user.profile.description,
-                "followers": user.user_to.all().count(),
-            }
+            },
         }
         return Response(response, status=status.HTTP_200_OK)
 
@@ -46,11 +47,16 @@ class GetWalletAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        user = Talvidouser.objects.get(firebase_uid=request.user)
+        wallet_history = user.user_wallet_history.all()
+        wallet_history_serializer = WalletModelSerializer(wallet_history, many=True)
+
         response = {
             "status_code": status.HTTP_200_OK,
             "message": "ok",
             "data": {
-                "total_balance": 100
-            }
+                "total_balance": wallet_history.aggregate(Sum("amount"))["amount__sum"],
+                "wallet_history": wallet_history_serializer.data,
+            },
         }
         return Response(response, status=status.HTTP_200_OK)

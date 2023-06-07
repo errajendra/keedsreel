@@ -9,8 +9,10 @@ from . import (
     RegenerateAccessTokenAPIVIew,
     CheckMobileNumberExistAPIView,
     ResetEmailPasswordAPIView,
+    ChangeEmailPasswordAPIView,
     ProfileAPIView,
     UserTimeSpendsWeekAPIView,
+    UserTimeSpendsTodayAPIView,
     GetUserReferralAPIView,
     UpdateProfilePictureAPIView,
     RemoveProfilePictureAPIView,
@@ -59,6 +61,8 @@ from . import (
     UPIPaymentAPIView,
     UserSubscriptionAPIView,
     RecentAccountSearchAPIView,
+    NotificationAPIView,
+    SeenNotificationAPIView,
 )
 
 
@@ -104,6 +108,11 @@ urlpatterns = [
         "auth/email/reset/password/",
         ResetEmailPasswordAPIView.as_view(),
         name="reset-email-password-api",
+    ),
+    path(
+        "auth/email/change/password/",
+        ChangeEmailPasswordAPIView.as_view(),
+        name="change-email-password-api",
     ),
     # profile api's endpoints
     path(
@@ -159,6 +168,9 @@ urlpatterns = [
     ),
     path(
         "user/time-spends/week/", UserTimeSpendsWeekAPIView.as_view(), name="user-time-spends-week-api"
+    ),
+     path(
+        "user/time-spends/today/", UserTimeSpendsTodayAPIView.as_view(), name="user-time-spends-today-api"
     ),
     # post API's enpoints
     path("stories/active/", ActiveStoryAPIView.as_view(), name="active-stories-api"),
@@ -326,5 +338,15 @@ urlpatterns = [
         "user/subscription/",
         UserSubscriptionAPIView.as_view(),
         name="user-subscription-api",
+    ),
+    path(
+        "user/notification/",
+        NotificationAPIView.as_view(),
+        name="user-notiication-api",
+    ),
+    path(
+        "user/notification/seen/",
+        SeenNotificationAPIView.as_view(),
+        name="user-notiication-seen-api",
     ),
 ]
