@@ -63,6 +63,7 @@ from . import (
     RecentAccountSearchAPIView,
     NotificationAPIView,
     SeenNotificationAPIView,
+    GoogleTokenAuthAPIView,
 )
 
 
@@ -83,7 +84,12 @@ urlpatterns = [
         CheckMobileNumberExistAPIView.as_view(),
         name="check-mobile-number-exist-api",
     ),
-    path("auth/login/google/", LoginGoogleAPIView.as_view(), name="login-google-api"),
+    # path("auth/login/google/", LoginGoogleAPIView.as_view(), name="login-google-api"),
+    path(
+        "auth/google-auth/",
+        GoogleTokenAuthAPIView.as_view(),
+        name="auth-google-api"
+    ),
     path(
         "auth/register/email/",
         RegsiterEmailAPIView.as_view(),
