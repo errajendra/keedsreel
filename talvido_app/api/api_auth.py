@@ -124,7 +124,7 @@ class CheckMobileNumberExistAPIView(APIView):
                     )
                 )
                 else "0",
-            }
+            } 
             return Response(response, status=status.HTTP_200_OK)
 
         """return this response if validation failed"""
