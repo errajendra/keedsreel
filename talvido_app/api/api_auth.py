@@ -13,6 +13,16 @@ from . import (
     ResetEmailPasswordSerializer,
     ChangePasswordSerializer,
 )
+from ..models import Talvidouser, Profile
+from talvido_app.firebase.helpers import (
+    verify_firebase_uid,
+    generate_firebase_token,
+    send_reset_password_email,
+    # generate_firebase_token_without_password,
+)
+from firebase_admin import auth
+from django.contrib.auth.hashers import make_password
+from firebase_admin.exceptions import AlreadyExistsError
 from talvido_app.firebase.authentication import FirebaseAuthentication
 from rest_framework.permissions import IsAuthenticated
 
@@ -137,10 +147,35 @@ class LoginGoogleAPIView(APIView):
 
         """validate the data"""
         if google_login_serializer.is_valid():
-            google_login_serializer.save()
+            validated_data = google_login_serializer.validated_data
+            email = validated_data.get("email")
+            password = validated_data.get("password")
+            try:
+                auth.create_user(email=email, password=password)
+            except AlreadyExistsError:
+                # user = generate_firebase_token(email=email, password=password)
+                pass
+            user = generate_firebase_token(email=email, password=password).json()
+            try:
+                talvido_user = Talvidouser.objects.update_or_create(
+                    first_name=validated_data.get("firstName"),
+                    last_name=validated_data.get("lastName"),
+                    email=email,
+                    password=make_password(password),
+                    firebase_uid=user["localId"],
+                )
+            except Exception as e:
+                talvido_user = Talvidouser.objects.get(
+                    firebase_uid=user["localId"],
+                )
+            profile = Profile.objects.get(user=talvido_user)
+            profile.image = validated_data['profileUrl']
+            profile.save()
+            # user_data = generate_firebase_token_without_password(email=email)
             response = {
                 "status_code": status.HTTP_200_OK,
-                "message": "success",
+                "message": "OK",
+                "data": user
             }
             return Response(response, status=status.HTTP_200_OK)
 
