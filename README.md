@@ -3,7 +3,7 @@
 
 1. clone the project using 
 ```console
-git clone https://github.com/Aashish-wooshelf/talvido.git
+git clone https://github.com/dharma-wooshelf/talvido.git
 ```
 
 2. Install all the dependies using this command

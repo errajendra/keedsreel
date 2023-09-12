@@ -1,6 +1,8 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view
+import requests
 from . import (
     TalvidoMobileRegisterSerializer,
     TalvidoMobileLoginSerializer,
@@ -12,6 +14,7 @@ from . import (
     TalvidoEmailLoginSerializer,
     ResetEmailPasswordSerializer,
     ChangePasswordSerializer,
+    GoogleTokenSignAuthSerializer,
 )
 from ..models import Talvidouser, Profile
 from talvido_app.firebase.helpers import (
@@ -24,6 +27,7 @@ from firebase_admin import auth
 from django.contrib.auth.hashers import make_password
 from firebase_admin.exceptions import AlreadyExistsError
 from talvido_app.firebase.authentication import FirebaseAuthentication
+from talvido_app.firebase.exceptions import FirebaseUIDExists
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -363,3 +367,35 @@ class ChangeEmailPasswordAPIView(APIView):
             "data": change_pwd_serializer.errors
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+"""
+    Sign in with google View
+# """
+# class GoogleTokenAuthAPIView(APIView):
+#     """
+#     This API will handle registration with google token
+#     """
+#     def post(self, request):
+#         """deserialize the request data"""
+#         email_regsiter_serializer = GoogleTokenSignAuthSerializer(data=request.data)
+
+#         """validate the data if validation success it will 
+#             call the save method and save the data"""
+#         if email_regsiter_serializer.is_valid():
+#             user = email_regsiter_serializer.save()
+#             response = {
+#                 "status_code": status.HTTP_200_OK,
+#                 "message": "OK",
+#                 "data": user,
+#             }
+#             return Response(response, status=status.HTTP_200_OK)
+
+#         """if validation fails it will response this"""
+#         response = {
+#             "status_code": status.HTTP_400_BAD_REQUEST,
+#             "message": "bad request",
+#             "data": email_regsiter_serializer.errors,
+#         }
+#         return Response(response, status=status.HTTP_400_BAD_REQUEST)
