@@ -63,7 +63,7 @@ from . import (
     RecentAccountSearchAPIView,
     NotificationAPIView,
     SeenNotificationAPIView,
-    GoogleTokenAuthAPIView,
+    # GoogleTokenAuthAPIView,
 )
 
 
