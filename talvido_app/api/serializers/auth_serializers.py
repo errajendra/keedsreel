@@ -5,7 +5,7 @@ from talvido_app.firebase.helpers import (
     verify_firebase_uid,
     generate_firebase_token,
     send_reset_password_email,
-    generate_firebase_token_with_email,
+    # generate_firebase_token_with_email,
 )
 from talvido_app.firebase.exceptions import InvalidFirebaseUID, FirebaseUIDExists
 from django.contrib.auth.hashers import make_password
