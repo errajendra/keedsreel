@@ -16,6 +16,16 @@ from . import (
     ChangePasswordSerializer,
     GoogleTokenSignAuthSerializer,
 )
+from ..models import Talvidouser, Profile
+from talvido_app.firebase.helpers import (
+    verify_firebase_uid,
+    generate_firebase_token,
+    send_reset_password_email,
+    # generate_firebase_token_without_password,
+)
+from firebase_admin import auth
+from django.contrib.auth.hashers import make_password
+from firebase_admin.exceptions import AlreadyExistsError
 from talvido_app.firebase.authentication import FirebaseAuthentication
 from talvido_app.firebase.exceptions import FirebaseUIDExists
 from rest_framework.permissions import IsAuthenticated
@@ -118,7 +128,7 @@ class CheckMobileNumberExistAPIView(APIView):
                     )
                 )
                 else "0",
-            }
+            } 
             return Response(response, status=status.HTTP_200_OK)
 
         """return this response if validation failed"""
@@ -141,10 +151,36 @@ class LoginGoogleAPIView(APIView):
 
         """validate the data"""
         if google_login_serializer.is_valid():
-            google_login_serializer.save()
+            validated_data = google_login_serializer.validated_data
+            email = validated_data.get("email")
+            password = validated_data.get("password")
+            try:
+                auth.create_user(email=email, password=password)
+            except AlreadyExistsError:
+                # user = generate_firebase_token(email=email, password=password)
+                pass
+            user = generate_firebase_token(email=email, password=password).json()
+            try:
+                talvido_user = Talvidouser.objects.update_or_create(
+                    first_name=validated_data.get("firstName"),
+                    last_name=validated_data.get("lastName"),
+                    email=email,
+                    password=make_password(password),
+                    firebase_uid=user["localId"],
+                )
+            except Exception as e:
+                talvido_user = Talvidouser.objects.get(
+                    firebase_uid=user["localId"],
+                )
+            profile = Profile.objects.get(user=talvido_user)
+            profile.image = validated_data['profileUrl']
+            profile.save()
+            # Try to get user info without password
+            # user_data = generate_firebase_token_without_password(email=email)
             response = {
                 "status_code": status.HTTP_200_OK,
-                "message": "success",
+                "message": "OK",
+                "data": user
             }
             return Response(response, status=status.HTTP_200_OK)
 
@@ -336,30 +372,30 @@ class ChangeEmailPasswordAPIView(APIView):
 
 """
     Sign in with google View
-"""
-class GoogleTokenAuthAPIView(APIView):
-    """
-    This API will handle registration with google token
-    """
-    def post(self, request):
-        """deserialize the request data"""
-        email_regsiter_serializer = GoogleTokenSignAuthSerializer(data=request.data)
+# """
+# class GoogleTokenAuthAPIView(APIView):
+#     """
+#     This API will handle registration with google token
+#     """
+#     def post(self, request):
+#         """deserialize the request data"""
+#         email_regsiter_serializer = GoogleTokenSignAuthSerializer(data=request.data)
 
-        """validate the data if validation success it will 
-            call the save method and save the data"""
-        if email_regsiter_serializer.is_valid():
-            user = email_regsiter_serializer.save()
-            response = {
-                "status_code": status.HTTP_200_OK,
-                "message": "OK",
-                "data": user,
-            }
-            return Response(response, status=status.HTTP_200_OK)
+#         """validate the data if validation success it will 
+#             call the save method and save the data"""
+#         if email_regsiter_serializer.is_valid():
+#             user = email_regsiter_serializer.save()
+#             response = {
+#                 "status_code": status.HTTP_200_OK,
+#                 "message": "OK",
+#                 "data": user,
+#             }
+#             return Response(response, status=status.HTTP_200_OK)
 
-        """if validation fails it will response this"""
-        response = {
-            "status_code": status.HTTP_400_BAD_REQUEST,
-            "message": "bad request",
-            "data": email_regsiter_serializer.errors,
-        }
-        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+#         """if validation fails it will response this"""
+#         response = {
+#             "status_code": status.HTTP_400_BAD_REQUEST,
+#             "message": "bad request",
+#             "data": email_regsiter_serializer.errors,
+#         }
+#         return Response(response, status=status.HTTP_400_BAD_REQUEST)
