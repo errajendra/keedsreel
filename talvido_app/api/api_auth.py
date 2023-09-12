@@ -14,7 +14,7 @@ from . import (
     TalvidoEmailLoginSerializer,
     ResetEmailPasswordSerializer,
     ChangePasswordSerializer,
-    GoogleTokenSignAuthSerializer,
+    # GoogleTokenSignAuthSerializer,
 )
 from ..models import Talvidouser, Profile
 from talvido_app.firebase.helpers import (
