@@ -171,7 +171,7 @@ class LoginGoogleAPIView(APIView):
             profile = Profile.objects.get(user=talvido_user)
             profile.image = validated_data['profileUrl']
             profile.save()
-            # Try to get user info without password 
+            # Try to get user info without password
             # user_data = generate_firebase_token_without_password(email=email)
             response = {
                 "status_code": status.HTTP_200_OK,
