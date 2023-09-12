@@ -112,7 +112,7 @@ class Profile(BaseModel):
 class Story(BaseModel):
     user = models.ForeignKey(Talvidouser, verbose_name="User", on_delete=models.CASCADE)
     story = models.FileField(
-        upload_to="story/users/", null=True, blank=True, verbose_name="User Story"
+        null=True, blank=True, verbose_name="User Story", max_length=500
     )
     post_at = models.DateTimeField(
         auto_now=True, editable=False, verbose_name="Story Post At"

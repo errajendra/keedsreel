@@ -19,13 +19,15 @@ def generate_firebase_token(email, password):
     return response
 
 
-"""generate firebase token for user without password"""
 
-def generate_firebase_token_with_email(email):
-    url = f"https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key={settings.FIREBASE_API_KEY}"
-    data = {"email": email, "returnSecureToken": True}
-    response = requests.post(data=data, url=url)
-    return response
+"""generate firebase token for user without password 
+    Not Working
+"""
+# def generate_firebase_token_without_password(email):
+#     url = f"https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key={settings.FIREBASE_API_KEY}"
+#     data = {"email": email, "returnSecureToken": True}
+#     response = requests.post(data=data, url=url)
+#     return response
 
 
 """send reset password email"""
