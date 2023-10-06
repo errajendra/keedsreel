@@ -14,7 +14,7 @@ class ImagekitClient():
     @property
     def upload_file(self):
         upload = imagekit.upload_file(
-        file=self.file,
-        file_name=self.file_name,
-    )
+            file=self.file,
+            file_name=self.file_name,
+        )
         return upload.response_metadata.raw
