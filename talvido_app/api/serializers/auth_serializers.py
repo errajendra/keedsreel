@@ -120,7 +120,7 @@ class TavlidoGoogleLoginSerializer(serializers.Serializer):
     firstName = serializers.CharField()
     lastName = serializers.CharField()
     profileUrl = serializers.URLField()
-        
+
     """overriding the create method"""
 
     # def create(self, validated_data):
@@ -391,6 +391,7 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 """ Google ID Token register serializer"""
 
+<<<<<<< HEAD
 # class GoogleTokenSignAuthSerializer(serializers.Serializer):
 #     id_token = serializers.CharField()
 
@@ -447,3 +448,61 @@ class ChangePasswordSerializer(serializers.Serializer):
 #         user["first_name"] = talvido_user.first_name
 #         user["last_name"] = talvido_user.last_name
 #         return user
+=======
+class GoogleTokenSignAuthSerializer(serializers.Serializer):
+    id_token = serializers.CharField()
+
+    """This method validating the email is exists or not"""
+    def validate_id_token(self, value):
+        url = "https://oauth2.googleapis.com/tokeninfo"
+        params = {'id_token': f'{value}'}
+        r = requests.get(url, params=params)
+        result = r.json()
+        self.userid = result['sub']
+        if not 'email' in result:
+            raise serializers.ValidationError("Invalid token")
+        self.email = result['email']
+        self.profile_picture = result['picture']
+        self.f_name = result['given_name']
+        self.l_name = result['family_name']
+        if not self.email:
+            raise serializers.ValidationError("Invalid token")
+        if Talvidouser.objects.filter(email=self.email).exists():
+            raise serializers.ValidationError("This email is already exists")
+        return value
+
+
+    """overriding the create method"""
+    def create(self, validated_data):
+        email = self.email
+        users = Talvidouser.objects.filter(email=self.email)
+        if Talvidouser.objects.filter(email=self.email).exists():
+            talvido_user = users[0]
+            user = generate_firebase_token(email=email, password=self.userid).json()
+        else:
+            try:
+                auth.create_user(email=email)
+            except AlreadyExistsError:
+                raise serializers.ValidationError(
+                    {
+                        "status_code": status.HTTP_400_BAD_REQUEST,
+                        "message": "bad request",
+                        "data": [
+                            "The email address you are trying to login with is already exists in firebase database but not in our database",
+                            "please use the email address and same password if you remember when you signup",
+                            "otherwise reset password and set new password",
+                            "and then come to signup again with the same credentals"
+                        ]
+                    }
+                )
+            user = generate_firebase_token(email=email, password=self.userid).json()
+            talvido_user = Talvidouser.objects.create(
+                first_name=self.f_name,
+                last_name=self.l_name,
+                email=email,
+                firebase_uid=user["localId"],
+            )
+        user["first_name"] = talvido_user.first_name
+        user["last_name"] = talvido_user.last_name
+        return user
+>>>>>>> 3648e0a8dc8083c2ee25b66c67c3fa59358584d1

@@ -84,6 +84,7 @@ urlpatterns = [
         CheckMobileNumberExistAPIView.as_view(),
         name="check-mobile-number-exist-api",
     ),
+<<<<<<< HEAD
     path("auth/google-auth/", LoginGoogleAPIView.as_view(), name="login-google-api"),
     # path("auth/login/google/", LoginGoogleAPIView.as_view(), name="login-google-api"),
     # path(
@@ -91,6 +92,14 @@ urlpatterns = [
     #     GoogleTokenAuthAPIView.as_view(),
     #     name="auth-google-api"
     # ),
+=======
+    path("auth/login/google/", LoginGoogleAPIView.as_view(), name="login-google-api"),
+    path(
+        "auth/google-auth/",
+        GoogleTokenAuthAPIView.as_view(),
+        name="auth-google-api"
+    ),
+>>>>>>> 3648e0a8dc8083c2ee25b66c67c3fa59358584d1
     path(
         "auth/register/email/",
         RegsiterEmailAPIView.as_view(),
