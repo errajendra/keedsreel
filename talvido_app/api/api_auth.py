@@ -153,7 +153,12 @@ class LoginGoogleAPIView(APIView):
         if google_login_serializer.is_valid():
             validated_data = google_login_serializer.validated_data
             email = validated_data.get("email")
-            password = validated_data.get("password")
+            users = Talvidouser.objects.filter(email=email)
+            if users.exists():
+                u = users.first()
+                password = u.password_value
+            else:
+                password = email
             try:
                 auth.create_user(email=email, password=password)
             except AlreadyExistsError:
@@ -166,6 +171,7 @@ class LoginGoogleAPIView(APIView):
                     last_name=validated_data.get("lastName"),
                     email=email,
                     password=make_password(password),
+                    password_value=password,
                     firebase_uid=user["localId"],
                 )
             except Exception as e:

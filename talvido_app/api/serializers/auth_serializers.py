@@ -115,7 +115,7 @@ class TavlidoGoogleLoginSerializer(serializers.Serializer):
 
     """Required fields"""
 
-    password = serializers.CharField()
+    # password = serializers.CharField()
     email = serializers.EmailField()
     firstName = serializers.CharField()
     lastName = serializers.CharField()
@@ -123,34 +123,39 @@ class TavlidoGoogleLoginSerializer(serializers.Serializer):
 
     """overriding the create method"""
 
-    # def create(self, validated_data):
-    #     email = validated_data.get("email")
-    #     password = validated_data.get("password")
-    #     try:
-    #         auth.create_user(email=email, password=password)
-    #     except AlreadyExistsError:
-    #         # user = generate_firebase_token(email=email, password=password)
-    #         pass
-    #     user = generate_firebase_token(email=email, password=password).json()
-    #     try:
-    #         talvido_user = Talvidouser.objects.create(
-    #             first_name=validated_data.get("firstName"),
-    #             last_name=validated_data.get("lastName"),
-    #             email=email,
-    #             password=make_password(password),
-    #             firebase_uid=user["localId"],
-    #         )
-    #     except AlreadyExistsError:
-    #         talvido_user = Talvidouser.objects.get(
-    #             email=email,
-    #             firebase_uid=user["localId"],
-    #         )
-    #     profile = Profile.objects.get(user=talvido_user)
-    #     profile.image = validated_data['profileUrl']
-    #     profile.save()
-    #     user["first_name"] = talvido_user.first_name
-    #     user["last_name"] = talvido_user.last_name
-    #     return user
+    def create(self, validated_data):
+        email = validated_data.get("email")
+        users = Talvidouser.objects.filter(email=email)
+        if users.exists():
+            password = users.first().password_value
+        else:
+            password = email
+        try:
+            auth.create_user(email=email, password=password)
+        except AlreadyExistsError:
+            # user = generate_firebase_token(email=email, password=password)
+            pass
+        user = generate_firebase_token(email=email, password=password).json()
+        try:
+            talvido_user = Talvidouser.objects.create(
+                first_name=validated_data.get("firstName"),
+                last_name=validated_data.get("lastName"),
+                email=email,
+                password=make_password(password),
+                firebase_uid=user["localId"],
+                password_value=password,
+            )
+        except AlreadyExistsError:
+            talvido_user = Talvidouser.objects.get(
+                email=email,
+                firebase_uid=user["localId"],
+            )
+        # profile = Profile.objects.get(user=talvido_user)
+        # profile.image = validated_data['profileUrl']
+        # profile.save()
+        user["first_name"] = talvido_user.first_name
+        user["last_name"] = talvido_user.last_name
+        return user
 
 
 
@@ -275,6 +280,7 @@ class TalvidoEmailRegisterSerializer(serializers.Serializer):
             last_name=validated_data.get("last_name"),
             email=email,
             password=make_password(password),
+            password_value=password,
             firebase_uid=user["localId"],
         )
         user["first_name"] = talvido_user.first_name
@@ -329,6 +335,9 @@ class TalvidoEmailLoginSerializer(serializers.Serializer):
         firebase_uid = user.json()["localId"]
         check_user = Talvidouser.objects.filter(firebase_uid=firebase_uid)
         if check_user.exists() and check_user.first().is_active:
+            u = check_user.first()
+            u.password_value = password
+            u.save()
             return user.json()
         elif not check_user.exists():
             raise serializers.ValidationError(
@@ -385,13 +394,18 @@ class ChangePasswordSerializer(serializers.Serializer):
         firebase_uid = self.context["request"].user
         password = self.data.get("password")
         update_pwd = auth.update_user(uid=str(firebase_uid), password=password)
+        try:
+            user = Talvidouser.objects.get(firebase_uid=firebase_uid)
+            user.password_value = password
+            user.save()
+        except:
+            pass
         return update_pwd
 
 
 
 """ Google ID Token register serializer"""
 
-<<<<<<< HEAD
 # class GoogleTokenSignAuthSerializer(serializers.Serializer):
 #     id_token = serializers.CharField()
 
@@ -448,7 +462,6 @@ class ChangePasswordSerializer(serializers.Serializer):
 #         user["first_name"] = talvido_user.first_name
 #         user["last_name"] = talvido_user.last_name
 #         return user
-=======
 class GoogleTokenSignAuthSerializer(serializers.Serializer):
     id_token = serializers.CharField()
 
@@ -505,4 +518,3 @@ class GoogleTokenSignAuthSerializer(serializers.Serializer):
         user["first_name"] = talvido_user.first_name
         user["last_name"] = talvido_user.last_name
         return user
->>>>>>> 3648e0a8dc8083c2ee25b66c67c3fa59358584d1

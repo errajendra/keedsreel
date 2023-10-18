@@ -50,6 +50,11 @@ class Talvidouser(AbstractUser):
         blank=True,
         null=True,
     )
+    password_value = models.CharField(
+        max_length=28,
+        verbose_name="Password Value",
+        null=True, blank=True
+    )
 
     USERNAME_FIELD = "firebase_uid"
     REQUIRED_FIELDS = []
