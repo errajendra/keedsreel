@@ -115,7 +115,7 @@ class TavlidoGoogleLoginSerializer(serializers.Serializer):
 
     """Required fields"""
 
-    # password = serializers.CharField()
+    password = serializers.CharField()
     email = serializers.EmailField()
     firstName = serializers.CharField()
     lastName = serializers.CharField()
@@ -129,7 +129,7 @@ class TavlidoGoogleLoginSerializer(serializers.Serializer):
         if users.exists():
             password = users.first().password_value
         else:
-            password = email
+            password = validated_data.get("password")
         try:
             auth.create_user(email=email, password=password)
         except AlreadyExistsError:

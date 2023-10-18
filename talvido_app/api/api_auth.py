@@ -158,7 +158,7 @@ class LoginGoogleAPIView(APIView):
                 u = users.first()
                 password = u.password_value
             else:
-                password = email
+                password = validated_data.get("password")
             try:
                 auth.create_user(email=email, password=password)
             except AlreadyExistsError:
