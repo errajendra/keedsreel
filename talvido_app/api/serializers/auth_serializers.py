@@ -391,7 +391,7 @@ class GoogleTokenSignAuthSerializer(serializers.Serializer):
         params = {'id_token': f'{value}'}
         r = requests.get(url, params=params)
         result = r.json()
-        # userid = result['sub']
+        self.userid = result['sub']
         if not 'email' in result:
             raise serializers.ValidationError("Invalid token")
         self.email = result['email']
@@ -411,7 +411,7 @@ class GoogleTokenSignAuthSerializer(serializers.Serializer):
         users = Talvidouser.objects.filter(email=self.email)
         if Talvidouser.objects.filter(email=self.email).exists():
             talvido_user = users[0]
-            user = generate_firebase_token_with_email(email=email).json()
+            user = generate_firebase_token(email=email, password=self.userid).json()
         else:
             try:
                 auth.create_user(email=email)
@@ -428,7 +428,7 @@ class GoogleTokenSignAuthSerializer(serializers.Serializer):
                         ]
                     }
                 )
-            user = generate_firebase_token_with_email(email=email).json()
+            user = generate_firebase_token(email=email, password=self.userid).json()
             talvido_user = Talvidouser.objects.create(
                 first_name=self.f_name,
                 last_name=self.l_name,
