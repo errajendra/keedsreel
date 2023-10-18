@@ -39,7 +39,7 @@ hyperlink==21.0.0
 idna==3.4
 imageio==2.29.0
 imageio-ffmpeg==0.4.8
-imagekitio==3.0.1
+imagekitio==3.1.0
 incremental==22.10.0
 moviepy==1.0.3
 msgpack==1.0.5
