@@ -22,6 +22,6 @@ class Chat(BaseModel):
     def __str__(self):
         return str(self.id)
 
-    def save(self, *args, **kwargs):
-        self.message = encrypt_message(message=self.message).decode('utf_8')
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     self.message = encrypt_message(message=self.message).decode('utf_8')
+    #     super().save(*args, **kwargs)

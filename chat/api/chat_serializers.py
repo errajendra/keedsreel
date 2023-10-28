@@ -54,7 +54,7 @@ class GetParticularUserChatModelSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data["message"] = self.decode_msg(instance)
+        # data["message"] = self.decode_msg(instance)
         data["sender"]["image"] = (
             "https://"
             + self.context["request"].META["HTTP_HOST"]
