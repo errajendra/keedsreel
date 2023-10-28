@@ -18,9 +18,11 @@ class GetChatModelSerializer(serializers.ModelSerializer):
             + self.context["request"].META["HTTP_HOST"]
             + instance.reciever.profile.image.url
         )
-        data["last_message"] = decrypt_message(
-            encoded_message=self.get_last_message(instance).message.encode("utf_8")
-        )
+        # data["last_message"] = decrypt_message(
+        #     encoded_message=self.get_last_message(instance).message.encode("utf_8")
+        # )
+        data["last_message"] = self.get_last_message(instance).message
+        
         df, tf = self.get_message_datetime(instance)
         data["date"] = df
         data["time"] = tf
