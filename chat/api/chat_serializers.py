@@ -2,7 +2,7 @@ from rest_framework import serializers
 from chat.models import Chat
 from talvido_app.api.serializers.profile_serializers import UserModelSerializer
 from chat.helpers import decrypt_message
-
+from datetime import timedelta
 
 class GetChatModelSerializer(serializers.ModelSerializer):
     reciever = UserModelSerializer()
@@ -75,7 +75,7 @@ class GetParticularUserChatModelSerializer(serializers.ModelSerializer):
         from django.utils.dateformat import DateFormat, TimeFormat
         from django.utils.formats import get_format
 
-        create_at = data.created_at
+        create_at = data.created_at + timedelta(hours=5, minutes=30)
         df = DateFormat(create_at)
         tf = TimeFormat(create_at)
         df = df.format(get_format("DATE_FORMAT"))
