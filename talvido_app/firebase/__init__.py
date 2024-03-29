@@ -4,5 +4,5 @@ import firebase_admin
 
 
 """intialize firebase credentials"""
-cred = credentials.Certificate("talvido-4cf3f-firebase-adminsdk-u7p22-904989d192.json")
+cred = credentials.Certificate("kidsreel-c7df8-firebase-adminsdk-9yb5t-9aaeea5cff.json")
 firebase_admin.initialize_app(cred)
