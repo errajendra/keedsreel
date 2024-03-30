@@ -9,7 +9,7 @@ SECRET_KEY = 'django-insecure-sc@s_h6%*k(8(2cvdy+uta59b1ba2$#u+82$*aff&(rdko(roy
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS = ['api.kidsreel.in', 'localhost', 'localhost:8000', '15.206.205.232']
+ALLOWED_HOSTS = ['api.kidsreel.in', 'backend.kidsreel.in', 'localhost', 'localhost:8000', '15.206.205.232']
 
 
 # Application definition
