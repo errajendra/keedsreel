@@ -3,7 +3,7 @@
 
 1. clone the project using 
 ```console
-git remote add origin https://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@github.com/errajendra/keedsreel.git
+git remote add origin https://ghp_X7MgJn0QWqZeJ2ayLaL9QZa0Tapuo@github.com/errajendra/keedsreel.git
 ```
 
 2. Install all the dependies using this command
@@ -25,11 +25,11 @@ RAZORPAY_KEY_SECRET=OVNdEwmls1o4xjKDqA8LzHdf
 
 ENCRYPTION_KEY=6bf164ba2e842481ef4044276c480aa2
 
-IMAGEKIT_PUBLIC_KEY=public_+l7BlLFOY8X32v/Xu7C/ANro9G8=
-IMAGEKIT_PRIVATE_KEY=private_lRFajU5FJIaktO9FtRAou2cNErU=
-IMAGEKIT_URL_ENDPOINT=https://ik.imagekit.io/qsximwlqb
+IMAGEKIT_PUBLIC_KEY=public_+l7BlLFOY8X32v/XNro9G8=
+IMAGEKIT_PRIVATE_KEY=private_lRFajU5FJIaktO9ou2cNErU=
+IMAGEKIT_URL_ENDPOINT=https://ik.imag/qsximwlqb
 
-# ENCRYPTION_KEY=6bf164ba2e842481ef4044276c480aa2339e664e47be1da70522c95e25eedbd3
+# ENCRYPTION_KEY=6bf164ba2e842481ef4044276c480aa2339e664e470522c95e25eedbd3
 ```
 change your database credentials with mine.
 
